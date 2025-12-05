@@ -1,105 +1,224 @@
+
+# import pandas as pd
+# import numpy as np
+# from pathlib import Path
+# from sklearn.preprocessing import StandardScaler, OneHotEncoder
+# from sklearn.pipeline import Pipeline
+# from sklearn.compose import ColumnTransformer
+# from sklearn.ensemble import RandomForestClassifier
+
+# # -------------------------------
+# # 0️⃣ Reproducibility
+# # -------------------------------
+# np.random.seed(42)  # ensures same random rows every run
+
+# # -------------------------------
+# # 1️⃣ Load original dataset
+# # -------------------------------
+# orig_path = r'D:\CancerCare\data_science\dataset\cancer patient data sets.csv'
+# orig_df = pd.read_csv(orig_path)
+
+# # Clean column names
+# orig_df.columns = orig_df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('-', '_')
+
+# # -------------------------------
+# # 2️⃣ Generate realistic noisy dataset
+# # -------------------------------
+# n_total = 5000
+# n_orig = orig_df.shape[0]
+# n_new = n_total - n_orig
+
+# features = orig_df.drop(columns=['level'])
+# target = orig_df['level']
+
+# new_rows = []
+# for _ in range(n_new):
+#     row = {}
+#     for col in features.columns:
+#         if features[col].dtype in ['int64', 'float64']:
+#             val = np.random.choice(features[col].values)
+#             jitter = np.random.randint(-3, 8)
+#             row[col] = max(0, val + jitter)
+#             if np.random.rand() < 0.02:
+#                 row[col] += np.random.randint(5, 15)  # occasional outlier
+#         else:
+#             val = np.random.choice(features[col].values)
+#             if np.random.rand() < 0.01:
+#                 val = val + 'a'  # tiny typo
+#             row[col] = val
+#     row['level'] = np.random.choice(['Low', 'Medium', 'High', 'Unknown']) if np.random.rand() < 0.03 else np.random.choice(target.values)
+#     new_rows.append(row)
+
+# new_df = pd.DataFrame(new_rows)
+
+# # Combine original + new rows, shuffle, reset index
+# combined_df = pd.concat([orig_df, new_df], ignore_index=True)
+# combined_df = combined_df.sample(frac=1, random_state=42).reset_index(drop=True)
+# # Drop rows where target is 'Unknown'
+# combined_df = combined_df[combined_df['level'] != 'Unknown'].reset_index(drop=True)
+
+# # -------------------------------
+# # 3️⃣ Handle missing values
+# # -------------------------------
+# combined_df.ffill(inplace=True)  # forward-fill missing values
+
+# # -------------------------------
+# # 4️⃣ Remove old index column & reset index
+# # -------------------------------
+# if 'index' in combined_df.columns:
+#     combined_df.drop(columns=['index'], inplace=True)
+# combined_df.reset_index(drop=True, inplace=True)
+
+# # -------------------------------
+# # 5️⃣ Split features (numeric + categorical) for pipeline
+# # -------------------------------
+# label_col = 'level'
+# identifiers = ['patient_id']  # keep IDs separate
+
+# feature_cols = [c for c in combined_df.columns if c not in identifiers + [label_col]]
+# numeric_cols = combined_df[feature_cols].select_dtypes(include=['int64', 'float64']).columns.tolist()
+# categorical_cols = combined_df[feature_cols].select_dtypes(include=['object']).columns.tolist()
+
+# # -------------------------------
+# # 6️⃣ Create preprocessing + model pipeline
+# # -------------------------------
+# # Numeric columns will be scaled and categorical columns one-hot encoded during training
+# pipeline = Pipeline([
+#     ('preprocessor', ColumnTransformer([
+#         ('num', StandardScaler(), numeric_cols),
+#         ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_cols)
+#     ])),
+#     ('classifier', RandomForestClassifier())
+# ])
+
+# print("Pipeline created successfully.")
+
+# # -------------------------------
+# # 7️⃣ Save preprocessed dataset (raw numeric + categorical as strings)
+# # -------------------------------
+# preproc_dir = Path("D:/CancerCare/data_science/preprocessed")
+# preproc_dir.mkdir(parents=True, exist_ok=True)
+# out_path = preproc_dir / "cancer_patient_preprocessed_final.csv"
+# combined_df.to_csv(out_path, index=False)
+# print(f"Preprocessed dataset saved at: {out_path}")
+
+
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, StandardScaler, OneHotEncoder
+import numpy as np
+from pathlib import Path
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.impute import SimpleImputer
-from sklearn.ensemble import RandomForestClassifier
 
-def create_pipeline(df, label_col='level'):
-    # Identify categorical and numeric columns
-    categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
-    numeric_cols = [c for c in df.select_dtypes(include=['int64', 'float64']).columns if c != label_col]
+# -------------------------------
+# 0️⃣ Reproducibility
+# -------------------------------
+np.random.seed(42)
 
-    # Numeric pipeline: fill missing + scale
-    numeric_transformer = Pipeline([
-        ('imputer', SimpleImputer(strategy='ffill')),  # forward fill
-        ('scaler', StandardScaler())
-    ])
+# -------------------------------
+# 1️⃣ Load original dataset
+# -------------------------------
+orig_path = r'D:\CancerCare\data_science\dataset\cancer patient data sets.csv'
+orig_df = pd.read_csv(orig_path)
 
-    # Categorical pipeline: fill missing + encode
-    categorical_transformer = Pipeline([
-        ('imputer', SimpleImputer(strategy='most_frequent')),
-        ('onehot', OneHotEncoder(handle_unknown='ignore'))
-    ])
+# Clean column names
+orig_df.columns = orig_df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('-', '_')
 
-    # Combine numeric + categorical
-    preprocessor = ColumnTransformer([
-        ('num', numeric_transformer, numeric_cols),
-        ('cat', categorical_transformer, categorical_cols)
-    ])
+# -------------------------------
+# 2️⃣ Generate realistic noisy dataset
+# -------------------------------
+n_total = 5000
+n_orig = orig_df.shape[0]
+n_new = n_total - n_orig
 
-    # Full pipeline: preprocessing + model
-    pipeline = Pipeline([
-        ('preprocessor', preprocessor),
-        ('classifier', RandomForestClassifier())
-    ])
+features = orig_df.drop(columns=['level'])
+target = orig_df['level']
 
-    return pipeline
+new_rows = []
+for _ in range(n_new):
+    row = {}
+    for col in features.columns:
+        if features[col].dtype in ['int64', 'float64']:
+            val = np.random.choice(features[col].values)
+            jitter = np.random.randint(-3, 8)
+            row[col] = max(0, val + jitter)
+            if np.random.rand() < 0.02:
+                row[col] += np.random.randint(5, 15)  # occasional outlier
+        else:
+            val = np.random.choice(features[col].values)
+            if np.random.rand() < 0.01:
+                val = val + 'a'  # tiny typo
+            row[col] = val
+    row['level'] = np.random.choice(['Low', 'Medium', 'High', 'Unknown']) if np.random.rand() < 0.03 else np.random.choice(target.values)
+    new_rows.append(row)
 
+new_df = pd.DataFrame(new_rows)
 
-# 1️ Load dataset
-try:
-    df = pd.read_csv("../dataset/cancer patient data sets.csv")
-    print("Dataset loaded successfully!")
-except FileNotFoundError:
-    print("Error: File not found. Check the path.")
-    exit()
-except pd.errors.EmptyDataError:
-    print("Error: File is empty.")
-    exit()
-except Exception as e:
-    print(f"Unexpected error: {e}")
-    exit()
+# Combine original + new rows, shuffle, reset index
+combined_df = pd.concat([orig_df, new_df], ignore_index=True)
+combined_df = combined_df.sample(frac=1, random_state=42).reset_index(drop=True)
+# Drop rows where target is 'Unknown'
+combined_df = combined_df[combined_df['level'] != 'Unknown'].reset_index(drop=True)
+# -------------------------------
+# 3️⃣ Handle missing values & feature engineering
+# -------------------------------
+combined_df.ffill(inplace=True)  # forward-fill missing values
 
-# 2️ Explore dataset
-try:
-    print("\nFirst 5 rows:\n", df.head())
-    print("\nShape:", df.shape)
-    print("\nInfo:\n", df.info())
-    print("\nDescribe:\n", df.describe())
-except Exception as e:
-    print(f"Error exploring data: {e}")
+# Keep patient_id separate
+identifiers = ['patient_id']
+label_col = 'level'
 
-# 3️ Fix column names
-df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('-', '_')
-print("\nFixed column names:\n", df.columns)
+# List of numeric columns
+numeric_cols = [
+    'age','air_pollution','alcohol_use','dust_allergy','occupational_hazards',
+    'genetic_risk','chronic_lung_disease','balanced_diet','obesity','smoking',
+    'passive_smoker','chest_pain','coughing_of_blood','fatigue','weight_loss',
+    'shortness_of_breath','wheezing','swallowing_difficulty','clubbing_of_finger_nails',
+    'frequent_cold','dry_cough','snoring'
+]
 
-# Drop non-feature columns so ml model is not confused
-non_features = ['index', 'Patient_Id']  # adjust if necessary
-df = df.drop(columns=[col for col in non_features if col in df.columns], errors='ignore')
+# --- Feature engineering ---
+# Ratios
+combined_df['smoking_vs_passive'] = combined_df['smoking'] / (combined_df['passive_smoker'] + 1)
+combined_df['obesity_vs_diet'] = combined_df['obesity'] / (combined_df['balanced_diet'] + 1)
 
-# 4️ Handle missing values
-try:
-    print("\nMissing values before fill:\n", df.isnull().sum())
-    df.ffill(inplace=True)  # forward fill missing values
-    print("Missing values after fill:\n", df.isnull().sum())
-except Exception as e:
-    print(f"Error handling missing values: {e}")
+# Squared features
+for col in numeric_cols:
+    combined_df[f'{col}_sq'] = combined_df[col] ** 2
 
-# 5️ Encode categorical features
-try:
-    le = LabelEncoder()
-    categorical_cols = df.select_dtypes(include=['object']).columns
-    for col in categorical_cols:
-        df[col] = le.fit_transform(df[col])
-    print("\nCategorical columns encoded successfully.")
-except Exception as e:
-    print(f"Error encoding categorical columns: {e}")
+# Interactions
+combined_df['age_genetic_risk'] = combined_df['age'] * combined_df['genetic_risk']
 
-# 6️ Scale numeric columns
-try:
-    label_col = "level"
-    numeric_cols = [c for c in df.select_dtypes(include=['int64','float64']).columns if c != label_col]
-    # numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
-    scaler = StandardScaler()
-    df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
-    print("\nNumeric columns scaled successfully.")
-except Exception as e:
-    print(f"Error scaling numeric columns: {e}")
+# -------------------------------
+# 4️⃣ Remove old index column & reset index
+# -------------------------------
+if 'index' in combined_df.columns:
+    combined_df.drop(columns=['index'], inplace=True)
+combined_df.reset_index(drop=True, inplace=True)
 
-# 7️ Save preprocessed dataset
-try:
-    df.to_csv("../preprocessed/cancer_patient_preprocessed.csv", index=False)
-    print("\nPreprocessed dataset saved successfully!")
-except Exception as e:
-    print(f"Error saving dataset: {e}")
+# -------------------------------
+# 5️⃣ Split features for pipeline
+# -------------------------------
+feature_cols = [c for c in combined_df.columns if c not in identifiers + [label_col]]
+numeric_cols = combined_df[feature_cols].select_dtypes(include=['int64', 'float64']).columns.tolist()
+categorical_cols = combined_df[feature_cols].select_dtypes(include=['object']).columns.tolist()
+
+# -------------------------------
+# 6️⃣ Preprocessing pipeline
+# -------------------------------
+pipeline = Pipeline([
+    ('preprocessor', ColumnTransformer([
+        ('num', StandardScaler(), numeric_cols),
+        ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_cols)
+    ]))
+])
+
+# -------------------------------
+# 7️⃣ Save preprocessed dataset
+# -------------------------------
+preproc_dir = Path("D:/CancerCare/data_science/preprocessed")
+preproc_dir.mkdir(parents=True, exist_ok=True)
+out_path = preproc_dir / "cancer_patient_preprocessed_final.csv"
+combined_df.to_csv(out_path, index=False)
+print("✅ Preprocessing + feature engineering done!")
+print(f"Preprocessed dataset saved at: {out_path}")
