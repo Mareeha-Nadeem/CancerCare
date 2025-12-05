@@ -1,5 +1,4 @@
-data_science/dataset/*.csv
 data_science/models/*.pkl
-data_science/__pycache__/
+data_science/data/*.csv
 data_science/preprocessed/*.csv
-data_science/preprocessed/*.pkl
+data_science/__pycache__/
