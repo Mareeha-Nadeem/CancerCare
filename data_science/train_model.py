@@ -133,11 +133,15 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier,
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score, balanced_accuracy_score, classification_report, roc_auc_score
 from imblearn.over_sampling import SMOTE
+from pathlib import Path
 
 # -------------------------------
 # 1️⃣ Load preprocessed dataset
 # -------------------------------
-df = pd.read_csv(r"D:\CancerCare\data_science\preprocessed\cancer_patient_preprocessed_final.csv")
+BASE_DIR = Path(__file__).parent.parent  # assumes script in scripts/
+DATA_FILE = BASE_DIR / "data_science/preprocessed/cancer_patient_preprocessed_final.csv"
+
+df = pd.read_csv(DATA_FILE)
 print("Dataset loaded! Shape:", df.shape)
 
 # Drop identifiers
