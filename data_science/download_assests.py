@@ -1,16 +1,16 @@
-# import os
-# import subprocess
+
 
 FILES = {
     # DATA
-    "raw_data.csv": "1mlF6k-YVMx-jLp6t4UJPGxhAkr6Mq5Mm",
-    "raw_data5000.csv": "1R74xRr1rU2_Ubvcho261qYWpgJg4W5zc",
-    "cleaned_data.csv": "1Q5HeVqnN4J-khEhRlo93jSplXHe4vSot",
+    # "raw_data.csv": "1mlF6k-YVMx-jLp6t4UJPGxhAkr6Mq5Mm",
+    "raw_data.csv": "1n51N2oWXXKgtasUcR5nzk9HJWguLR4ZE",
+    # "raw_data5000.csv": "1R74xRr1rU2_Ubvcho261qYWpgJg4W5zc",
+    # "cleaned_data.csv": "1Q5HeVqnN4J-khEhRlo93jSplXHe4vSot",
 
     # MODELS
-    "Stacked_Model_pipeline.pkl": "17NFnenqnV4A-33hHtCl-pVKOYEy8yMV3",
+    # "Stacked_Model_pipeline.pkl": "17NFnenqnV4A-33hHtCl-pVKOYEy8yMV3",
     "Stacked_Model_pipeline_tuned.pkl": "1gjcd-QatnaQ5RzARXgYw0LmiV-BHbh_e",
-    "RandomForest_Model_pipeline.pkl": "1-FHepupokjJzlrdI2DXbpFrgV0TkTU8x",
+    # "RandomForest_Model_pipeline.pkl": "1-FHepupokjJzlrdI2DXbpFrgV0TkTU8x",
 }
 
 # def download_from_drive(file_id, out_path):
