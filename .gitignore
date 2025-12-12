@@ -12,3 +12,5 @@ __pycache__/
 data_science/models/*.joblib
 data_science/models/*.pkl
 data_science/models/*.part
+# Ignore all joblib model files
+data_science/models/*.joblib
