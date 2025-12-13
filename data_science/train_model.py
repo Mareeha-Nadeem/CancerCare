@@ -1,259 +1,270 @@
 # import pandas as pd
-# import numpy as np
-# import joblib
 # from pathlib import Path
-# from sklearn.model_selection import train_test_split, cross_val_score
-# from sklearn.preprocessing import StandardScaler, OneHotEncoder
-# from sklearn.compose import ColumnTransformer
+# import joblib
+# from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+# from sklearn.model_selection import train_test_split
+# from sklearn.ensemble import RandomForestClassifier
 # from sklearn.pipeline import Pipeline
-# from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, StackingClassifier
-# from sklearn.linear_model import LogisticRegression
-# from sklearn.metrics import accuracy_score, f1_score, balanced_accuracy_score, classification_report, roc_auc_score
 # from imblearn.over_sampling import SMOTE
+# from sklearn.compose import ColumnTransformer
+# from sklearn.base import TransformerMixin, BaseEstimator
+# import numpy as np
 
-# # -------------------------------
-# # 1️⃣ Load preprocessed dataset with feature engineering
-# # -------------------------------
-# df = pd.read_csv(r"D:\CancerCare\data_science\preprocessed\cancer_patient_preprocessed_final.csv")
-# print("Dataset loaded! Shape:", df.shape)
+# PROJECT_ROOT = Path(__file__).resolve().parent
+# RAW_DATA_PATH = PROJECT_ROOT / "data/raw_data.csv"
+# MODEL_DIR = PROJECT_ROOT / "models"
+# DATA_DIR = PROJECT_ROOT / "data"
+# MODEL_DIR.mkdir(exist_ok=True)
+# DATA_DIR.mkdir(exist_ok=True)
+# TARGET_COL = "Final_Prediction"
 
-# # Drop identifiers and old index
-# for col in ['patient_id', 'index']:
-#     if col in df.columns:
-#         df.drop(columns=[col], inplace=True)
+# DROP_COLS = [
+#     "STAGE_AT_DIAGNOSIS",
+#     "CANCER_TYPE",
+#     "MUTATION_TYPE",
+#     "TREATMENT_ACCESS",
+#     "CLINICAL_TRIAL_ACCESS",
+#     "LANGUAGE_BARRIER",
+#     "DELAY_IN_DIAGNOSIS",
+#     "MORTALITY_RISK",
+#     "5_YEAR_SURVIVAL_PROBABILITY"
+# ]
 
-# # -------------------------------
-# # 2️⃣ Split features & target
-# # -------------------------------
-# label_col = 'level'
-# X = df.drop(columns=[label_col])
-# y = df[label_col]
+# def feature_engineering(df: pd.DataFrame):
+#     df = df.copy()
+#     df['SMOKING_RISK'] = df['SMOKING_STATUS'].map({'Smoker':2,'Former Smoker':1,'Non-Smoker':0}) + \
+#                          df['SECOND_HAND_SMOKE'].map({'Yes':1,'No':0})
+#     df['ENVIRONMENTAL_RISK'] = df['OCCUPATION_EXPOSURE'].map({'Yes':1,'No':0}) + \
+#                                 df['AIR_POLLUTION_EXPOSURE'].map({'Low':0,'Medium':1,'High':2})
+#     df['TOBACCO_EXPOSURE_RISK'] = df['INDOOR_SMOKE_EXPOSURE'].map({'Yes':1,'No':0}) + \
+#                                    df['TOBACCO_MARKETING_EXPOSURE'].map({'Yes':1,'No':0})
+#     df['HEALTHCARE_RISK'] = df['HEALTHCARE_ACCESS'].map({'Good':0,'Limited':1,'Poor':2})
+#     df['SOCIOECONOMIC_RISK'] = df['SOCIOECONOMIC_STATUS'].map({'High':0,'Middle':1,'Low':2})
+#     df['SCREENING_RISK'] = df['SCREENING_AVAILABILITY'].map({'Yes':0,'No':1})
+#     df['URBAN_RURAL_RISK'] = df['RURAL_OR_URBAN'].map({'Urban':0,'Rural':1})
+#     df['AGE_GROUP'] = pd.cut(df['AGE'], bins=[29,40,50,60,70,80,90], labels=False)
+#     drop_cols = [
+#         'SMOKING_STATUS','SECOND_HAND_SMOKE','OCCUPATION_EXPOSURE','AIR_POLLUTION_EXPOSURE',
+#         'INDOOR_SMOKE_EXPOSURE','TOBACCO_MARKETING_EXPOSURE','HEALTHCARE_ACCESS',
+#         'SOCIOECONOMIC_STATUS','SCREENING_AVAILABILITY','RURAL_OR_URBAN','AGE'
+#     ]
+#     df.drop(columns=[c for c in drop_cols if c in df.columns], inplace=True)
+#     return df
 
-# # -------------------------------
-# # 3️⃣ Train-test split (stratified)
-# # -------------------------------
-# X_train, X_test, y_train, y_test = train_test_split(
-#     X, y, test_size=0.2, stratify=y, random_state=42
-# )
-# print(f"Train size: {X_train.shape}, Test size: {X_test.shape}")
+# class LabelEncoderWrapper(BaseEstimator, TransformerMixin):
+#     """Encode multiple object columns using sklearn's LabelEncoder per column.
+#     Accepts and returns a pandas DataFrame (keeps column names).
+#     """
+#     def __init__(self):
+#         self.encoders_ = {}
 
-# # -------------------------------
-# # 4️⃣ Handle class imbalance with SMOTE
-# # -------------------------------
-# smote = SMOTE(random_state=42)
-# X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
-# print("After SMOTE, class distribution:\n", pd.Series(y_train_res).value_counts())
+#     def fit(self, X, y=None):
+#         X = X.copy()
+#         for col in X.columns:
+#             le = LabelEncoder()
+#             le.fit(X[col].astype(str).fillna("##NA##"))
+#             self.encoders_[col] = le
+#         return self
 
-# # -------------------------------
-# # 5️⃣ Identify numeric & categorical features
-# # -------------------------------
-# numeric_cols = X_train_res.select_dtypes(include=['int64', 'float64']).columns.tolist()
-# categorical_cols = X_train_res.select_dtypes(include=['object']).columns.tolist()
+#     def transform(self, X):
+#         X = X.copy()
+#         for col, le in self.encoders_.items():
+#             X[col] = le.transform(X[col].astype(str).fillna("##NA##"))
+#         return X
 
-# preprocessor = ColumnTransformer([
-#     ('num', StandardScaler(), numeric_cols),
-#     ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_cols)
-# ])
+#     def fit_transform(self, X, y=None):
+#         return self.fit(X, y).transform(X)
 
-# # -------------------------------
-# # 6️⃣ Define base models
-# # -------------------------------
-# rf = RandomForestClassifier(n_estimators=300, max_depth=None, class_weight='balanced', random_state=42)
-# gb = GradientBoostingClassifier(n_estimators=200, learning_rate=0.1, random_state=42)
-# lr = LogisticRegression(max_iter=2000, class_weight='balanced', random_state=42)
+# class CustomScalerEncoder(BaseEstimator, TransformerMixin):
+#     """Encode categorical columns and scale numeric columns.
+#     - categorical_cols: list of column names to LabelEncode
+#     - scaler: scaler instance (MinMaxScaler/StandardScaler). Defaults to MinMaxScaler.
+#     Returns a pandas DataFrame with same column order.
+#     """
+#     def __init__(self, categorical_cols=None, scaler=None):
+#         self.categorical_cols = list(categorical_cols) if categorical_cols else []
+#         self.scaler = scaler if scaler is not None else MinMaxScaler()
+#         self.le_wrapper_ = None
+#         self.numeric_cols_ = None
 
-# # -------------------------------
-# # 7️⃣ Stacking ensemble
-# # -------------------------------
-# stack = StackingClassifier(
-#     estimators=[('rf', rf), ('gb', gb), ('lr', lr)],
-#     final_estimator=RandomForestClassifier(n_estimators=200, random_state=42),
-#     cv=5,
-#     n_jobs=-1,
-#     passthrough=True
-# )
+#     def fit(self, X, y=None):
+#         X = X.copy()
+#         # ensure columns exist
+#         self.categorical_cols = [c for c in self.categorical_cols if c in X.columns]
+#         # prepare label encoders for categorical columns
+#         if self.categorical_cols:
+#             self.le_wrapper_ = LabelEncoderWrapper()
+#             self.le_wrapper_.fit(X[self.categorical_cols])
+#         # numeric cols are the rest
+#         self.numeric_cols_ = [c for c in X.columns if c not in self.categorical_cols]
+#         if self.numeric_cols_:
+#             self.scaler.fit(X[self.numeric_cols_].astype(float).fillna(0))
+#         return self
 
-# # -------------------------------
-# # 8️⃣ Full pipeline
-# # -------------------------------
-# pipeline = Pipeline([
-#     ('preprocessor', preprocessor),
-#     ('classifier', stack)
-# ])
+#     def transform(self, X):
+#         X = X.copy()
+#         if self.categorical_cols and self.le_wrapper_ is not None:
+#             X[self.categorical_cols] = self.le_wrapper_.transform(X[self.categorical_cols])
+#         if self.numeric_cols_:
+#             X[self.numeric_cols_] = self.scaler.transform(X[self.numeric_cols_].astype(float).fillna(0))
+#         return X
 
-# # -------------------------------
-# # 9️⃣ Cross-validation for F1-macro
-# # -------------------------------
-# cv_scores = cross_val_score(pipeline, X_train_res, y_train_res, cv=5, scoring='f1_macro', n_jobs=-1)
-# print(f"CV F1-macro scores: {cv_scores}")
-# print(f"Mean CV F1-macro: {cv_scores.mean():.4f}")
+#     def fit_transform(self, X, y=None):
+#         return self.fit(X, y).transform(X)
 
-# # -------------------------------
-# # 🔟 Train pipeline
-# # -------------------------------
-# pipeline.fit(X_train_res, y_train_res)
+# # ----------------------------
+# # MAIN
+# # ----------------------------
+# def main():
+#     df = pd.read_csv(RAW_DATA_PATH)
+#     df.columns = df.columns.str.strip().str.upper().str.replace(" ", "_")
+#     target_upper = TARGET_COL.upper()
+#     drop_cols_upper = [c.upper() for c in DROP_COLS]
+#     df.drop(columns=[c for c in drop_cols_upper if c in df.columns], inplace=True)
+#     df = df[~df[target_upper].isna()]
+#     df = feature_engineering(df)
 
-# # -------------------------------
-# # 1️⃣1️⃣ Evaluate on test set
-# # -------------------------------
-# y_pred = pipeline.predict(X_test)
-# y_prob = pipeline.predict_proba(X_test)
+#     # Separate X/y
+#     y = df[target_upper]
+#     X = df.drop(columns=[target_upper])
 
-# acc = accuracy_score(y_test, y_pred)
-# f1_macro = f1_score(y_test, y_pred, average='macro')
-# bal_acc = balanced_accuracy_score(y_test, y_pred)
-# try:
-#     roc_auc = roc_auc_score(pd.get_dummies(y_test), y_prob, average='macro', multi_class='ovr')
-# except:
-#     roc_auc = "N/A"
+#     # Save engineered/encoded features for prediction
+#     X.to_csv(DATA_DIR / "cleaned_features.csv", index=False)
+#     y.to_csv(DATA_DIR / "y_target.csv", index=False)
 
-# print("\nModel Evaluation:")
-# print(f"Accuracy: {acc:.4f} | F1-macro: {f1_macro:.4f} | Balanced Acc: {bal_acc:.4f} | ROC AUC: {roc_auc}")
-# print("\nClassification Report:\n", classification_report(y_test, y_pred))
+#     # Identify categorical columns
+#     cat_cols = X.select_dtypes(include="object").columns.tolist()
 
-# # -------------------------------
-# # 1️⃣2️⃣ Save pipeline (preprocessing + model)
-# # -------------------------------
-# out_dir = Path(r"D:\CancerCare\data_science\models")
-# out_dir.mkdir(parents=True, exist_ok=True)
-# out_file = out_dir / "Stacked_Model_pipeline.pkl"
-# joblib.dump(pipeline, out_file)
-# print(f"Best pipeline saved at: {out_file}")
+#     # Preprocessing: encode categorical + scale numerical
+#     preprocessor = ColumnTransformer(
+#         transformers=[
+#             ('cat', LabelEncoderWrapper(), cat_cols),
+#         ], remainder='passthrough'
+#     )
 
+#     # Train/test split
+#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+#     # Upsample minority with SMOTE
+#     smt = SMOTE(random_state=42)
+#     X_train_res, y_train_res = smt.fit_resample(X_train, y_train)
+
+#     # Build pipeline
+#     pipeline = Pipeline([
+#         ('encoder_scaler', CustomScalerEncoder(cat_cols)),
+#         ('model', RandomForestClassifier(n_estimators=200, class_weight='balanced', random_state=42))
+#     ])
+
+#     # Train pipeline
+#     pipeline.fit(X_train_res, y_train_res)
+
+#     # Save pipeline
+#     joblib.dump(pipeline, MODEL_DIR / "RF_Prediction_Pipeline.joblib")
+#     print(f"✅ Pipeline trained and saved to {MODEL_DIR / 'RF_Prediction_Pipeline.joblib'}")
+
+# if __name__ == "__main__":
+#     main()
 
 import pandas as pd
-import numpy as np
+from pathlib import Path
 import joblib
-from pathlib import Path
-from sklearn.model_selection import train_test_split, StratifiedKFold, GridSearchCV
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, StackingClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, f1_score, balanced_accuracy_score, classification_report, roc_auc_score
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
 from imblearn.over_sampling import SMOTE
-from pathlib import Path
 
-# -------------------------------
-# 1️⃣ Load preprocessed dataset
-# -------------------------------
-BASE_DIR = Path(__file__).parent.parent  # assumes script in scripts/
-DATA_FILE = BASE_DIR / "data_science/preprocessed/cancer_patient_preprocessed_final.csv"
+PROJECT_ROOT = Path(__file__).resolve().parent
+RAW_DATA_PATH = PROJECT_ROOT / "data/raw_data.csv"
+MODEL_DIR = PROJECT_ROOT / "models"
+DATA_DIR = PROJECT_ROOT / "data"
+MODEL_DIR.mkdir(exist_ok=True)
+DATA_DIR.mkdir(exist_ok=True)
+TARGET_COL = "Final_Prediction"
 
-df = pd.read_csv(DATA_FILE)
-print("Dataset loaded! Shape:", df.shape)
+DROP_COLS = [
+    "STAGE_AT_DIAGNOSIS",
+    "CANCER_TYPE",
+    "MUTATION_TYPE",
+    "TREATMENT_ACCESS",
+    "CLINICAL_TRIAL_ACCESS",
+    "LANGUAGE_BARRIER",
+    "DELAY_IN_DIAGNOSIS",
+    "MORTALITY_RISK",
+    "5_YEAR_SURVIVAL_PROBABILITY"
+]
 
-# Drop identifiers
-for col in ['patient_id', 'index']:
-    if col in df.columns:
-        df.drop(columns=[col], inplace=True)
+def feature_engineering(df: pd.DataFrame):
+    df = df.copy()
+    df['SMOKING_RISK'] = df['SMOKING_STATUS'].map({'Smoker':2,'Former Smoker':1,'Non-Smoker':0}) + \
+                         df['SECOND_HAND_SMOKE'].map({'Yes':1,'No':0})
+    df['ENVIRONMENTAL_RISK'] = df['OCCUPATION_EXPOSURE'].map({'Yes':1,'No':0}) + \
+                                df['AIR_POLLUTION_EXPOSURE'].map({'Low':0,'Medium':1,'High':2})
+    df['TOBACCO_EXPOSURE_RISK'] = df['INDOOR_SMOKE_EXPOSURE'].map({'Yes':1,'No':0}) + \
+                                   df['TOBACCO_MARKETING_EXPOSURE'].map({'Yes':1,'No':0})
+    df['HEALTHCARE_RISK'] = df['HEALTHCARE_ACCESS'].map({'Good':0,'Limited':1,'Poor':2})
+    df['SOCIOECONOMIC_RISK'] = df['SOCIOECONOMIC_STATUS'].map({'High':0,'Middle':1,'Low':2})
+    df['SCREENING_RISK'] = df['SCREENING_AVAILABILITY'].map({'Yes':0,'No':1})
+    df['URBAN_RURAL_RISK'] = df['RURAL_OR_URBAN'].map({'Urban':0,'Rural':1})
+    df['AGE_GROUP'] = pd.cut(df['AGE'], bins=[29,40,50,60,70,80,90], labels=False)
 
-# -------------------------------
-# 2️⃣ Split features & target
-# -------------------------------
-label_col = 'level'
-X = df.drop(columns=[label_col])
-y = df[label_col]
+    drop_cols = [
+        'SMOKING_STATUS','SECOND_HAND_SMOKE','OCCUPATION_EXPOSURE','AIR_POLLUTION_EXPOSURE',
+        'INDOOR_SMOKE_EXPOSURE','TOBACCO_MARKETING_EXPOSURE','HEALTHCARE_ACCESS',
+        'SOCIOECONOMIC_STATUS','SCREENING_AVAILABILITY','RURAL_OR_URBAN','AGE'
+    ]
+    df.drop(columns=[c for c in drop_cols if c in df.columns], inplace=True)
+    return df
 
-# -------------------------------
-# 3️⃣ Train-test split
-# -------------------------------
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, stratify=y, random_state=42
-)
-print(f"Train size: {X_train.shape}, Test size: {X_test.shape}")
+class Preprocess:
+    def encode(self, df: pd.DataFrame):
+        df = df.copy()
+        cat_cols = df.select_dtypes(include="object").columns
+        for col in cat_cols:
+            df[col] = LabelEncoder().fit_transform(df[col].astype(str))
+        return df
 
-# -------------------------------
-# 4️⃣ SMOTE for balancing
-# -------------------------------
-smote = SMOTE(random_state=42)
-X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
-print("After SMOTE, class distribution:\n", pd.Series(y_train_res).value_counts())
+    def scale(self, X: pd.DataFrame):
+        scaler = MinMaxScaler()
+        X_scaled = scaler.fit_transform(X)
+        return pd.DataFrame(X_scaled, columns=X.columns)
 
-# -------------------------------
-# 5️⃣ Identify numeric & categorical features
-# -------------------------------
-numeric_cols = X_train_res.select_dtypes(include=['int64', 'float64']).columns.tolist()
-categorical_cols = X_train_res.select_dtypes(include=['object']).columns.tolist()
+def main():
+    df = pd.read_csv(RAW_DATA_PATH)
+    df.columns = df.columns.str.strip().str.upper().str.replace(" ", "_")
+    target_upper = TARGET_COL.upper()
+    drop_cols_upper = [c.upper() for c in DROP_COLS]
+    df.drop(columns=[c for c in drop_cols_upper if c in df.columns], inplace=True)
+    df = df[~df[target_upper].isna()]
 
-preprocessor = ColumnTransformer([
-    ('num', StandardScaler(), numeric_cols),
-    ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_cols)
-])
+    df = feature_engineering(df)
 
-# -------------------------------
-# 6️⃣ Base models with tuned params
-# -------------------------------
-rf = RandomForestClassifier(class_weight='balanced', random_state=42)
-gb = GradientBoostingClassifier(random_state=42)
-lr = LogisticRegression(max_iter=3000, class_weight='balanced', random_state=42)
+    # Separate X/y
+    y = df[target_upper]
+    X = df.drop(columns=[target_upper])
 
-# -------------------------------
-# 7️⃣ Hyperparameter grid for tuning
-# -------------------------------
-rf_params = {
-    'n_estimators': [200, 300],
-    'max_depth': [None, 10, 20],
-    'min_samples_split': [2, 5],
-}
-gb_params = {
-    'n_estimators': [200, 300],
-    'learning_rate': [0.05, 0.1],
-    'max_depth': [3, 5],
-}
+    # Preprocess
+    prep = Preprocess()
+    X_encoded = prep.encode(X)
+    X_scaled = prep.scale(X_encoded)
 
-# GridSearchCV for RandomForest
-rf_grid = GridSearchCV(rf, rf_params, scoring='f1_macro', cv=5, n_jobs=-1)
-rf_grid.fit(preprocessor.fit_transform(X_train_res), y_train_res)
-print("Best RF params:", rf_grid.best_params_)
+    # Save engineered/encoded features for prediction
+    X_scaled.to_csv(DATA_DIR / "cleaned_features.csv", index=False)
+    y.to_csv(DATA_DIR / "y_target.csv", index=False)
 
-# GridSearchCV for GradientBoosting
-gb_grid = GridSearchCV(gb, gb_params, scoring='f1_macro', cv=5, n_jobs=-1)
-gb_grid.fit(preprocessor.fit_transform(X_train_res), y_train_res)
-print("Best GB params:", gb_grid.best_params_)
+    # Train/test split
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=42)
 
-# -------------------------------
-# 8️⃣ Stacking ensemble with tuned models
-# -------------------------------
-stack = StackingClassifier(
-    estimators=[('rf', rf_grid.best_estimator_), ('gb', gb_grid.best_estimator_), ('lr', lr)],
-    final_estimator=RandomForestClassifier(n_estimators=200, random_state=42),
-    cv=5,
-    n_jobs=-1,
-    passthrough=True
-)
+    # Upsample minority with SMOTE
+    smt = SMOTE(random_state=42)
+    X_train_res, y_train_res = smt.fit_resample(X_train, y_train)
 
-pipeline = Pipeline([
-    ('preprocessor', preprocessor),
-    ('classifier', stack)
-])
+    # Train model
+    model = RandomForestClassifier(n_estimators=200, class_weight='balanced', random_state=42)
+    model.fit(X_train_res, y_train_res)
 
-# -------------------------------
-# 9️⃣ Train final pipeline
-# -------------------------------
-pipeline.fit(X_train_res, y_train_res)
+    # Save model
+    joblib.dump(model, MODEL_DIR / "RF_Prediction_Pipeline.joblib")
+    print(f"✅ Pipeline trained and saved to {MODEL_DIR / 'RF_Prediction_Pipeline.joblib'}")
 
-# -------------------------------
-# 🔟 Evaluate
-# -------------------------------
-y_pred = pipeline.predict(X_test)
-y_prob = pipeline.predict_proba(X_test)
-
-acc = accuracy_score(y_test, y_pred)
-f1_macro = f1_score(y_test, y_pred, average='macro')
-bal_acc = balanced_accuracy_score(y_test, y_pred)
-roc_auc = roc_auc_score(pd.get_dummies(y_test), y_prob, average='macro', multi_class='ovr')
-
-print("\nModel Evaluation:")
-print(f"Accuracy: {acc:.4f} | F1-macro: {f1_macro:.4f} | Balanced Acc: {bal_acc:.4f} | ROC AUC: {roc_auc}")
-print("\nClassification Report:\n", classification_report(y_test, y_pred))
-
-# -------------------------------
-# 1️⃣1️⃣ Save pipeline
-# -------------------------------
-out_dir = Path(r"D:\CancerCare\data_science\models")
-out_dir.mkdir(parents=True, exist_ok=True)
-out_file = out_dir / "Stacked_Model_pipeline_tuned.pkl"
-joblib.dump(pipeline, out_file)
-print(f"Best tuned pipeline saved at: {out_file}")
+if __name__ == "__main__":
+    main()

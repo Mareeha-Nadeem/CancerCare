@@ -1,247 +1,149 @@
-
-# import pandas as pd
-# import numpy as np
-# from pathlib import Path
-
-# # -------------------------------
-# # 0️⃣ Reproducibility
-# # -------------------------------
-# np.random.seed(42)
-
-# # -------------------------------
-# # 1️⃣ Load original dataset
-# # -------------------------------
-# # Load existing downloaded CSV
-# project_root = Path(__file__).parent.parent  # utils/ ke 1 level upar
-# csv_file = project_root / "data/raw_data.csv"
-# orig_df = pd.read_csv(csv_file)
-
-
-# # Clean column names
-# orig_df.columns = orig_df.columns.str.strip().str.lower().str.replace(' ', '_').str.replace('-', '_')
-
-# # -------------------------------
-# # 2️⃣ Generate realistic noisy dataset
-# # -------------------------------
-# n_total = 5000
-# n_orig = orig_df.shape[0]
-# n_new = n_total - n_orig
-
-# features = orig_df.drop(columns=['level'])
-# target = orig_df['level']
-
-# new_rows = []
-# for _ in range(n_new):
-#     row = {}
-#     for col in features.columns:
-#         if features[col].dtype in ['int64', 'float64']:
-#             val = np.random.choice(features[col].values)
-#             jitter = np.random.randint(-3, 8)
-#             row[col] = max(0, val + jitter)
-#             if np.random.rand() < 0.02:
-#                 row[col] += np.random.randint(5, 15)  # occasional outlier
-#         else:
-#             val = np.random.choice(features[col].values)
-#             if np.random.rand() < 0.01:
-#                 val = val + 'a'  # tiny typo
-#             row[col] = val
-#     row['level'] = np.random.choice(['Low', 'Medium', 'High', 'Unknown']) if np.random.rand() < 0.03 else np.random.choice(target.values)
-#     new_rows.append(row)
-
-# new_df = pd.DataFrame(new_rows)
-
-# # Combine original + new rows, shuffle, reset index
-# combined_df = pd.concat([orig_df, new_df], ignore_index=True)
-# combined_df = combined_df.sample(frac=1, random_state=42).reset_index(drop=True)
-# # Drop rows where target is 'Unknown'
-# combined_df = combined_df[combined_df['level'] != 'Unknown'].reset_index(drop=True)
-
-# # Save the 5000-row raw augmented dataset BEFORE preprocessing
-# raw_augmented_path = project_root / "data/raw_data5000.csv"
-# combined_df.to_csv(raw_augmented_path, index=False)
-# print(f"Raw 5000-row dataset saved at: {raw_augmented_path}")
-
-
-
-# # -------------------------------
-# # 3️⃣ Handle missing values & feature engineering
-# # -------------------------------
-# combined_df.ffill(inplace=True)  # forward-fill missing values
-
-# # Keep patient_id separate
-# identifiers = ['patient_id']
-# label_col = 'level'
-
-# # List of numeric columns
-# numeric_cols = [
-#     'age','air_pollution','alcohol_use','dust_allergy','occupational_hazards',
-#     'genetic_risk','chronic_lung_disease','balanced_diet','obesity','smoking',
-#     'passive_smoker','chest_pain','coughing_of_blood','fatigue','weight_loss',
-#     'shortness_of_breath','wheezing','swallowing_difficulty','clubbing_of_finger_nails',
-#     'frequent_cold','dry_cough','snoring'
-# ]
-
-# # --- Feature engineering ---
-# # Ratios
-# combined_df['smoking_vs_passive'] = combined_df['smoking'] / (combined_df['passive_smoker'] + 1)
-# combined_df['obesity_vs_diet'] = combined_df['obesity'] / (combined_df['balanced_diet'] + 1)
-
-# # Squared features
-# for col in numeric_cols:
-#     combined_df[f'{col}_sq'] = combined_df[col] ** 2
-
-# # Interactions
-# combined_df['age_genetic_risk'] = combined_df['age'] * combined_df['genetic_risk']
-
-# # -------------------------------
-# # 4️⃣ Remove old index column & reset index
-# # -------------------------------
-# if 'index' in combined_df.columns:
-#     combined_df.drop(columns=['index'], inplace=True)
-# combined_df.reset_index(drop=True, inplace=True)
-
-# # -------------------------------
-# # 5️⃣ Split features for pipeline
-# # -------------------------------
-# feature_cols = [c for c in combined_df.columns if c not in identifiers + [label_col]]
-# numeric_cols = combined_df[feature_cols].select_dtypes(include=['int64', 'float64']).columns.tolist()
-# categorical_cols = combined_df[feature_cols].select_dtypes(include=['object']).columns.tolist()
-
-# # -------------------------------
-# # 6️⃣ Preprocessing pipeline
-# # -------------------------------
-# # pipeline = Pipeline([
-# #     ('preprocessor', ColumnTransformer([
-# #         ('num', StandardScaler(), numeric_cols),
-# #         ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_cols)
-# #     ]))
-# # ])
-
-# # -------------------------------
-# # 7️⃣ Save preprocessed dataset
-# # -------------------------------
-
-# out_path = project_root / "data/cleaned_data.csv"
-# combined_df.to_csv(out_path, index=False)
-# print("✅ Preprocessing + feature engineering done!")
-# print(f"Preprocessed dataset saved at: {out_path}")
-
-
 import pandas as pd
 import numpy as np
 from pathlib import Path
+import joblib
+import sys
+
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder, MinMaxScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 
-# -------------------------------
-# 0️⃣ Reproducibility
-# -------------------------------
-np.random.seed(42)
+# ----------------------
+# CONFIG
+# ----------------------
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-# -------------------------------
-# 1️⃣ Load original dataset
-# -------------------------------
-project_root = Path(__file__).parent.parent
-csv_file = project_root / "data/raw_data.csv"
-orig_df = pd.read_csv(csv_file)
+RAW_DATA_PATH = PROJECT_ROOT / "data" / "raw_data.csv"
+DATA_DIR = PROJECT_ROOT / "data"
+DATA_DIR.mkdir(exist_ok=True)
+MODEL_DIR = PROJECT_ROOT / "models"
+MODEL_DIR.mkdir(exist_ok=True)
 
-# Clean column names
-orig_df.columns = (
-    orig_df.columns.str.strip()
-    .str.lower()
-    .str.replace(' ', '_')
-    .str.replace('-', '_')
-)
+EXCLUDE_COLS = [
+    "STAGE_AT_DIAGNOSIS",
+    "CANCER_TYPE",
+    "MUTATION_TYPE",
+    "TREATMENT_ACCESS",
+    "CLINICAL_TRIAL_ACCESS",
+    "LANGUAGE_BARRIER",
+    "DELAY_IN_DIAGNOSIS",
+    "MORTALITY_RISK",
+    "5_YEAR_SURVIVAL_PROBABILITY"
+    "TOBACCO_MARKETING_EXPOSURE"
+]
 
-# -------------------------------
-# 2️⃣ Generate realistic noisy dataset
-# -------------------------------
-n_total = 5000
-n_orig = orig_df.shape[0]
-n_new = n_total - n_orig
+TARGET_COL = "FINAL_PREDICTION"
 
-features = orig_df.drop(columns=['level'])
-target = orig_df['level']
 
-new_rows = []
-for _ in range(n_new):
-    row = {}
-    for col in features.columns:
-        if features[col].dtype in ['int64', 'float64']:
-            val = np.random.choice(features[col].values)
-            jitter = np.random.randint(-3, 8)
-            row[col] = max(0, val + jitter)
+def run_preprocessing(sampling=None, n_samples=None):
+    print("\n--- ⚙️ Running Preprocessing ---\n")
 
-            if np.random.rand() < 0.02:
-                row[col] += np.random.randint(5, 15)  # rare outlier
+    # ----------------------
+    # LOAD DATA
+    # ----------------------
+    try:
+        df = pd.read_csv(RAW_DATA_PATH)
+    except FileNotFoundError:
+        print(f"❌ File not found: {RAW_DATA_PATH.resolve()}")
+        sys.exit(1)
 
-        else:  
-            val = np.random.choice(features[col].values)
-            if np.random.rand() < 0.01:
-                val = val + 'a'
-            row[col] = val
+    # Normalize column names
+    df.columns = [col.upper().replace(" ", "_") for col in df.columns]
 
-    row['level'] = (
-        np.random.choice(['Low','Medium','High','Unknown'])
-        if np.random.rand() < 0.03 else np.random.choice(target.values)
-    )
-    new_rows.append(row)
+    # Drop duplicates and IDs
+    df.drop_duplicates(inplace=True)
+    for col in ["PATIENT_ID", "ID", "INDEX"]:
+        if col in df.columns:
+            df.drop(columns=[col], inplace=True)
 
-new_df = pd.DataFrame(new_rows)
+    # Drop post-diagnosis columns
+    drop_now = [c for c in EXCLUDE_COLS if c in df.columns]
+    df.drop(columns=drop_now, inplace=True)
+    print(f"Dropped columns: {drop_now}")
 
-# Combine everything
-combined_df = pd.concat([orig_df, new_df], ignore_index=True)
-combined_df = combined_df.sample(frac=1, random_state=42).reset_index(drop=True)
+    # Check target
+    if TARGET_COL not in df.columns:
+        print(f"❌ Target column '{TARGET_COL}' missing!")
+        sys.exit(1)
 
-# Remove Unknown
-combined_df = combined_df[combined_df['level'] != 'Unknown'].reset_index(drop=True)
+    X = df.drop(columns=[TARGET_COL])
+    y = df[TARGET_COL]
 
-# -------------------------------------------------
-# SAVE 5000-row RAW dataset BEFORE any processing
-# -------------------------------------------------
-raw_augmented_path = project_root / "data/raw_data5000.csv"
-combined_df.to_csv(raw_augmented_path, index=False)
-print(f"Raw 5000-row dataset saved at: {raw_augmented_path}")
+    # ----------------------
+    # FEATURE TYPES
+    # ----------------------
+    numerical_cols = [c for c in X.columns if X[c].dtype in [np.int64, np.float64]]
+    categorical_cols = [c for c in X.columns if c not in numerical_cols]
 
-# -------------------------------
-# 3️⃣ Missing values (UPGRADED)
-# -------------------------------
-numeric_cols = combined_df.select_dtypes(include=['int64','float64']).columns
-categorical_cols = combined_df.select_dtypes(include=['object']).columns
+    # ----------------------
+    # PREPROCESSING PIPELINES
+    # ----------------------
+    num_transformer = Pipeline([
+        ("imputer", SimpleImputer(strategy="mean")),
+        ("scaler", StandardScaler())
+    ])
 
-num_imputer = SimpleImputer(strategy='median')
-cat_imputer = SimpleImputer(strategy='most_frequent')
+    cat_transformer = Pipeline([
+        ("imputer", SimpleImputer(strategy="most_frequent")),
+        ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False))
+    ])
 
-combined_df[numeric_cols] = num_imputer.fit_transform(combined_df[numeric_cols])
-combined_df[categorical_cols] = cat_imputer.fit_transform(combined_df[categorical_cols])
+    preprocessor = ColumnTransformer([
+        ("num", num_transformer, numerical_cols),
+        ("cat", cat_transformer, categorical_cols)
+    ])
 
-# -------------------------------
-# 4️⃣ Outlier Clamping
-# -------------------------------
-for col in numeric_cols:
-    combined_df[col] = np.clip(combined_df[col], 0, 100)
+    print("\n🔧 Applying preprocessing...\n")
 
-# -------------------------------
-# 5️⃣ Feature Engineering
-# -------------------------------
-combined_df['smoking_vs_passive'] = combined_df['smoking'] / (combined_df['passive_smoker'] + 1)
-combined_df['obesity_vs_diet'] = combined_df['obesity'] / (combined_df['balanced_diet'] + 1)
+    # ----------------------
+    # TARGET ENCODING
+    # ----------------------
+    if y.dtype == object or y.dtype.name == "category":
+        le = LabelEncoder()
+        y = pd.Series(le.fit_transform(y), index=y.index)
+        print(f"Target encoded → classes: {le.classes_}")
+        joblib.dump(le, MODEL_DIR / "label_encoder.pkl")
 
-for col in numeric_cols:
-    combined_df[f"{col}_sq"] = combined_df[col] ** 2
+    # ----------------------
+    # FEATURE TRANSFORMATION
+    # ----------------------
+    X_processed = preprocessor.fit_transform(X)
+    feature_names = [name.split("__")[-1] for name in preprocessor.get_feature_names_out()]
+    X_final = pd.DataFrame(X_processed, columns=feature_names)
 
-combined_df['age_genetic_risk'] = combined_df['age'] * combined_df['genetic_risk']
+    # ----------------------
+    # OPTIONAL SAMPLING
+    # ----------------------
+    if sampling == "stratified" and n_samples:
+        from sklearn.utils import resample
+        # ensure the target series has the expected column name
+        if y.name != TARGET_COL:
+            y = y.rename(TARGET_COL)
 
-# -------------------------------
-# 6️⃣ Drop patient_id (requested)
-# -------------------------------
-if 'patient_id' in combined_df.columns:
-    combined_df.drop(columns=['patient_id'], inplace=True)
+        # align indices and concat safely
+        df_combined = pd.concat([X_final.reset_index(drop=True), y.reset_index(drop=True)], axis=1)
+        grouped = df_combined.groupby(TARGET_COL)
 
-# -------------------------------
-# 7️⃣ Save Final Cleaned Dataset
-# -------------------------------
-out_path = project_root / "data/cleaned_data.csv"
-combined_df.to_csv(out_path, index=False)
+        # compute per-group sample size (at least 1)
+        per_group = max(1, n_samples // len(grouped))
+        sampled = grouped.apply(lambda x: resample(x, n_samples=per_group, replace=True))
+        sampled = sampled.droplevel(0).reset_index(drop=True)
+        X_final = sampled.drop(columns=[TARGET_COL])
+        y = sampled[TARGET_COL]
+        print(f"Applied stratified sampling → {X_final.shape[0]} samples")
 
-print("✅ Preprocessing + feature engineering done!")
-print(f"Preprocessed dataset saved at: {out_path}")
+    # ----------------------
+    # SAVE OUTPUTS
+    # ----------------------
+    X_final.to_csv(DATA_DIR / "cleaned_features.csv", index=False)
+    y.to_csv(DATA_DIR / "y_target.csv", index=False, header=["TARGET"])
+    joblib.dump(preprocessor, MODEL_DIR / "preprocessor.pkl")
+
+    print(f"✅ Saved features: {X_final.shape}")
+    print(f"📁 Saved to {DATA_DIR}")
+    print(f"📁 Preprocessor saved to {MODEL_DIR}/preprocessor.pkl\n")
+
+
+if __name__ == "__main__":
+    run_preprocessing(sampling="stratified", n_samples=500)  # optional

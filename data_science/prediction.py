@@ -1,110 +1,62 @@
-# # prediction.py
 # import pandas as pd
-# import joblib
-# from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 # from pathlib import Path
+# import joblib
+# import sys
 
-# # -----------------------------
-# # 1️⃣ Load dataset (preprocessed or new)
-# # -----------------------------
-# data_path = "../preprocessed/cancer_patient_preprocessed.csv"  # replace if new data
-# df = pd.read_csv(data_path)
-# print("Dataset loaded! Shape:", df.shape)
+# DATA_DIR = Path(__file__).resolve().parent / "data"
+# MODEL_DIR = Path(__file__).resolve().parent / "models"
 
-# # -----------------------------
-# # 2️⃣ Split features & labels
-# # -----------------------------
-# label_col = "level"
-# X = df.drop(columns=[label_col])
-# y = df[label_col]
+# PIPELINE_FILENAME = "RF_Prediction_Pipeline.joblib"
+# PIPELINE_PATH = MODEL_DIR / PIPELINE_FILENAME
+# CLEANED_FEATURES = DATA_DIR / "cleaned_features.csv"
+# Y_TARGET = DATA_DIR / "y_target.csv"
 
-# # -----------------------------
-# # 3️⃣ Load trained model
-# # -----------------------------
-# model_path = "../models/cancer_model.pkl"
-# model = joblib.load(model_path)
-# print("Trained model loaded!")
+# def main():
+#     print(f"--- 🚀 Starting Prediction Test using {PIPELINE_FILENAME} ---")
 
-# # -----------------------------
-# # 4️⃣ Make predictions
-# # -----------------------------
-# y_pred = model.predict(X)
-# df['predicted_level'] = y_pred
+#     try:
+#         pipeline = joblib.load(PIPELINE_PATH)
+#         print("✅ Pipeline loaded successfully.")
+#     except FileNotFoundError:
+#         print("❌ ERROR: Pipeline not found. Run train_model.py first.")
+#         sys.exit(1)
 
-# # -----------------------------
-# # 5️⃣ Evaluate model
-# # -----------------------------
-# print("Accuracy:", accuracy_score(y, y_pred))
-# print("\nClassification Report:\n", classification_report(y, y_pred))
+#     X = pd.read_csv(CLEANED_FEATURES)
+#     y = pd.read_csv(Y_TARGET).squeeze()
 
-# cm = confusion_matrix(y, y_pred)
-# print("\nConfusion Matrix:\n", cm)
+#     # Take a sample for testing
+#     X_test_sample = X.iloc[[0]]
+#     y_true = y.iloc[0]
 
-# # # -----------------------------
-# # # 6️⃣ Save predictions (optional)
-# # # -----------------------------
-# # df.to_csv("predictions/cancer_predictions.csv", index=False)
-# # print("Predictions saved at: data_science/predictions/cancer_predictions.csv")
+#     pred = pipeline.predict(X_test_sample)[0]
+#     prob = pipeline.predict_proba(X_test_sample)[0][1]
 
+#     print("\n--- 🎯 Prediction Results ---")
+#     print(f"RAW Features Shape: {X_test_sample.shape}")
+#     print(f"True Label: {y_true} ({'High Risk' if y_true == 1 else 'No Risk'})")
+#     print(f"Predicted Risk: **{'HIGH RISK' if pred == 1 else 'NO RISK'}** (Prob: {prob:.4f})")
+#     print(f"Prediction Status: {'✅ CORRECT' if pred == y_true else '❌ INCORRECT'}")
 
+# if __name__ == "__main__":
+#     main()
 import pandas as pd
-import joblib
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from pathlib import Path
+import joblib
 
-# -----------------------------
-# 1️⃣ Load dataset (preprocessed)
-# -----------------------------
-data_path = r"D:\CancerCare\data_science\preprocessed\cancer_patient_preprocessed.csv"
-try:
-    df = pd.read_csv(data_path)
-    print("Dataset loaded! Shape:", df.shape)
-except FileNotFoundError:
-    print("Error: File not found at", data_path)
-    exit()
+DATA_DIR = Path(__file__).resolve().parent / "data"
+MODEL_PATH = Path(__file__).resolve().parent / "models/RF_Prediction_Pipeline.joblib"
+CLEANED_FEATURES = DATA_DIR / "cleaned_features.csv"
 
-# -----------------------------
-# 2️⃣ Split features & labels
-# -----------------------------
-label_col = "level"
-X = df.drop(columns=[label_col])
-y = df[label_col]
+def main():
+    print("--- 🚀 Starting Prediction Test ---")
+    pipeline = joblib.load(MODEL_PATH)
+    print("✅ Pipeline loaded successfully.")
 
-# -----------------------------
-# 3️⃣ Load trained model
-# -----------------------------
-model_path = r"D:\CancerCare\data_science\models\cancer_model.pkl"
-try:
-    model = joblib.load(model_path)
-    print("Trained model loaded!")
-except FileNotFoundError:
-    print("Error: Model file not found at", model_path)
-    exit()
+    # Load a sample input for prediction
+    X = pd.read_csv(CLEANED_FEATURES)
+    sample = X.sample(1, random_state=42)  # pick a random row to predict
+    pred = pipeline.predict(sample)[0]
+    print(f"Predicted class for the sample: {pred}")
 
-# -----------------------------
-# 4️⃣ Make predictions
-# -----------------------------
-y_pred = model.predict(X)  # Use X (features only), not df
-df['predicted_level'] = y_pred
-
-print("\nPredictions added to dataframe:")
-print(df.head())
-
-# -----------------------------
-# 5️⃣ Evaluate model
-# -----------------------------
-print("\nAccuracy:", accuracy_score(y, y_pred))
-print("\nClassification Report:\n", classification_report(y, y_pred))
-
-cm = confusion_matrix(y, y_pred)
-print("\nConfusion Matrix:\n", cm)
-
-# -----------------------------
-# 6️⃣ Save predictions
-# -----------------------------
-pred_dir = Path(r"D:\CancerCare\data_science\predictions")
-pred_dir.mkdir(parents=True, exist_ok=True)
-
-output_path = pred_dir / "cancer_predictions.csv"
-df.to_csv(output_path, index=False)
-print(f"\nPredictions saved at: {output_path}")
+if __name__ == "__main__":
+    main()
