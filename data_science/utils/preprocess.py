@@ -4,10 +4,13 @@ from pathlib import Path
 import joblib
 import sys
 
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder, MinMaxScaler
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
+from imblearn.pipeline import Pipeline as ImbPipeline
 
 # ----------------------
 # CONFIG
@@ -20,6 +23,7 @@ DATA_DIR.mkdir(exist_ok=True)
 MODEL_DIR = PROJECT_ROOT / "models"
 MODEL_DIR.mkdir(exist_ok=True)
 
+# Post-diagnosis columns to exclude (for pre-diagnosis prediction)
 EXCLUDE_COLS = [
     "STAGE_AT_DIAGNOSIS",
     "CANCER_TYPE",
@@ -30,45 +34,78 @@ EXCLUDE_COLS = [
     "DELAY_IN_DIAGNOSIS",
     "MORTALITY_RISK",
     "5_YEAR_SURVIVAL_PROBABILITY"
-    "TOBACCO_MARKETING_EXPOSURE"
 ]
 
 TARGET_COL = "FINAL_PREDICTION"
 
 
-def run_preprocessing(sampling=None, n_samples=None):
-    print("\n--- ⚙️ Running Preprocessing ---\n")
+def run_preprocessing(handle_imbalance="smote", sampling_strategy="auto"):
+    """
+    Preprocess cancer dataset for pre-diagnosis prediction.
+    
+    Parameters:
+    -----------
+    handle_imbalance : str
+        Method to handle imbalanced data: 'smote', 'undersample', 'combined', or None
+    sampling_strategy : str or float
+        Sampling strategy for resampling (default: 'auto')
+    """
+    print("\n" + "="*60)
+    print("⚙️  CANCER PRE-DIAGNOSIS DATA PREPROCESSING")
+    print("="*60 + "\n")
 
     # ----------------------
     # LOAD DATA
     # ----------------------
     try:
         df = pd.read_csv(RAW_DATA_PATH)
+        print(f"✅ Loaded data: {df.shape}")
     except FileNotFoundError:
         print(f"❌ File not found: {RAW_DATA_PATH.resolve()}")
         sys.exit(1)
 
     # Normalize column names
     df.columns = [col.upper().replace(" ", "_") for col in df.columns]
+    print(f"📋 Columns: {list(df.columns)}\n")
 
-    # Drop duplicates and IDs
+    # ----------------------
+    # DATA CLEANING
+    # ----------------------
+    # Drop duplicates
+    initial_rows = len(df)
     df.drop_duplicates(inplace=True)
-    for col in ["PATIENT_ID", "ID", "INDEX"]:
-        if col in df.columns:
-            df.drop(columns=[col], inplace=True)
+    print(f"🧹 Removed {initial_rows - len(df)} duplicate rows")
+
+    # Drop ID columns
+    id_cols = ["PATIENT_ID", "ID", "INDEX"]
+    id_cols_found = [col for col in id_cols if col in df.columns]
+    if id_cols_found:
+        df.drop(columns=id_cols_found, inplace=True)
+        print(f"🗑️  Dropped ID columns: {id_cols_found}")
 
     # Drop post-diagnosis columns
-    drop_now = [c for c in EXCLUDE_COLS if c in df.columns]
-    df.drop(columns=drop_now, inplace=True)
-    print(f"Dropped columns: {drop_now}")
+    drop_cols = [c for c in EXCLUDE_COLS if c in df.columns]
+    if drop_cols:
+        df.drop(columns=drop_cols, inplace=True)
+        print(f"🗑️  Dropped post-diagnosis columns: {drop_cols}")
 
-    # Check target
+    # ----------------------
+    # TARGET VALIDATION
+    # ----------------------
     if TARGET_COL not in df.columns:
-        print(f"❌ Target column '{TARGET_COL}' missing!")
+        print(f"\n❌ ERROR: Target column '{TARGET_COL}' not found!")
+        print(f"Available columns: {list(df.columns)}")
         sys.exit(1)
 
+    # Separate features and target
     X = df.drop(columns=[TARGET_COL])
     y = df[TARGET_COL]
+
+    print(f"\n📊 Dataset Info:")
+    print(f"   Features: {X.shape}")
+    print(f"   Target distribution:")
+    print(y.value_counts())
+    print(f"   Class imbalance ratio: {y.value_counts().max() / y.value_counts().min():.2f}:1")
 
     # ----------------------
     # FEATURE TYPES
@@ -76,11 +113,14 @@ def run_preprocessing(sampling=None, n_samples=None):
     numerical_cols = [c for c in X.columns if X[c].dtype in [np.int64, np.float64]]
     categorical_cols = [c for c in X.columns if c not in numerical_cols]
 
+    print(f"\n🔢 Numerical features ({len(numerical_cols)}): {numerical_cols}")
+    print(f"📝 Categorical features ({len(categorical_cols)}): {categorical_cols}")
+
     # ----------------------
     # PREPROCESSING PIPELINES
     # ----------------------
     num_transformer = Pipeline([
-        ("imputer", SimpleImputer(strategy="mean")),
+        ("imputer", SimpleImputer(strategy="median")),
         ("scaler", StandardScaler())
     ])
 
@@ -94,44 +134,63 @@ def run_preprocessing(sampling=None, n_samples=None):
         ("cat", cat_transformer, categorical_cols)
     ])
 
-    print("\n🔧 Applying preprocessing...\n")
+    print("\n🔧 Applying preprocessing transformations...")
 
     # ----------------------
     # TARGET ENCODING
     # ----------------------
     if y.dtype == object or y.dtype.name == "category":
         le = LabelEncoder()
-        y = pd.Series(le.fit_transform(y), index=y.index)
-        print(f"Target encoded → classes: {le.classes_}")
+        y_encoded = le.fit_transform(y)
+        y = pd.Series(y_encoded, index=y.index, name=TARGET_COL)
+        print(f"✅ Target encoded → classes: {list(le.classes_)}")
         joblib.dump(le, MODEL_DIR / "label_encoder.pkl")
+        
+        # Save class mapping
+        class_mapping = {i: cls for i, cls in enumerate(le.classes_)}
+        print(f"   Mapping: {class_mapping}")
 
     # ----------------------
     # FEATURE TRANSFORMATION
     # ----------------------
     X_processed = preprocessor.fit_transform(X)
-    feature_names = [name.split("__")[-1] for name in preprocessor.get_feature_names_out()]
-    X_final = pd.DataFrame(X_processed, columns=feature_names)
+    
+    # Get feature names
+    feature_names = []
+    for name in preprocessor.get_feature_names_out():
+        # Clean up feature names
+        clean_name = name.split("__")[-1]
+        feature_names.append(clean_name)
+    
+    X_final = pd.DataFrame(X_processed, columns=feature_names, index=X.index)
+    print(f"✅ Features transformed: {X_final.shape}")
 
     # ----------------------
-    # OPTIONAL SAMPLING
+    # HANDLE IMBALANCED DATA
     # ----------------------
-    if sampling == "stratified" and n_samples:
-        from sklearn.utils import resample
-        # ensure the target series has the expected column name
-        if y.name != TARGET_COL:
-            y = y.rename(TARGET_COL)
-
-        # align indices and concat safely
-        df_combined = pd.concat([X_final.reset_index(drop=True), y.reset_index(drop=True)], axis=1)
-        grouped = df_combined.groupby(TARGET_COL)
-
-        # compute per-group sample size (at least 1)
-        per_group = max(1, n_samples // len(grouped))
-        sampled = grouped.apply(lambda x: resample(x, n_samples=per_group, replace=True))
-        sampled = sampled.droplevel(0).reset_index(drop=True)
-        X_final = sampled.drop(columns=[TARGET_COL])
-        y = sampled[TARGET_COL]
-        print(f"Applied stratified sampling → {X_final.shape[0]} samples")
+    if handle_imbalance:
+        print(f"\n⚖️  Handling class imbalance using: {handle_imbalance.upper()}")
+        print(f"   Before: {dict(y.value_counts())}")
+        
+        if handle_imbalance == "smote":
+            sampler = SMOTE(sampling_strategy=sampling_strategy, random_state=42)
+            X_final, y = sampler.fit_resample(X_final, y)
+            
+        elif handle_imbalance == "undersample":
+            sampler = RandomUnderSampler(sampling_strategy=sampling_strategy, random_state=42)
+            X_final, y = sampler.fit_resample(X_final, y)
+            
+        elif handle_imbalance == "combined":
+            # First oversample minority, then undersample majority
+            over = SMOTE(sampling_strategy=0.5, random_state=42)
+            under = RandomUnderSampler(sampling_strategy=0.8, random_state=42)
+            X_final, y = over.fit_resample(X_final, y)
+            X_final, y = under.fit_resample(X_final, y)
+        
+        y = pd.Series(y, name=TARGET_COL)
+        X_final = pd.DataFrame(X_final, columns=feature_names)
+        print(f"   After: {dict(y.value_counts())}")
+        print(f"✅ Balanced dataset: {X_final.shape}")
 
     # ----------------------
     # SAVE OUTPUTS
@@ -140,10 +199,34 @@ def run_preprocessing(sampling=None, n_samples=None):
     y.to_csv(DATA_DIR / "y_target.csv", index=False, header=["TARGET"])
     joblib.dump(preprocessor, MODEL_DIR / "preprocessor.pkl")
 
-    print(f"✅ Saved features: {X_final.shape}")
-    print(f"📁 Saved to {DATA_DIR}")
-    print(f"📁 Preprocessor saved to {MODEL_DIR}/preprocessor.pkl\n")
+    # Save metadata
+    metadata = {
+        "n_samples": len(X_final),
+        "n_features": len(feature_names),
+        "numerical_features": numerical_cols,
+        "categorical_features": categorical_cols,
+        "feature_names": feature_names,
+        "target_distribution": dict(y.value_counts()),
+        "imbalance_method": handle_imbalance
+    }
+    joblib.dump(metadata, MODEL_DIR / "preprocessing_metadata.pkl")
+
+    print(f"\n{'='*60}")
+    print("✅ PREPROCESSING COMPLETE")
+    print(f"{'='*60}")
+    print(f"📊 Final dataset shape: {X_final.shape}")
+    print(f"📁 Features saved to: {DATA_DIR / 'cleaned_features.csv'}")
+    print(f"📁 Target saved to: {DATA_DIR / 'y_target.csv'}")
+    print(f"📁 Preprocessor saved to: {MODEL_DIR / 'preprocessor.pkl'}")
+    print(f"📁 Metadata saved to: {MODEL_DIR / 'preprocessing_metadata.pkl'}")
+    print(f"{'='*60}\n")
+
+    return X_final, y, preprocessor
 
 
 if __name__ == "__main__":
-    run_preprocessing(sampling="stratified", n_samples=500)  # optional
+    # Run preprocessing with SMOTE to handle imbalanced data
+    X, y, preprocessor = run_preprocessing(
+        handle_imbalance="smote",  # Options: 'smote', 'undersample', 'combined', None
+        sampling_strategy="auto"    # 'auto' balances all classes
+    )
