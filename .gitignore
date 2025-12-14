@@ -6,7 +6,6 @@ data_science/utils/__pycache__/
 # Python Caches and Compilation
 __pycache__/
 *.pyc
-
 # Data science / Machine Learning artifacts
 # These large binary files should not be stored in Git
 data_science/models/*.joblib
@@ -15,6 +14,7 @@ data_science/models/*.part
 data_science/models/*.json
 # Ignore all joblib model files
 data_science/models/*.joblib
+data_science/models/*.txt
 data_science/prediction_logs/*.log
 data_science/data/results/*.csv
 data_science/data/results/*.json
