@@ -1,3 +1,5 @@
+
+
 """
 preprocessing.py
 ----------------
@@ -27,6 +29,7 @@ DATA_DIR.mkdir(exist_ok=True)
 MODEL_DIR.mkdir(exist_ok=True)
 
 TARGET_COL = "Level"  # Target: Low, Medium, High risk
+COLS_TO_DROP = ["index", "Patient Id"]  # Non-feature columns to remove
 
 
 class LungCancerFeatureEngineer(BaseEstimator, TransformerMixin):
@@ -48,9 +51,12 @@ class LungCancerFeatureEngineer(BaseEstimator, TransformerMixin):
         # ENCODE CATEGORICAL FEATURES TO NUMERIC
         # ==========================================
         
+        # Gender encoding (1=Male, 2=Female typically)
+        if 'GENDER' in X.columns:
+            X['GENDER'] = pd.to_numeric(X['GENDER'], errors='coerce')
+        
         # Most features are categorical levels (1-8 scale typically)
         # Keep as numeric if already numeric, otherwise encode
-        
         for col in X.columns:
             if X[col].dtype == 'object':
                 # Try to convert to numeric first
@@ -95,7 +101,7 @@ class LungCancerFeatureEngineer(BaseEstimator, TransformerMixin):
         symptom_features = [
             'CHEST_PAIN', 'COUGHING_OF_BLOOD', 'FATIGUE', 'WEIGHT_LOSS',
             'SHORTNESS_OF_BREATH', 'WHEEZING', 'SWALLOWING_DIFFICULTY',
-            'CLUBBING_OF_FINGER_NAILS'
+            'CLUBBING_OF_FINGER_NAILS', 'FREQUENT_COLD', 'DRY_COUGH', 'SNORING'
         ]
         available_symptoms = [f for f in symptom_features if f in X.columns]
         if available_symptoms:
@@ -191,9 +197,28 @@ def run_preprocessing():
         print(f"   Please download the dataset and place it in: {DATA_DIR}")
         sys.exit(1)
     
+    # Display first few rows
+    print(f"\n📋 First 3 rows:")
+    print(df.head(3))
+    
     # Normalize column names
     df.columns = df.columns.str.strip().str.upper().str.replace(" ", "_")
-    print(f"📋 Columns: {list(df.columns)}\n")
+    print(f"\n📋 Columns after normalization: {list(df.columns)}\n")
+    
+    # ----------------------
+    # DROP NON-FEATURE COLUMNS
+    # ----------------------
+    
+    cols_to_drop_upper = [col.upper() for col in COLS_TO_DROP]
+    cols_found = [col for col in cols_to_drop_upper if col in df.columns]
+    
+    if cols_found:
+        df = df.drop(columns=cols_found)
+        print(f"🗑️  Dropped columns: {cols_found}")
+    else:
+        print(f"ℹ️  No identifier columns found to drop")
+    
+    print(f"📊 Data shape after dropping IDs: {df.shape}\n")
     
     # ----------------------
     # DATA CLEANING
@@ -209,6 +234,13 @@ def run_preprocessing():
     if missing.sum() > 0:
         print(f"\n⚠️  Missing values found:")
         print(missing[missing > 0])
+        
+        # Handle missing values
+        print("\n🔧 Imputing missing values with median...")
+        for col in df.columns:
+            if df[col].isnull().sum() > 0:
+                if col != TARGET_COL.upper():
+                    df[col].fillna(df[col].median(), inplace=True)
     else:
         print("✅ No missing values")
     
@@ -223,15 +255,28 @@ def run_preprocessing():
         sys.exit(1)
     
     print(f"\n📊 Target Distribution:")
-    print(df[target_upper].value_counts())
+    target_dist = df[target_upper].value_counts()
+    print(target_dist)
+    print(f"\nTarget proportions:")
+    print(df[target_upper].value_counts(normalize=True).round(3))
     
     # Separate features and target
     y = df[target_upper]
     X = df.drop(columns=[target_upper])
     
     print(f"\n📊 Dataset Info:")
-    print(f"   Features: {X.shape}")
     print(f"   Samples: {len(X)}")
+    print(f"   Features: {X.shape[1]}")
+    print(f"   Feature names: {list(X.columns)}")
+    
+    # ----------------------
+    # DATA VALIDATION
+    # ----------------------
+    
+    print(f"\n🔍 Data Validation:")
+    print(f"   Feature dtypes:")
+    for col in X.columns:
+        print(f"      {col}: {X[col].dtype}")
     
     # ----------------------
     # FEATURE ENGINEERING
@@ -242,13 +287,19 @@ def run_preprocessing():
     feature_engineer = LungCancerFeatureEngineer()
     X_engineered = feature_engineer.fit_transform(X)
     
-    print(f"✅ Engineered features: {X_engineered.shape}")
+    print(f"\n✅ Engineered features: {X_engineered.shape}")
     print(f"   Original features: {X.shape[1]}")
-    print(f"   New features: {X_engineered.shape[1] - X.shape[1]}")
+    print(f"   New features added: {X_engineered.shape[1] - X.shape[1]}")
+    print(f"\n   New feature names:")
+    new_features = [col for col in X_engineered.columns if col not in X.columns]
+    for feat in new_features:
+        print(f"      - {feat}")
     
     # ----------------------
     # SAVE OUTPUTS
     # ----------------------
+    
+    print(f"\n💾 Saving processed data...")
     
     X_engineered.to_csv(DATA_DIR / "processed_features.csv", index=False)
     y.to_csv(DATA_DIR / "target.csv", index=False)
@@ -265,8 +316,11 @@ def run_preprocessing():
     metadata = {
         'n_samples': len(X_engineered),
         'n_features': X_engineered.shape[1],
+        'original_features': X.shape[1],
+        'engineered_features': X_engineered.shape[1] - X.shape[1],
         'target_classes': y.value_counts().to_dict(),
-        'feature_names': feature_names
+        'feature_names': feature_names,
+        'dropped_columns': cols_found
     }
     
     import json
@@ -279,6 +333,7 @@ def run_preprocessing():
     print(f"📁 Features saved to: {DATA_DIR / 'processed_features.csv'}")
     print(f"📁 Target saved to: {DATA_DIR / 'target.csv'}")
     print(f"📁 Feature engineer saved to: {MODEL_DIR / 'feature_engineer.pkl'}")
+    print(f"📁 Metadata saved to: {MODEL_DIR / 'preprocessing_metadata.json'}")
     print(f"{'='*70}\n")
     
     return X_engineered, y
