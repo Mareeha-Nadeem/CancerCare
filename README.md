@@ -1,468 +1,398 @@
 # Lung Cancer Risk Prediction System
 
-A complete machine learning pipeline for predicting lung cancer risk based on pre-diagnosis factors including smoking history, environmental exposure, genetics, and symptoms.
+A complete machine learning pipeline for predicting lung cancer risk levels with advanced feature engineering and a user-friendly interface.
 
 ## 📁 Project Structure
 
 ```
-lung-cancer-prediction/
+project/
 ├── data/
-│   ├── cancer patient data sets.csv    # Original dataset
-│   ├── processed_features.csv          # Engineered features
-│   ├── target.csv                       # Target variable
-│   └── test_set.csv                     # Hold-out test set
+│   ├── raw_data.csv                    # Original dataset
+│   ├── processed_features.csv          # Preprocessed features
+│   ├── target.csv                      # Target labels
+│   └── test_predictions.csv            # Test set results
 ├── models/
-│   ├── lung_cancer_model.joblib         # Trained model
-│   ├── feature_engineer.pkl             # Feature engineering pipeline
-│   ├── target_encoder.pkl               # Target label encoder
-│   └── model_metadata.json              # Model information
+│   ├── lung_cancer_pipeline.pkl        # Complete trained pipeline
+│   ├── target_encoder.pkl              # Label encoder
+│   └── model_metadata.json             # Model info & metrics
 ├── results/
-│   ├── feature_importance.csv           # Feature rankings
-│   ├── training_results_*.json          # Training metrics
-│   └── test_results_*.json              # Testing metrics
-├── predictions/
-│   └── predictions_*.csv                # Saved predictions
-├── preprocessing.py                     # Data preprocessing
-├── train_model.py                       # Model training
-├── test_model.py                        # Model testing
-└── predict.py                           # Make predictions
+│   └── test_predictions.csv            # Evaluation results
+├── preprocess.py                       # Data preprocessing
+├── feature_engineer.py                 # Feature engineering transformer
+├── train_model.py                      # Model training script
+├── predict.py                          # Prediction pipeline (advanced)
+└── interface.py                        # Simple interface (recommended)
 ```
 
 ## 🚀 Quick Start
 
-### 1. Installation
-
-```bash
-pip install pandas numpy scikit-learn imbalanced-learn joblib
+### 1. **Preprocess Data**
+```python
+python preprocess.py
 ```
+This will:
+- Load raw data
+- Normalize column names
+- Handle missing values
+- Remove duplicates
+- Save processed features and target
 
-### 2. Download Dataset
-
-Download the dataset from Kaggle:
-https://www.kaggle.com/datasets/thedevastator/cancer-patients-and-air-pollution-a-new-link
-
-Place `cancer patient data sets.csv` in the `data/` folder.
-
-### 3. Run the Pipeline
-
-```bash
-# Step 1: Preprocess data
-python preprocessing.py
-
-# Step 2: Train model
-python train_model.py
-
-# Step 3: Test model
-python test_model.py
-
-# Step 4: Make predictions
-python predict.py --interactive
-```
-
-## 📊 Dataset Features
-
-### Risk Factors (23 features):
-- **Demographics:** Age, Gender
-- **Environmental:** Air Pollution, Dust Allergy, Occupational Hazards
-- **Lifestyle:** Smoking, Passive Smoker, Alcohol use, Balanced Diet, Obesity
-- **Medical:** Genetic Risk, Chronic Lung Disease
-- **Symptoms:** Chest Pain, Coughing of Blood, Fatigue, Weight Loss, Shortness of Breath, Wheezing, Swallowing Difficulty, Clubbing of Finger Nails, Snoring
-
-### Target Variable:
-- **Level:** Low, Medium, High (lung cancer risk)
-
-## 🔧 What Each Script Does
-
-### `preprocessing.py`
-
-**Purpose:** Transform raw data into ML-ready features
-
-**Features Created:**
-- **Composite Risk Scores:**
-  - Smoking Risk (smoking + passive smoking)
-  - Environmental Risk (pollution + dust + occupational)
-  - Lifestyle Risk (alcohol + obesity - balanced diet)
-  - Hereditary Risk (genetic + chronic disease)
-  - Symptom Severity (average of all symptoms)
-  
-- **Total Risk Score:** Weighted combination (30% smoking, 20% environmental, etc.)
-
-- **Age Features:**
-  - Age Risk (exponential scale)
-  - Age Groups (5 categories)
-
-- **Interaction Features:**
-  - Smoking × Age
-  - Environmental × Smoking
-  - Genetic × Age
-
-**Output:**
-- `processed_features.csv` - Engineered features
-- `target.csv` - Target labels
-- `feature_engineer.pkl` - Fitted transformer
-
-**Usage:**
-```bash
-python preprocessing.py
-```
-
----
-
-### `train_model.py`
-
-**Purpose:** Train and evaluate the prediction model
-
-**Model:** Random Forest Classifier (200 trees)
-
-**Techniques:**
-- ✅ Feature engineering
-- ✅ Standard scaling
-- ✅ SMOTE for class balancing (if imbalanced)
-- ✅ 5-fold cross-validation
-- ✅ Class weighting
-- ✅ Feature importance analysis
-
-**Output:**
-- `lung_cancer_model.joblib` - Complete trained pipeline
-- `model_metadata.json` - Performance metrics
-- `feature_importance.csv` - Feature rankings
-- `test_set.csv` - Held-out test data
-
-**Expected Performance:**
-- **Accuracy:** 85-95%
-- **F1-Score:** 0.80-0.92
-- **ROC-AUC:** 0.90-0.98
-
-**Usage:**
-```bash
+### 2. **Train Model**
+```python
 python train_model.py
 ```
+This will:
+- Apply feature engineering
+- Train Gradient Boosting model
+- Perform 5-fold cross-validation
+- Evaluate on test set
+- Save complete pipeline
 
----
+### 3. **Make Predictions**
 
-### `test_model.py`
+**Option A: Simple Interface (Recommended)**
+```python
+from interface import predict_patient, predict_file
 
-**Purpose:** Evaluate model on test set or new data
+# Single patient prediction
+result = predict_patient(
+    age=65,
+    gender='M',
+    smoking=7,
+    genetic_risk=5,
+    chest_pain=6,
+    # ... other features
+)
 
-**Metrics:**
-- Accuracy, Precision, Recall, F1-Score
-- ROC-AUC, Matthews Correlation Coefficient
-- Confusion Matrix
-- Per-class accuracy
-
-**Output:**
-- `test_results_*.json` - Detailed metrics
-- `predictions_*.csv` - Test predictions with probabilities
-
-**Usage:**
-```bash
-# Test on saved test set
-python test_model.py
-
-# Or test on custom data (in Python)
-from test_model import test_model
-results = test_model("path/to/custom_data.csv")
+# Batch prediction from file
+results = predict_file('new_patients.csv', 'predictions.csv')
 ```
 
----
+**Option B: Advanced Interface**
+```python
+from predict import LungCancerPredictor
 
-### `predict.py`
+predictor = LungCancerPredictor()
 
-**Purpose:** Make predictions for new patients
+# Single prediction
+patient = {'AGE': 65, 'SMOKING': 7, ...}
+result = predictor.predict_single(patient)
 
-**Two Modes:**
-
-#### 1. Interactive Mode (Single Patient)
-```bash
-python predict.py --interactive
+# Batch prediction
+results = predictor.predict_batch('patients.csv', 'output.csv')
 ```
 
-Prompts for patient information and provides immediate risk assessment.
+## 📊 Features
 
-#### 2. Batch Mode (Multiple Patients)
-```bash
-python predict.py data/new_patients.csv
+### Automatic Feature Engineering
+
+The pipeline automatically creates:
+
+1. **Composite Risk Scores**
+   - `SMOKING_RISK`: Combined smoking exposure
+   - `ENVIRONMENTAL_RISK`: Air quality factors
+   - `LIFESTYLE_RISK`: Diet, alcohol, obesity
+   - `HEREDITARY_RISK`: Genetic and chronic disease factors
+   - `SYMPTOM_SEVERITY`: Average of all symptoms
+   - `TOTAL_RISK_SCORE`: Weighted composite of all risks
+
+2. **Age-Based Features**
+   - `AGE_RISK`: Risk category based on age brackets
+   - `AGE_GROUP`: Age grouping for analysis
+
+3. **Interaction Features**
+   - `SMOKING_AGE_INTERACTION`
+   - `ENV_SMOKING_INTERACTION`
+   - `GENETIC_AGE_INTERACTION`
+
+### Model Pipeline
+
+```
+Input Data 
+    ↓
+Feature Engineering (LungCancerFeatureEngineer)
+    ↓
+Missing Value Imputation (Median)
+    ↓
+Standardization (StandardScaler)
+    ↓
+SMOTE (if imbalanced classes)
+    ↓
+Gradient Boosting Classifier
+    ↓
+Predictions + Probabilities
 ```
 
-Processes CSV file and saves predictions.
+## 📖 Usage Examples
 
-**Output:**
-- Risk level (Low/Medium/High)
-- Confidence score
-- Probability for each risk level
-- Saved to `predictions/` folder
-
----
-
-## 📈 Feature Importance
-
-Top predictive features (typical results):
-
-1. **Smoking Risk** (30% importance) - Most critical factor
-2. **Age Risk** (18% importance) - Increases with age
-3. **Symptom Severity** (12% importance) - Combined symptoms
-4. **Total Risk Score** (10% importance) - Overall assessment
-5. **Genetic Risk** (8% importance) - Family history
-6. **Environmental Risk** (7% importance) - Pollution exposure
-7. **Smoking × Age Interaction** (6% importance) - Compound effect
-8. **Chronic Lung Disease** (5% importance) - Pre-existing condition
-9. **Lifestyle Risk** (4% importance) - Diet and habits
-10. Other features...
-
-## 🎯 Model Performance Interpretation
-
-### Confusion Matrix Example:
-```
-                Low    Medium    High
-Low             450      12       3
-Medium           15     380      22
-High              2      18     425
-```
-
-### What to Look For:
-
-✅ **Good Model:**
-- Accuracy > 85%
-- F1-Score > 0.80
-- ROC-AUC > 0.90
-- Low misclassification between Low ↔ High
-
-⚠️ **Needs Improvement:**
-- Accuracy < 75%
-- Frequent Low ↔ High misclassifications
-- Low confidence scores
-
-## 💡 Usage Examples
-
-### Example 1: Single Patient Assessment
+### Example 1: Quick Single Prediction
 
 ```python
-from predict import predict_single_patient, load_pipeline
+from interface import quick_predict
 
-# Load pipeline
-fe, model, encoder, metadata = load_pipeline()
-
-# Patient data
-patient = {
-    'Age': 65,
-    'Gender': 'Male',
-    'Air Pollution': 7,
-    'Alcohol use': 6,
-    'Dust Allergy': 4,
-    'OccuPational Hazards': 3,
-    'Genetic Risk': 5,
-    'chronic Lung Disease': 6,
-    'Balanced Diet': 3,
-    'Obesity': 6,
-    'Smoking': 8,
-    'Passive Smoker': 2,
-    'Chest Pain': 5,
-    'Coughing of Blood': 4,
-    'Fatigue': 7,
-    'Weight Loss': 6,
-    'Shortness of Breath': 7,
-    'Wheezing': 6,
-    'Swallowing Difficulty': 3,
-    'Clubbing of Finger Nails': 5
-}
-
-# Predict
-result = predict_single_patient(fe, model, encoder, patient)
+# Predict with minimal input (uses defaults for other features)
+result = quick_predict(
+    age=65,
+    smoking=7,
+    gender='M'
+)
 
 print(f"Risk Level: {result['predicted_class']}")
 print(f"Confidence: {result['confidence']:.1%}")
-print(f"Probabilities: {result['probabilities']}")
 ```
 
-**Output:**
-```
-Risk Level: High
-Confidence: 92.3%
-Probabilities: {'Low': 0.02, 'Medium': 0.06, 'High': 0.92}
-```
-
----
-
-### Example 2: Batch Prediction
+### Example 2: Detailed Single Prediction
 
 ```python
-from predict import predict_batch, load_pipeline
+from interface import predict_patient
 
-# Load pipeline
-fe, model, encoder, metadata = load_pipeline()
-
-# Make predictions
-predictions_df = predict_batch(
-    fe, model, encoder,
-    "data/new_patients.csv"
+result = predict_patient(
+    age=68,
+    gender='M',
+    smoking=8,
+    passive_smoker=6,
+    air_pollution=7,
+    alcohol_use=7,
+    dust_allergy=5,
+    occupational_hazards=6,
+    genetic_risk=7,
+    chronic_lung_disease=6,
+    balanced_diet=2,
+    obesity=6,
+    chest_pain=7,
+    coughing_of_blood=6,
+    fatigue=7,
+    weight_loss=6,
+    shortness_of_breath=8,
+    wheezing=7,
+    swallowing_difficulty=5,
+    clubbing_of_finger_nails=4,
+    frequent_cold=6,
+    dry_cough=7,
+    snoring=5
 )
 
-# View results
-print(predictions_df[['PREDICTED_RISK', 'CONFIDENCE', 'PROB_High']].head())
+# Access results
+print(result['predicted_class'])        # 'High', 'Medium', or 'Low'
+print(result['confidence'])              # 0.0 to 1.0
+print(result['probabilities'])           # {'Low': 0.1, 'Medium': 0.2, 'High': 0.7}
+print(result['risk_interpretation'])     # Human-readable recommendation
 ```
 
----
-
-### Example 3: Model Evaluation
+### Example 3: Batch Prediction
 
 ```python
-from test_model import test_model
+from interface import predict_file
 
-# Test model
-results = test_model("data/test_set.csv")
+# Process entire CSV file
+results = predict_file(
+    input_file='patients.csv',
+    output_file='predictions.csv',
+    verbose=True
+)
 
-# View metrics
-print(f"Accuracy: {results['test_accuracy']:.4f}")
-print(f"F1-Score: {results['test_f1']:.4f}")
+# results is a DataFrame with:
+# - All original columns
+# - PREDICTED_CLASS
+# - PREDICTED_LEVEL
+# - PROB_Low, PROB_Medium, PROB_High
+# - CONFIDENCE
+# - RISK_INTERPRETATION
 ```
 
----
+### Example 4: Check Model Status
 
-## 🔍 Understanding Predictions
+```python
+from interface import check_model_status
 
-### Risk Levels:
-
-**Low Risk:**
-- Minimal symptoms
-- No smoking history
-- Good lifestyle factors
-- Low environmental exposure
-
-**Medium Risk:**
-- Some risk factors present
-- Former smoker or passive exposure
-- Moderate symptoms
-- Mixed lifestyle factors
-
-**High Risk:**
-- Multiple risk factors
-- Current smoker
-- Significant symptoms
-- High environmental exposure
-- Genetic predisposition
-
-### Confidence Scores:
-
-- **High (>80%):** Model is very confident
-- **Medium (60-80%):** Moderate confidence
-- **Low (<60%):** Uncertain, review manually
-
-## ⚠️ Important Notes
-
-### Medical Disclaimer:
-This system is for **research and educational purposes only**. 
-
-❌ **NOT for:**
-- Clinical diagnosis
-- Treatment decisions
-- Replacing medical professionals
-
-✅ **Use for:**
-- Risk assessment research
-- Population screening studies
-- Educational demonstrations
-- ML model development
-
-### Data Privacy:
-- Ensure patient data is handled according to HIPAA/GDPR
-- Remove personally identifiable information
-- Use secure storage and transmission
-
-## 🛠️ Troubleshooting
-
-### Problem: Low accuracy (<75%)
-
-**Solutions:**
-1. Check data quality and missing values
-2. Increase training data size
-3. Adjust SMOTE sampling strategy
-4. Try different model (GradientBoosting, XGBoost)
-
-### Problem: Model predicts mostly one class
-
-**Solutions:**
-1. Check class balance in training data
-2. Ensure SMOTE is working
-3. Verify class weights are applied
-4. Check for data leakage
-
-### Problem: High training accuracy, low test accuracy
-
-**Solutions:**
-1. Model is overfitting
-2. Reduce max_depth (try 10 instead of 15)
-3. Increase min_samples_split (try 20 instead of 10)
-4. Use more training data
-
-## 📚 Technical Details
-
-### Model Architecture:
-```
-Input (23 features)
-    ↓
-Feature Engineering (→40+ features)
-    ↓
-Standard Scaling
-    ↓
-SMOTE Balancing (if needed)
-    ↓
-Random Forest (200 trees, depth=15)
-    ↓
-Output (Low/Medium/High risk)
+check_model_status()
 ```
 
-### Hyperparameters:
-- n_estimators: 200
-- max_depth: 15
-- min_samples_split: 10
-- min_samples_leaf: 4
-- class_weight: balanced
-- random_state: 42
+### Example 5: Run Interactive Demo
 
-## 🔄 Model Retraining
+```python
+from interface import interactive_demo
 
-To retrain with new data:
+interactive_demo()
+```
 
-1. Add new data to `cancer patient data sets.csv`
-2. Run preprocessing: `python preprocessing.py`
-3. Train new model: `python train_model.py`
-4. Compare performance with previous model
-5. Deploy if better
+## 🎯 Input Features
 
-## 📊 Expected Dataset Performance
+All features should be provided as integers on a scale (typically 1-8, except AGE):
 
-With the lung cancer dataset:
+| Feature | Description | Scale |
+|---------|-------------|-------|
+| `AGE` | Patient's age | Years |
+| `GENDER` | Gender | 'M' or 'F' |
+| `SMOKING` | Active smoking level | 1-8 |
+| `PASSIVE_SMOKER` | Passive smoking exposure | 1-8 |
+| `AIR_POLLUTION` | Air pollution exposure | 1-8 |
+| `ALCOHOL_USE` | Alcohol consumption | 1-8 |
+| `DUST_ALLERGY` | Dust allergy severity | 1-8 |
+| `OCCUPATIONAL_HAZARDS` | Workplace hazards | 1-8 |
+| `GENETIC_RISK` | Genetic risk factors | 1-8 |
+| `CHRONIC_LUNG_DISEASE` | Chronic lung disease | 1-8 |
+| `BALANCED_DIET` | Diet quality (higher=better) | 1-8 |
+| `OBESITY` | Obesity level | 1-8 |
+| `CHEST_PAIN` | Chest pain severity | 1-8 |
+| `COUGHING_OF_BLOOD` | Hemoptysis severity | 1-8 |
+| `FATIGUE` | Fatigue level | 1-8 |
+| `WEIGHT_LOSS` | Weight loss severity | 1-8 |
+| `SHORTNESS_OF_BREATH` | Dyspnea severity | 1-8 |
+| `WHEEZING` | Wheezing severity | 1-8 |
+| `SWALLOWING_DIFFICULTY` | Dysphagia severity | 1-8 |
+| `CLUBBING_OF_FINGER_NAILS` | Finger clubbing | 1-8 |
+| `FREQUENT_COLD` | Frequency of colds | 1-8 |
+| `DRY_COUGH` | Dry cough severity | 1-8 |
+| `SNORING` | Snoring severity | 1-8 |
 
-| Metric | Expected Range | Excellent |
-|--------|---------------|-----------|
-| Accuracy | 80-95% | >90% |
-| Precision | 0.75-0.90 | >0.85 |
-| Recall | 0.75-0.90 | >0.85 |
-| F1-Score | 0.75-0.92 | >0.85 |
-| ROC-AUC | 0.85-0.98 | >0.93 |
+## 📈 Model Performance
 
-## 🤝 Contributing
+The model is evaluated using:
+- **F1 Score** (weighted): Primary metric
+- **Accuracy**: Overall correctness
+- **Precision**: Positive prediction accuracy
+- **Recall**: Sensitivity
+- **Confusion Matrix**: Detailed breakdown
 
-Improvements welcome:
-- Better feature engineering
-- Alternative models (XGBoost, Neural Networks)
-- Hyperparameter optimization
-- Visualization tools
-- Web interface
+View current metrics:
+```python
+from predict import LungCancerPredictor
 
-## 📄 License
+predictor = LungCancerPredictor()
+predictor.print_model_info()
+```
 
-MIT License - Free for research and educational use
+## 🔧 Advanced Configuration
 
-## 📧 Support
+### Custom Model Directory
+
+```python
+from predict import LungCancerPredictor
+
+predictor = LungCancerPredictor(model_dir='/path/to/models')
+```
+
+### Without Verbose Output
+
+```python
+result = predict_patient(..., verbose=False)
+results = predict_file(..., verbose=False)
+```
+
+### Access Raw Predictor
+
+```python
+from predict import LungCancerPredictor
+
+predictor = LungCancerPredictor()
+
+# Get model metadata
+info = predictor.get_model_info()
+
+# Direct DataFrame prediction
+import pandas as pd
+df = pd.read_csv('patients.csv')
+predictions = predictor.pipeline.predict(df)
+```
+
+## 🛡️ Error Handling
+
+The system handles:
+- ✅ Missing columns (filled with defaults)
+- ✅ Missing values (imputed)
+- ✅ Different column name formats
+- ✅ Model not trained (clear error message)
+
+## 📝 Output Format
+
+### Single Prediction Result
+```python
+{
+    'predicted_class': 'High',
+    'predicted_level': 2,
+    'confidence': 0.87,
+    'probabilities': {
+        'Low': 0.05,
+        'Medium': 0.08,
+        'High': 0.87
+    },
+    'risk_interpretation': 'High risk - Immediate medical evaluation strongly recommended'
+}
+```
+
+### Batch Prediction DataFrame
+```
+| AGE | GENDER | SMOKING | ... | PREDICTED_CLASS | CONFIDENCE | RISK_INTERPRETATION |
+|-----|--------|---------|-----|-----------------|------------|---------------------|
+| 65  | M      | 7       | ... | High           | 0.87       | High risk - ...     |
+| 45  | F      | 2       | ... | Low            | 0.92       | Low risk - ...      |
+```
+
+## 🎓 Best Practices
+
+1. **Always preprocess** your data before training
+2. **Use `interface.py`** for simplest usage
+3. **Check model status** before making predictions
+4. **Save predictions** to file for record-keeping
+5. **Review confidence scores** - low confidence may need manual review
+
+## 🚨 Troubleshooting
+
+### Model Not Found
+```bash
+# Train the model first
+python preprocess.py
+python train_model.py
+```
+
+### Import Errors
+```bash
+# Install dependencies
+pip install pandas numpy scikit-learn imbalanced-learn joblib
+```
+
+### Column Name Mismatch
+- The system auto-normalizes column names
+- Use uppercase with underscores: `AGE`, `CHEST_PAIN`, etc.
+
+## 📞 Support
 
 For issues or questions:
-1. Check troubleshooting section
-2. Review error messages
-3. Verify data format matches expected structure
+1. Check that preprocessing completed successfully
+2. Verify model training finished without errors
+3. Ensure all required features are provided
+4. Check model metadata: `predictor.print_model_info()`
+
+## 🔄 Workflow Summary
+
+```
+1. Collect Data → raw_data.csv
+2. Run preprocess.py → processed_features.csv + target.csv
+3. Run train_model.py → lung_cancer_pipeline.pkl
+4. Use interface.py → Make predictions!
+```
+
+## ⚡ Quick Reference
+
+```python
+# Check if ready
+from interface import check_model_status
+check_model_status()
+
+# Single prediction
+from interface import predict_patient
+result = predict_patient(age=65, smoking=7, gender='M')
+
+# Batch prediction
+from interface import predict_file
+results = predict_file('patients.csv', 'output.csv')
+
+# Interactive demo
+from interface import interactive_demo
+interactive_demo()
+```
 
 ---
 
-**Last Updated:** December 2025  
-**Version:** 1.0.0  
-**Dataset:** Kaggle Lung Cancer Prediction Dataset
+**Note**: This is a risk assessment tool and should not replace professional medical diagnosis. Always consult healthcare professionals for medical decisions.

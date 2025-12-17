@@ -405,6 +405,168 @@
 #         use_smote=True
 #     )
 
+
+
+# from sklearn.preprocessing import StandardScaler, LabelEncoder
+# from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
+# from sklearn.ensemble import GradientBoostingClassifier
+# from sklearn.pipeline import Pipeline
+# from sklearn.impute import SimpleImputer
+# from imblearn.over_sampling import SMOTE
+# from imblearn.pipeline import Pipeline as ImbPipeline
+# from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
+# import pandas as pd
+# import numpy as np
+# import joblib
+# from pathlib import Path
+# import json
+# from datetime import datetime
+
+# # ----------------------
+# # CONFIG
+# # ----------------------
+# PROJECT_ROOT = Path(__file__).resolve().parent
+# DATA_DIR = PROJECT_ROOT / "data"
+# MODEL_DIR = PROJECT_ROOT / "models"
+# RESULTS_DIR = PROJECT_ROOT / "results"
+
+# MODEL_DIR.mkdir(exist_ok=True)
+# RESULTS_DIR.mkdir(exist_ok=True)
+
+# # ----------------------
+# # LOAD DATA
+# # ----------------------
+# X = pd.read_csv(DATA_DIR / "processed_features.csv")
+# y = pd.read_csv(DATA_DIR / "target.csv").iloc[:, 0]
+
+# # Encode target if object
+# if y.dtype == 'object':
+#     le = LabelEncoder()
+#     y = le.fit_transform(y)
+#     joblib.dump(le, MODEL_DIR / "target_encoder.pkl")
+#     target_names = le.classes_.tolist()
+# else:
+#     target_names = [str(c) for c in sorted(y.unique())]
+
+# # ----------------------
+# # Add stronger noise to numeric features (~15%)
+# # ----------------------
+# noise_level = 0.15  # 15%
+# numeric_cols = X.select_dtypes(include=np.number).columns
+# X[numeric_cols] = X[numeric_cols] * (1 + np.random.normal(0, noise_level, X[numeric_cols].shape))
+
+# # ----------------------
+# # Train-Test Split
+# # ----------------------
+# X_train, X_test, y_train, y_test = train_test_split(
+#     X, y, test_size=0.2, random_state=42, stratify=y
+# )
+
+# # ----------------------
+# # Inject missing values in test set (~5%)
+# # ----------------------
+# for col in numeric_cols:
+#     X_test.loc[X_test.sample(frac=0.05, random_state=42).index, col] = np.nan
+
+# # ----------------------
+# # Safe imbalance ratio calculation
+# # ----------------------
+# class_counts = np.bincount(y_train)
+# imbalance_ratio = class_counts.max() / class_counts.min() if class_counts.min() > 0 else 1
+
+# # ----------------------
+# # Build pipeline with imputer
+# # ----------------------
+# if imbalance_ratio > 1.5:
+#     pipeline = ImbPipeline([
+#         ('imputer', SimpleImputer(strategy='median')),
+#         ('scaler', StandardScaler()),
+#         ('smote', SMOTE(random_state=42)),
+#         ('model', GradientBoostingClassifier(
+#             n_estimators=80,
+#             learning_rate=0.1,
+#             max_depth=2,
+#             random_state=42
+#         ))
+#     ])
+# else:
+#     pipeline = Pipeline([
+#         ('imputer', SimpleImputer(strategy='median')),
+#         ('scaler', StandardScaler()),
+#         ('model', GradientBoostingClassifier(
+#             n_estimators=80,
+#             learning_rate=0.1,
+#             max_depth=2,
+#             random_state=42
+#         ))
+#     ])
+
+# # ----------------------
+# # Cross-validation
+# # ----------------------
+# cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+# cv_scores = cross_val_score(pipeline, X_train, y_train, cv=cv, scoring='f1_weighted')
+# print(f"CV F1 Scores: {cv_scores}")
+# print(f"Mean CV F1: {cv_scores.mean():.4f}")
+
+# # ----------------------
+# # Train final model
+# # ----------------------
+# pipeline.fit(X_train, y_train)
+# joblib.dump(pipeline, MODEL_DIR / "lung_cancer_model_gb_realistic.joblib")
+# print("✅ Gradient Boosting model trained and saved!")
+
+# # ----------------------
+# # Evaluate on test set
+# # ----------------------
+# y_test_pred = pipeline.predict(X_test)
+# test_f1 = f1_score(y_test, y_test_pred, average='weighted', zero_division=0)
+# test_acc = accuracy_score(y_test, y_test_pred)
+# test_precision = precision_score(y_test, y_test_pred, average='weighted', zero_division=0)
+# test_recall = recall_score(y_test, y_test_pred, average='weighted', zero_division=0)
+
+# cm = confusion_matrix(y_test, y_test_pred)
+
+# print(f"\n📊 Test Metrics:")
+# print(f"Accuracy: {test_acc:.4f}")
+# print(f"F1 Score: {test_f1:.4f}")
+# print(f"Precision: {test_precision:.4f}")
+# print(f"Recall: {test_recall:.4f}")
+# print(f"Confusion Matrix:\n{cm}")
+
+# # ----------------------
+# # Save test set predictions
+# # ----------------------
+# test_results = X_test.copy()
+# test_results['TARGET'] = y_test
+# test_results['PRED'] = y_test_pred
+# test_results.to_csv(DATA_DIR / "test_set_with_preds_realistic.csv", index=False)
+
+# # ----------------------
+# # Save metadata
+# # ----------------------
+# metadata = {
+#     'model_type': 'GradientBoostingClassifier',
+#     'n_features': X_train.shape[1],
+#     'n_samples_train': len(X_train),
+#     'n_samples_test': len(X_test),
+#     'test_size': 0.2,
+#     'use_smote': int(imbalance_ratio > 1.5),  # JSON-safe
+#     'imbalance_ratio': float(imbalance_ratio),
+#     'cv_mean_f1': float(cv_scores.mean()),
+#     'cv_std_f1': float(cv_scores.std()),
+#     'test_accuracy': float(test_acc),
+#     'test_f1': float(test_f1),
+#     'test_precision': float(test_precision),
+#     'test_recall': float(test_recall),
+#     'target_classes': target_names,
+#     'trained_on': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+# }
+
+# with open(MODEL_DIR / "model_metadata_realistic.json", 'w') as f:
+#     json.dump(metadata, f, indent=2)
+
+# print("\n✅ Training complete! Metadata saved.")
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
 from sklearn.ensemble import GradientBoostingClassifier
@@ -412,13 +574,21 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline as ImbPipeline
-from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
+from sklearn.metrics import (
+    f1_score, accuracy_score, precision_score, recall_score, 
+    confusion_matrix, classification_report
+)
 import pandas as pd
 import numpy as np
 import joblib
 from pathlib import Path
 import json
 from datetime import datetime
+import sys
+
+# Import the feature engineer
+sys.path.append(str(Path(__file__).resolve().parent))
+from feature_engineer import LungCancerFeatureEngineer
 
 # ----------------------
 # CONFIG
@@ -431,137 +601,263 @@ RESULTS_DIR = PROJECT_ROOT / "results"
 MODEL_DIR.mkdir(exist_ok=True)
 RESULTS_DIR.mkdir(exist_ok=True)
 
-# ----------------------
-# LOAD DATA
-# ----------------------
-X = pd.read_csv(DATA_DIR / "processed_features.csv")
-y = pd.read_csv(DATA_DIR / "target.csv").iloc[:, 0]
+def train_model(debug=True):
+    """
+    Train the lung cancer prediction model with feature engineering
+    """
+    
+    # ----------------------
+    # LOAD DATA
+    # ----------------------
+    if debug:
+        print("=" * 60)
+        print("🚀 Starting Model Training")
+        print("=" * 60)
+    
+    X = pd.read_csv(DATA_DIR / "processed_features.csv")
+    y = pd.read_csv(DATA_DIR / "target.csv").iloc[:, 0]
+    
+    if debug:
+        print(f"\n✅ Loaded data: X={X.shape}, y={y.shape}")
+    
+    # ----------------------
+    # ENCODE TARGET
+    # ----------------------
+    if y.dtype == 'object':
+        le = LabelEncoder()
+        y = le.fit_transform(y)
+        joblib.dump(le, MODEL_DIR / "target_encoder.pkl")
+        target_names = le.classes_.tolist()
+        if debug:
+            print(f"🏷️  Encoded target classes: {target_names}")
+    else:
+        target_names = [str(c) for c in sorted(y.unique())]
+        le = None
+    
+    # ----------------------
+    # TRAIN-TEST SPLIT
+    # ----------------------
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
+    
+    if debug:
+        print(f"\n📊 Train set: {X_train.shape}")
+        print(f"📊 Test set: {X_test.shape}")
+    
+    # ----------------------
+    # ADD REALISTIC NOISE (15%)
+    # ----------------------
+    noise_level = 0.15
+    numeric_cols = X_train.select_dtypes(include=np.number).columns
+    X_train_noisy = X_train.copy()
+    X_train_noisy[numeric_cols] = X_train_noisy[numeric_cols] * (
+        1 + np.random.normal(0, noise_level, X_train_noisy[numeric_cols].shape)
+    )
+    
+    if debug:
+        print(f"🎲 Added {noise_level*100}% noise to training data")
+    
+    # ----------------------
+    # INJECT MISSING VALUES IN TEST SET (~5%)
+    # ----------------------
+    X_test_missing = X_test.copy()
+    for col in numeric_cols:
+        mask = X_test_missing.sample(frac=0.05, random_state=42).index
+        X_test_missing.loc[mask, col] = np.nan
+    
+    if debug:
+        missing_count = X_test_missing.isnull().sum().sum()
+        print(f"💧 Injected {missing_count} missing values in test set")
+    
+    # ----------------------
+    # CHECK IMBALANCE
+    # ----------------------
+    class_counts = np.bincount(y_train)
+    imbalance_ratio = class_counts.max() / class_counts.min() if class_counts.min() > 0 else 1
+    use_smote = imbalance_ratio > 1.5
+    
+    if debug:
+        print(f"\n⚖️  Class distribution: {dict(zip(*np.unique(y_train, return_counts=True)))}")
+        print(f"⚖️  Imbalance ratio: {imbalance_ratio:.2f}")
+        print(f"{'✅ Using SMOTE' if use_smote else '❌ Skipping SMOTE'}")
+    
+    # ----------------------
+    # BUILD PIPELINE
+    # ----------------------
+    if use_smote:
+        pipeline = ImbPipeline([
+            ('feature_engineer', LungCancerFeatureEngineer(debug=False)),
+            ('imputer', SimpleImputer(strategy='median')),
+            ('scaler', StandardScaler()),
+            ('smote', SMOTE(random_state=42)),
+            ('model', GradientBoostingClassifier(
+                n_estimators=100,
+                learning_rate=0.1,
+                max_depth=3,
+                min_samples_split=10,
+                min_samples_leaf=4,
+                random_state=42
+            ))
+        ])
+    else:
+        pipeline = Pipeline([
+            ('feature_engineer', LungCancerFeatureEngineer(debug=False)),
+            ('imputer', SimpleImputer(strategy='median')),
+            ('scaler', StandardScaler()),
+            ('model', GradientBoostingClassifier(
+                n_estimators=100,
+                learning_rate=0.1,
+                max_depth=3,
+                min_samples_split=10,
+                min_samples_leaf=4,
+                random_state=42
+            ))
+        ])
+    
+    if debug:
+        print("\n🔧 Pipeline created with feature engineering")
+    
+    # ----------------------
+    # CROSS-VALIDATION
+    # ----------------------
+    if debug:
+        print("\n🔄 Running 5-fold cross-validation...")
+    
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    cv_scores = cross_val_score(
+        pipeline, X_train_noisy, y_train, 
+        cv=cv, scoring='f1_weighted', n_jobs=-1
+    )
+    
+    if debug:
+        print(f"📈 CV F1 Scores: {[f'{s:.4f}' for s in cv_scores]}")
+        print(f"📈 Mean CV F1: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
+    
+    # ----------------------
+    # TRAIN FINAL MODEL
+    # ----------------------
+    if debug:
+        print("\n🎯 Training final model...")
+    
+    pipeline.fit(X_train_noisy, y_train)
+    
+    # Save the complete pipeline
+    joblib.dump(pipeline, MODEL_DIR / "lung_cancer_pipeline.pkl")
+    if debug:
+        print("✅ Pipeline saved to lung_cancer_pipeline.pkl")
+    
+    # ----------------------
+    # EVALUATE ON TEST SET
+    # ----------------------
+    if debug:
+        print("\n📊 Evaluating on test set...")
+    
+    y_test_pred = pipeline.predict(X_test_missing)
+    y_test_proba = pipeline.predict_proba(X_test_missing)
+    
+    # Calculate metrics
+    test_metrics = {
+        'accuracy': accuracy_score(y_test, y_test_pred),
+        'f1_weighted': f1_score(y_test, y_test_pred, average='weighted', zero_division=0),
+        'f1_macro': f1_score(y_test, y_test_pred, average='macro', zero_division=0),
+        'precision_weighted': precision_score(y_test, y_test_pred, average='weighted', zero_division=0),
+        'recall_weighted': recall_score(y_test, y_test_pred, average='weighted', zero_division=0),
+    }
+    
+    cm = confusion_matrix(y_test, y_test_pred)
+    
+    if debug:
+        print("\n" + "=" * 60)
+        print("📊 TEST SET RESULTS")
+        print("=" * 60)
+        print(f"Accuracy:  {test_metrics['accuracy']:.4f}")
+        print(f"F1 (weighted): {test_metrics['f1_weighted']:.4f}")
+        print(f"F1 (macro):    {test_metrics['f1_macro']:.4f}")
+        print(f"Precision: {test_metrics['precision_weighted']:.4f}")
+        print(f"Recall:    {test_metrics['recall_weighted']:.4f}")
+        print(f"\nConfusion Matrix:\n{cm}")
+        print("\nClassification Report:")
+        print(classification_report(y_test, y_test_pred, target_names=target_names))
+    
+    # ----------------------
+    # SAVE TEST PREDICTIONS
+    # ----------------------
+    test_results = X_test.copy()
+    test_results['TRUE_LABEL'] = y_test
+    test_results['PREDICTED_LABEL'] = y_test_pred
+    
+    # Add probability columns
+    for i, class_name in enumerate(target_names):
+        test_results[f'PROB_{class_name}'] = y_test_proba[:, i]
+    
+    test_results.to_csv(RESULTS_DIR / "test_predictions.csv", index=False)
+    
+    if debug:
+        print(f"\n💾 Test predictions saved to {RESULTS_DIR / 'test_predictions.csv'}")
+    
+    # ----------------------
+    # SAVE METADATA
+    # ----------------------
+    # metadata = {
+    #     'model_type': 'GradientBoostingClassifier',
+    #     'feature_engineering': 'LungCancerFeatureEngineer',
+    #     'n_features_original': X_train.shape[1],
+    #     'n_features_engineered': pipeline.named_steps['feature_engineer'].transform(X_train.iloc[:1]).shape[1],
+    #     'n_samples_train': len(X_train),
+    #     'n_samples_test': len(X_test),
+    #     'test_size': 0.2,
+    #     'use_smote': bool(use_smote),
+    #     'imbalance_ratio': float(imbalance_ratio),
+    #     'noise_level': noise_level,
+    #     'missing_injection_rate': 0.05,
+    #     'cv_folds': 5,
+    #     'cv_mean_f1': float(cv_scores.mean()),
+    #     'cv_std_f1': float(cv_scores.std()),
+    #     'test_metrics': {k: float(v) for k, v in test_metrics.items()},
+    #     'target_classes': target_names,
+    #     'confusion_matrix': cm.tolist(),
+    #     'trained_on': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    #     'model_path': str(MODEL_DIR / "lung_cancer_pipeline.pkl"),
+    # }
 
-# Encode target if object
-if y.dtype == 'object':
-    le = LabelEncoder()
-    y = le.fit_transform(y)
-    joblib.dump(le, MODEL_DIR / "target_encoder.pkl")
-    target_names = le.classes_.tolist()
-else:
-    target_names = [str(c) for c in sorted(y.unique())]
 
-# ----------------------
-# Add stronger noise to numeric features (~15%)
-# ----------------------
-noise_level = 0.15  # 15%
-numeric_cols = X.select_dtypes(include=np.number).columns
-X[numeric_cols] = X[numeric_cols] * (1 + np.random.normal(0, noise_level, X[numeric_cols].shape))
-
-# ----------------------
-# Train-Test Split
-# ----------------------
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
-)
-
-# ----------------------
-# Inject missing values in test set (~5%)
-# ----------------------
-for col in numeric_cols:
-    X_test.loc[X_test.sample(frac=0.05, random_state=42).index, col] = np.nan
-
-# ----------------------
-# Safe imbalance ratio calculation
-# ----------------------
-class_counts = np.bincount(y_train)
-imbalance_ratio = class_counts.max() / class_counts.min() if class_counts.min() > 0 else 1
-
-# ----------------------
-# Build pipeline with imputer
-# ----------------------
-if imbalance_ratio > 1.5:
-    pipeline = ImbPipeline([
-        ('imputer', SimpleImputer(strategy='median')),
-        ('scaler', StandardScaler()),
-        ('smote', SMOTE(random_state=42)),
-        ('model', GradientBoostingClassifier(
-            n_estimators=80,
-            learning_rate=0.1,
-            max_depth=2,
-            random_state=42
-        ))
-    ])
-else:
-    pipeline = Pipeline([
-        ('imputer', SimpleImputer(strategy='median')),
-        ('scaler', StandardScaler()),
-        ('model', GradientBoostingClassifier(
-            n_estimators=80,
-            learning_rate=0.1,
-            max_depth=2,
-            random_state=42
-        ))
-    ])
-
-# ----------------------
-# Cross-validation
-# ----------------------
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-cv_scores = cross_val_score(pipeline, X_train, y_train, cv=cv, scoring='f1_weighted')
-print(f"CV F1 Scores: {cv_scores}")
-print(f"Mean CV F1: {cv_scores.mean():.4f}")
-
-# ----------------------
-# Train final model
-# ----------------------
-pipeline.fit(X_train, y_train)
-joblib.dump(pipeline, MODEL_DIR / "lung_cancer_model_gb_realistic.joblib")
-print("✅ Gradient Boosting model trained and saved!")
-
-# ----------------------
-# Evaluate on test set
-# ----------------------
-y_test_pred = pipeline.predict(X_test)
-test_f1 = f1_score(y_test, y_test_pred, average='weighted', zero_division=0)
-test_acc = accuracy_score(y_test, y_test_pred)
-test_precision = precision_score(y_test, y_test_pred, average='weighted', zero_division=0)
-test_recall = recall_score(y_test, y_test_pred, average='weighted', zero_division=0)
-
-cm = confusion_matrix(y_test, y_test_pred)
-
-print(f"\n📊 Test Metrics:")
-print(f"Accuracy: {test_acc:.4f}")
-print(f"F1 Score: {test_f1:.4f}")
-print(f"Precision: {test_precision:.4f}")
-print(f"Recall: {test_recall:.4f}")
-print(f"Confusion Matrix:\n{cm}")
-
-# ----------------------
-# Save test set predictions
-# ----------------------
-test_results = X_test.copy()
-test_results['TARGET'] = y_test
-test_results['PRED'] = y_test_pred
-test_results.to_csv(DATA_DIR / "test_set_with_preds_realistic.csv", index=False)
-
-# ----------------------
-# Save metadata
-# ----------------------
-metadata = {
+    metadata = {
     'model_type': 'GradientBoostingClassifier',
-    'n_features': X_train.shape[1],
-    'n_samples_train': len(X_train),
-    'n_samples_test': len(X_test),
+    'feature_engineering': 'LungCancerFeatureEngineer',
+    'n_features_original': int(X_train.shape[1]),
+    'n_features_engineered': int(
+        pipeline.named_steps['feature_engineer']
+        .transform(X_train.iloc[:1]).shape[1]
+    ),
+    'n_samples_train': int(len(X_train)),
+    'n_samples_test': int(len(X_test)),
     'test_size': 0.2,
-    'use_smote': int(imbalance_ratio > 1.5),  # JSON-safe
+    'use_smote': bool(use_smote),                 # ✅ FIX
     'imbalance_ratio': float(imbalance_ratio),
+    'noise_level': float(noise_level),
+    'missing_injection_rate': 0.05,
+    'cv_folds': 5,
     'cv_mean_f1': float(cv_scores.mean()),
     'cv_std_f1': float(cv_scores.std()),
-    'test_accuracy': float(test_acc),
-    'test_f1': float(test_f1),
-    'test_precision': float(test_precision),
-    'test_recall': float(test_recall),
+    'test_metrics': {k: float(v) for k, v in test_metrics.items()},
     'target_classes': target_names,
-    'trained_on': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    'confusion_matrix': cm.tolist(),              # already correct
+    'trained_on': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    'model_path': str(MODEL_DIR / "lung_cancer_pipeline.pkl"),
 }
 
-with open(MODEL_DIR / "model_metadata_realistic.json", 'w') as f:
-    json.dump(metadata, f, indent=2)
+    
+    with open(MODEL_DIR / "model_metadata.json", 'w') as f:
+        json.dump(metadata, f, indent=2)
+    
+    if debug:
+        print(f"💾 Metadata saved to {MODEL_DIR / 'model_metadata.json'}")
+        print("\n" + "=" * 60)
+        print("✅ TRAINING COMPLETE!")
+        print("=" * 60)
+    
+    return pipeline, metadata
 
-print("\n✅ Training complete! Metadata saved.")
+if __name__ == "__main__":
+    pipeline, metadata = train_model(debug=True)
