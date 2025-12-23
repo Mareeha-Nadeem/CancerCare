@@ -104,27 +104,45 @@
 import streamlit as st
 from frontend import home_page, prediction_page, patients_page, doctors_page
 from frontend import about_page, search_page, service_page, contact_page
+from frontend import dashboard_page, lab_tech_page, notifications_page, messaging_page
+from frontend import lab_dashboard, batch_processing, patient_history, reports_page
 
-st.set_page_config(page_title="CancerCare - Lung Cancer Risk", layout="wide")
+st.set_page_config(page_title="CancerCare - Lab Technician System", layout="wide")
 
 # All pages including top-nav pages
 ALL_PAGES = {
+    "lab_dashboard": lab_dashboard.show,  # Primary page for lab technicians
     "home": home_page.show,
     "prediction": prediction_page.show,
+    "batch_processing": batch_processing.show,
+    "patient_history": patient_history.show,
+    "reports": reports_page.show,
     "patients": patients_page.show,
     "doctors": doctors_page.show,
+    "dashboard": dashboard_page.show,
+    "lab_tech": lab_tech_page.show,
+    "notifications": notifications_page.show,
+    "messaging": messaging_page.show,
     "about": about_page.show,
     "search": search_page.show,
     "service": service_page.show,
     "contact": contact_page.show,
 }
 
-# Only sidebar navigation pages
+# Only sidebar navigation pages - Lab-focused
 SIDEBAR_PAGES = {
-    "🏠 Home": "home",
-    "🧪 Prediction": "prediction",
-    "👨‍⚕️ Patients": "patients",
-    "🏥 Doctors": "doctors",
+    "🔬 Lab Dashboard": "lab_dashboard",
+    "🧪 Single Analysis": "prediction",
+    "📦 Batch Processing": "batch_processing",
+    "📜 Patient History": "patient_history",
+    "📊 Reports & Export": "reports",
+    "📅 Appointments": "lab_tech",
+    "👥 Patient Records": "patients",
+    "👨‍⚕️ Doctors": "doctors",
+    "🔍 Search": "search",  # DSA-powered search
+    "📈 Analytics": "dashboard",
+    "🔔 Notifications": "notifications",
+    "💬 Messages": "messaging",
 }
 
 def set_page(page_name: str):
@@ -132,18 +150,21 @@ def set_page(page_name: str):
     st.rerun()
 
 def main():
-    # abhi current page URL se lo
-    current_page = st.query_params.get("page", "home")
+    # Default to lab dashboard for lab technicians
+    current_page = st.query_params.get("page", "lab_dashboard")
 
-    st.sidebar.title("CancerCare")
+    st.sidebar.title("🔬 CancerCare Lab")
 
-    # sirf uss waqt sidebar radio chalay jab page sidebar waalon mein se ho
+    # Show sidebar navigation
     if current_page in SIDEBAR_PAGES.values():
         labels = list(SIDEBAR_PAGES.keys())
         values = list(SIDEBAR_PAGES.values())
 
-        # jis page pe ho, ussi ko default select karo
-        current_index = values.index(current_page)
+        # Select current page
+        try:
+            current_index = values.index(current_page)
+        except ValueError:
+            current_index = 0
 
         choice = st.sidebar.radio(
             "Navigation",
@@ -153,18 +174,26 @@ def main():
 
         selected_page = SIDEBAR_PAGES[choice]
 
-        # agar user ne sidebar se page change kiya ho
+        # If user changed page
         if selected_page != current_page:
             set_page(selected_page)
-            return  # yahan se rerun hoga
+            return
 
     else:
-        # jab ABOUT / SEARCH / SERVICE / CONTACT pe ho,
-        # sidebar sirf info show kare, route na badlay
-        st.sidebar.write("Use the top navigation above to switch sections.")
+        # For other pages
+        st.sidebar.write("Use the top navigation to switch sections.")
 
-    # yahan final page render karo
-    ALL_PAGES[current_page]()
+    # Render the current page
+    try:
+        ALL_PAGES[current_page]()
+    except Exception as e:
+        st.error(f"Error loading page: {e}")
+        st.write("Trying to load Lab Dashboard...")
+        try:
+            ALL_PAGES["lab_dashboard"]()
+        except:
+            st.error("Could not load any page. Please check your installation.")
 
 if __name__ == "__main__":
     main()
+

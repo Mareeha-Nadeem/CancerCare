@@ -1,0 +1,11 @@
+# Ignore all uploaded medical images
+*.jpg
+*.jpeg
+*.png
+*.dcm
+*.dicom
+*.nii
+*.nii.gz
+
+# Keep directory structure
+!.gitkeep

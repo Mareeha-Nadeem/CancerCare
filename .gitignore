@@ -1,24 +1,32 @@
-data_science/models/*.pkl
-data_science/data/*.csv
-data_science/preprocessed/*.csv
-data_science/__pycache__/
-data_science/utils/__pycache__/
-# Python Caches and Compilation
-__pycache__/
-*.pyc
+# ==============================
+# Model artifacts
+# ==============================
+data_science/model_1/models/*.pkl
+data_science/model_1/models/*.joblib
+data_science/model_1/models/*.part
+data_science/model_1/models/*.json
+data_science/model_1/models/*.txt
+data_science/model_1/data/*.csv
+# ==============================
+# Data files
+# ==============================
 
-# Data science / Machine Learning artifacts
-# These large binary files should not be stored in Git
-data_science/models/*.joblib
-data_science/models/*.pkl
-data_science/models/*.part
-data_science/models/*.json
-# Ignore all joblib model files
-data_science/models/*.joblib
-data_science/prediction_logs/*.log
-data_science/data/results/*.csv
-data_science/data/results/*.json
+data_science/model_1/results/*.csv
+data_science/model_1/results/*.json
 data_science/predictions/*.csv
 data_science/predictions/*.json
 data_science/results
 data_science/predictions
+
+# ==============================
+# Logs
+# ==============================
+data_science/prediction_logs/*.log
+
+# ==============================
+# Python cache / compiled files
+# ==============================
+__pycache__/
+data_science/__pycache__/
+data_science/utils/__pycache__/
+*.pyc

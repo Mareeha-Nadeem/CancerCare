@@ -1,449 +1,325 @@
-# # frontend/Home.py
-# import streamlit as st
-
-# def show():
-#     # ---------- GLOBAL STYLING ----------
-#     st.markdown("""
-#         <style>
-#         /* Full blue background */
-#         [data-testid="stAppViewContainer"] {
-#             background-color: #5EC2FF;
-#         }
-#         [data-testid="stHeader"] {
-#             background: rgba(0,0,0,0);
-#         }
-
-#         /* Centered banner card */
-#         .hero-wrapper {
-#             display: flex;
-#             justify-content: center;
-#             padding: 3rem 0 4rem 0;
-#         }
-#         .hero-card {
-#             background: #7ED5FF;
-#             border-radius: 24px;
-#             box-shadow: 0 18px 40px rgba(0,0,0,0.18);
-#             padding: 2.5rem 3.5rem 3rem 3.5rem;
-#             width: 100%;
-#             max-width: 1150px;
-#             position: relative;
-#         }
-
-#         /* Top title & subtitle */
-#         .hero-top-title {
-#             text-align: center;
-#             font-weight: 800;
-#             letter-spacing: 0.14em;
-#             font-size: 0.95rem;
-#             margin-bottom: 0.1rem;
-#         }
-#         .hero-top-subtitle {
-#             text-align: center;
-#             font-size: 1.1rem;
-#             margin-bottom: 1.3rem;
-#         }
-
-#         /* Navigation row */
-#         .hero-nav {
-#             display: flex;
-#             justify-content: center;
-#             gap: 2.5rem;
-#             font-size: 0.9rem;
-#             margin-bottom: 1.8rem;
-#         }
-#         .hero-nav a {
-#             text-decoration: none;
-#             color: #0076D6;
-#             font-weight: 600;
-#         }
-#         .hero-nav a.active {
-#             color: #FF6B1A;
-#         }
-
-#         /* Social icons at right */
-#         # .hero-socials {
-#         #     position: absolute;
-#         #     right: 2.5rem;
-#         #     top: 4.9rem;
-#         #     display: flex;
-#         #     flex-direction: column;
-#         #     gap: 0.6rem;
-#         #     font-size: 0.8rem;
-#         #     color: #0050A3;
-#         # }
-#         # .hero-social-circle {
-#         #     width: 30px;
-#         #     height: 30px;
-#         #     border-radius: 50%;
-#         #     border: 2px solid #0050A3;
-#         #     display: flex;
-#         #     align-items: center;
-#         #     justify-content: center;
-#         #     font-size: 0.7rem;
-#         #     background: #7ED5FF;
-#         # }
-
-#         /* Main horizontal layout: lungs left, text right */
-#         .hero-main {
-#             display: flex;
-#             align-items: center;
-#             gap: 3rem;
-#         }
-#         .hero-left {
-#             flex: 1.15;
-#         }
-#         .hero-right {
-#             flex: 1;
-#         }
-
-#         .hero-heading {
-#             font-size: 2.8rem;
-#             font-weight: 900;
-#             color: #0050A3;
-#             line-height: 1.1;
-#             margin-bottom: 0.7rem;
-#         }
-#         .hero-subheading {
-#             font-weight: 700;
-#             color: #FF6B1A;
-#             margin-bottom: 0.8rem;
-#         }
-#         .hero-body {
-#             color: #00447A;
-#             font-size: 0.95rem;
-#             margin-bottom: 0.5rem;
-#         }
-#         .hero-deadline {
-#             color: #0050A3;
-#             font-weight: 700;
-#             margin-bottom: 1.4rem;
-#         }
-
-#         .hero-arrow {
-#             text-align: center;
-#             font-size: 1.4rem;
-#             color: #0050A3;
-#             margin-top: 1.3rem;
-#         }
-
-#         /* Make CTA button look like orange banner button */
-#         div.stButton > button:first-child {
-#             background-color: #FF6B1A;
-#             color: white;
-#             font-weight: 700;
-#             border-radius: 999px;
-#             padding: 0.6rem 1.9rem;
-#             border: none;
-#             font-size: 0.9rem;
-#         }
-#         div.stButton > button:first-child:hover {
-#             background-color: #ff8745;
-#         }
-
-#         /* Remove Streamlit default padding at top */
-#         section.main > div {
-#             padding-top: 0rem;
-#         }
-#         </style>
-#     """, unsafe_allow_html=True)
-
-#     # # ---------- OUTER CARD ----------
-#     # st.markdown('<div class="hero-wrapper"><div class="hero-card">', unsafe_allow_html=True)
-
-#     # st.markdown('<div class="hero-top-title">BANNER TEMPLATE</div>', unsafe_allow_html=True)
-#     # st.markdown('<div class="hero-top-subtitle">Medical</div>', unsafe_allow_html=True)
-
-#     # nav row (just cosmetic)
-#     st.markdown(
-#     """
-#     <div class="hero-nav">
-#         <a href="?page=home">HOME</a>
-#         <a href="?page=about">ABOUT</a>
-#         <a href="?page=search">SEARCH</a>
-#         <a href="?page=service">SERVICE</a>
-#         <a href="?page=contact">CONTACT</a>
-#     </div>
-#     """,
-#     unsafe_allow_html=True,
-# )
-# # --------- ROUTING BASED ON URL QUERY PARAMS ----------
-# page = st.query_params.get("page", "home")
-
-# # if user clicked ABOUT / SEARCH / SERVICE / CONTACT → show those pages
-# if page == "about":
-#     from frontend import about_page
-#     about_page.show()
-#     st.stop()
-
-# elif page == "search":
-#     from frontend import search_page
-#     search_page.show()
-#     st.stop()
-
-# elif page == "service":
-#     from frontend import service_page
-#     service_page.show()
-#     st.stop()
-
-# elif page == "contact":
-#     from frontend import contact_page
-#     contact_page.show()
-#     st.stop()
-
-# # if none matched → continue and show HOME hero section below  
-
-
-#     # # social icons on right
-#     # st.markdown(
-#     #     """
-#     #     <div class="hero-socials">
-#     #         <div class="hero-social-circle">T</div>
-#     #         <div class="hero-social-circle">F</div>
-#     #         <div class="hero-social-circle">X</div>
-#     #         <div class="hero-social-circle">I</div>
-#     #     </div>
-#     #     """,
-#     #     unsafe_allow_html=True,
-#     # )
-
-#     # ---------- MAIN CONTENT: LUNGS LEFT, TEXT RIGHT ----------
-#     # we wrap Streamlit columns in a div to keep horizontal layout like the design
-#     st.markdown('<div class="hero-main">', unsafe_allow_html=True)
-#     col1, col2 = st.columns([1.15, 1])
-
-#     with col1:
-#         # lungs placement exactly on left
-#         st.image("static/lung.png", use_container_width=True)
-
-#     with col2:
-#         st.markdown(
-#             '<div class="hero-heading">Stay healthy<br>and strong!</div>',
-#             unsafe_allow_html=True,
-#         )
-#         st.markdown(
-#             "<div class='hero-subheading'>It's time to book your specialist visit!</div>",
-#             unsafe_allow_html=True,
-#         )
-#         st.markdown(
-#             """
-#             <div class='hero-body'>
-#             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod 
-#             tempor incididunt ut labore et dolore magna aliqua.
-#             </div>
-#             """,
-#             unsafe_allow_html=True,
-#         )
-#         st.markdown(
-#             "<div class='hero-deadline'>You have time until 31<sup>st</sup> December</div>",
-#             unsafe_allow_html=True,
-#         )
-
-#         if st.button("CANCER RISK PREDICTION"):
-#             st.session_state["current_page"] = "🧪 Prediction"
-#             st.rerun()
-
-#     st.markdown('</div>', unsafe_allow_html=True)  # close hero-main
-#     st.markdown('<div class="hero-arrow">⌄</div>', unsafe_allow_html=True)
-
-#     st.markdown('</div></div>', unsafe_allow_html=True)  # close hero-card & wrapper
+"""
+CancerCare - Modern Dark-Themed Home Page
+"""
 import streamlit as st
+from datetime import datetime
 
 def show():
-    # ---------- GLOBAL STYLING ----------
+    # Apply dark theme CSS
     st.markdown("""
         <style>
-        /* Full blue background */
+        /* Global Styles - Black Theme */
         [data-testid="stAppViewContainer"] {
-            background-color: #5EC2FF;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
         }
+        
         [data-testid="stHeader"] {
-            background: rgba(0,0,0,0);
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
         }
-
-        /* Centered banner card */
-        .hero-wrapper {
-            display: flex;
-            justify-content: center;
-            padding: 3rem 0 4rem 0;
+        
+        [data-testid="stSidebar"] {
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            border-right: 1px solid #00d9ff;
         }
-        .hero-card {
-            background: #7ED5FF;
-            border-radius: 24px;
-            box-shadow: 0 18px 40px rgba(0,0,0,0.18);
-            padding: 2.5rem 3.5rem 3rem 3.5rem;
-            width: 100%;
-            max-width: 1150px;
-            position: relative;
+        
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            color: #ffffff !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        /* Top title & subtitle */
-        .hero-top-title {
+        
+        p, span, div {
+            color: #e0e0e0 !important;
+        }
+        
+        /* Hero Section */
+        .hero-container {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 2px solid #00d9ff;
+            box-shadow: 0 10px 40px rgba(0, 217, 255, 0.3);
+            margin: 2rem 0;
             text-align: center;
-            font-weight: 800;
-            letter-spacing: 0.14em;
-            font-size: 0.95rem;
-            margin-bottom: 0.1rem;
         }
-        .hero-top-subtitle {
-            text-align: center;
-            font-size: 1.1rem;
-            margin-bottom: 1.3rem;
-        }
-
-        /* Navigation row */
-        .hero-nav {
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            font-size: 0.9rem;
-            margin-bottom: 1.8rem;
-        }
-        .hero-nav a {
-            text-decoration: none;
-            color: #0076D6;
-            font-weight: 600;
-        }
-        .hero-nav a.active {
-            color: #FF6B1A;
-        }
-
-        /* Main horizontal layout: lungs left, text right */
-        .hero-main {
-            display: flex;
-            align-items: center;
-            gap: 3rem;
-        }
-        .hero-left {
-            flex: 1.15;
-        }
-        .hero-right {
-            flex: 1;
-        }
-
-        .hero-heading {
-            font-size: 2.8rem;
+        
+        .hero-title {
+            font-size: 3.5rem;
             font-weight: 900;
-            color: #0050A3;
-            line-height: 1.1;
-            margin-bottom: 0.7rem;
+            background: linear-gradient(90deg, #00d9ff 0%, #ff006e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
         }
-        .hero-subheading {
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: #b0b0b0;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .hero-tagline {
+            font-size: 1.1rem;
+            color: #00d9ff;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        /* Feature Cards */
+        .feature-card {
+            background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid #00d9ff;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.2);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 217, 255, 0.4);
+            border-color: #ff006e;
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            color: #00d9ff;
             font-weight: 700;
-            color: #FF6B1A;
-            margin-bottom: 0.8rem;
-        }
-        .hero-body {
-            color: #00447A;
-            font-size: 0.95rem;
             margin-bottom: 0.5rem;
         }
-        .hero-deadline {
-            color: #0050A3;
-            font-weight: 700;
-            margin-bottom: 1.4rem;
+        
+        .feature-desc {
+            color: #b0b0b0;
+            line-height: 1.6;
         }
-
-        .hero-arrow {
+        
+        /* Stats Section */
+        .stat-box {
+            background: linear-gradient(135deg, #ff006e 0%, #ffbe0b 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
             text-align: center;
-            font-size: 1.4rem;
-            color: #0050A3;
-            margin-top: 1.3rem;
+            margin: 1rem;
+            box-shadow: 0 10px 30px rgba(255, 0, 110, 0.3);
         }
-
-        /* Make CTA button look like orange banner button */
-        div.stButton > button:first-child {
-            background-color: #FF6B1A;
-            color: white;
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #ffffff;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: #ffffff;
+            opacity: 0.9;
+        }
+        
+        /* Buttons */
+        .stButton > button {
+            background: linear-gradient(90deg, #00d9ff 0%, #ff006e 100%);
+            color: #ffffff;
             font-weight: 700;
-            border-radius: 999px;
-            padding: 0.6rem 1.9rem;
             border: none;
-            font-size: 0.9rem;
+            border-radius: 50px;
+            padding: 0.8rem 2.5rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
         }
-        div.stButton > button:first-child:hover {
-            background-color: #ff8745;
+        
+        .stButton > button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 0, 110, 0.6);
         }
-
-        /* Remove Streamlit default padding at top */
-        section.main > div {
-            padding-top: 0rem;
+        
+        /* Info Boxes */
+        .info-box {
+            background: rgba(0, 217, 255, 0.1);
+            border-left: 4px solid #00d9ff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        .warning-box {
+            background: rgba(255, 190, 11, 0.1);
+            border-left: 4px solid #ffbe0b;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        /* Divider */
+        .gradient-divider {
+            height: 2px;
+            background: linear-gradient(90deg, #00d9ff 0%, #ff006e 100%);
+            margin: 2rem 0;
+            border-radius: 2px;
         }
         </style>
     """, unsafe_allow_html=True)
-
-    # ---------- TOP NAV (same UI) ----------
-    st.markdown(
-        """
-        <div class="hero-nav">
-            <a href="?page=home">HOME</a>
-            <a href="?page=about">ABOUT</a>
-            <a href="?page=search">SEARCH</a>
-            <a href="?page=service">SERVICE</a>
-            <a href="?page=contact">CONTACT</a>
+    
+    # Hero Section
+    st.markdown("""
+        <div class="hero-container">
+            <h1 class="hero-title">🫁 CancerCare</h1>
+            <p class="hero-subtitle">
+                Advanced Lung Cancer Risk Prediction System<br>
+                Powered by Machine Learning & Modern Technology
+            </p>
+            <p class="hero-tagline">
+                ⚡ Real-time Analysis | 🔒 Secure | 🎯 Accurate
+            </p>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # ---------- ROUTING BASED ON URL QUERY PARAMS ----------
-    page = st.query_params.get("page", "home")
-
-    if page == "about":
-        from frontend import about_page
-        about_page.show()
-        st.stop()
-
-    elif page == "search":
-        from frontend import search_page
-        search_page.show()
-        st.stop()
-
-    elif page == "service":
-        from frontend import service_page
-        service_page.show()
-        st.stop()
-
-    elif page == "contact":
-        from frontend import contact_page
-        contact_page.show()
-        st.stop()
-
-    # Agar upar wali conditions nahi chalin → HOME hero dikhao
-
-    # ---------- MAIN CONTENT: LUNGS LEFT, TEXT RIGHT ----------
-    st.markdown('<div class="hero-main">', unsafe_allow_html=True)
-    col1, col2 = st.columns([1.15, 1])
-
+    """, unsafe_allow_html=True)
+    
+    # Quick Actions
+    st.markdown("## 🚀 Quick Actions")
+    col1, col2, col3 = st.columns(3)
+    
     with col1:
-        st.image("static/lung.png", use_container_width=True)
-
-    with col2:
-        st.markdown(
-            '<div class="hero-heading">Stay healthy<br>and strong!</div>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            "<div class='hero-subheading'>It's time to book your specialist visit!</div>",
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            """
-            <div class='hero-body'>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod 
-            tempor incididunt ut labore et dolore magna aliqua.
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            "<div class='hero-deadline'>You have time until 31<sup>st</sup> December</div>",
-            unsafe_allow_html=True,
-        )
-
-        # 👉 Better: button bhi query param se prediction page khol de
-        if st.button("CANCER RISK PREDICTION"):
+        if st.button("🔬 Start Prediction", use_container_width=True):
             st.query_params.page = "prediction"
             st.rerun()
-
-    st.markdown('</div>', unsafe_allow_html=True)  # close hero-main
-    st.markdown('<div class="hero-arrow">⌄</div>', unsafe_allow_html=True)
+    
+    with col2:
+        if st.button("👥 View Patients", use_container_width=True):
+            st.query_params.page = "patients"
+            st.rerun()
+    
+    with col3:
+        if st.button("👨‍⚕️ Doctors Portal", use_container_width=True):
+            st.query_params.page = "doctors"
+            st.rerun()
+    
+    st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
+    
+    # About Section with Features
+    st.markdown("## ✨ Features")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">AI-Powered Predictions</div>
+                <div class="feature-desc">
+                    Advanced machine learning model trained on comprehensive medical data 
+                    to provide accurate lung cancer risk assessment.
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Comprehensive Analytics</div>
+                <div class="feature-desc">
+                    Detailed risk analysis with confidence scores, probability distributions,
+                    and personalized recommendations.
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <div class="feature-title">Secure & Private</div>
+                <div class="feature-desc">
+                    Enterprise-grade security with encrypted data storage, JWT authentication,
+                    and complete patient privacy protection.
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Real-Time Processing</div>
+                <div class="feature-desc">
+                    Instant predictions with network monitoring, real-time updates,
+                    and optimized performance using advanced DSA techniques.
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
+    
+    # Technology Stack
+    st.markdown("## 🛠️ Technology Integration")
+    
+    tech_col1, tech_col2, tech_col3, tech_col4 = st.columns(4)
+    
+    with tech_col1:
+        st.markdown("""
+            <div class="stat-box">
+                <div class="stat-number">📚</div>
+                <div class="stat-label">Data Structures</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with tech_col2:
+        st.markdown("""
+            <div class="stat-box">
+                <div class="stat-number">🧬</div>
+                <div class="stat-label">Data Science</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with tech_col3:
+        st.markdown("""
+            <div class="stat-box">
+                <div class="stat-number">🌐</div>
+                <div class="stat-label">Networks</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with tech_col4:
+        st.markdown("""
+            <div class="stat-box">
+                <div class="stat-number">⚙️</div>
+                <div class="stat-label">Engineering</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
+    
+    # Information Section
+    st.markdown("## ℹ️ Important Information")
+    
+    st.markdown("""
+        <div class="info-box">
+            <strong>🎓 Academic Project</strong><br>
+            This system integrates concepts from Data Structures & Algorithms, 
+            Data Science, Computer Networks, and Software Engineering.
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+        <div class="warning-box">
+            <strong>⚠️ Medical Disclaimer</strong><br>
+            This tool is for educational and assessment purposes only. 
+            Always consult qualified healthcare professionals for medical decisions.
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Footer
+    st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
+    st.markdown(f"""
+        <div style="text-align: center; color: #b0b0b0; padding: 2rem;">
+            <p>🏥 CancerCare System | Built with ❤️ using Modern Technologies</p>
+            <p style="font-size: 0.9rem;">© {datetime.now().year} | All Rights Reserved</p>
+        </div>
+    """, unsafe_allow_html=True)
