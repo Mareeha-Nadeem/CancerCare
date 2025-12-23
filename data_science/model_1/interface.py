@@ -32,10 +32,10 @@ RESULTS_DIR.mkdir(exist_ok=True)
 
 
 def load_model_and_metadata():
-    """Load trained model and metadata."""
-    
-    model_path = MODEL_DIR / "lung_cancer_model.joblib"
-    metadata_path = MODEL_DIR / "model_metadata.json"
+    """Load the trained model and its metadata."""
+    model_dir = PROJECT_ROOT / "models"
+    model_path = model_dir / "lung_cancer_pipeline.pkl"
+    metadata_path = model_dir / "model_metadata.json"
     
     if not model_path.exists():
         raise FileNotFoundError(
@@ -43,9 +43,10 @@ def load_model_and_metadata():
             "Please train the model first: python train_model.py"
         )
     
-    print(f"📦 Loading model from: {model_path}")
+    print(f"📂 Loading model from {model_path}")
     model = joblib.load(model_path)
     
+    # Load metadata = {}
     metadata = {}
     if metadata_path.exists():
         with open(metadata_path, 'r') as f:

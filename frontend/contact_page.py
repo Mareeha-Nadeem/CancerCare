@@ -1,36 +1,50 @@
+# CancerCare - Contact Page
 import streamlit as st
 
 def show():
-      # ------- TOP NAV BAR (same as Home page) -------
     st.markdown("""
         <style>
-        .hero-nav {
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            font-size: 0.9rem;
-            margin-bottom: 2.5rem;
-            margin-top: 1rem;
+        [data-testid="stAppViewContainer"] {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
         }
-        .hero-nav a {
-            text-decoration: none;
-            color: #0076D6;
-            font-weight: 600;
-        }
-        .hero-nav a:hover {
-            color: #FF6B1A;
-        }
-        .hero-nav a.active {
-            color: #FF6B1A;
+        
+        .contact-card {
+            background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid #00d9ff;
+            margin: 1rem 0;
         }
         </style>
-        <div class="hero-nav">
-            <a href="?page=home">HOME</a>
-            <a href="?page=about">ABOUT</a>
-            <a href="?page=search">SEARCH</a>
-            <a href="?page=service">SERVICE</a>
-            <a href="?page=contact">CONTACT</a>
-        </div>
     """, unsafe_allow_html=True)
-    st.title("Contact Page")
-    st.write("This page is empty for now.")
+    
+    st.title("📧 Contact Us")
+    
+    st.markdown("""
+    <div class="contact-card">
+        <h3 style="color: #00d9ff;">Get in Touch</h3>
+        <p>For inquiries about this project, please contact:</p>
+        <ul>
+            <li><strong>Project:</strong> CancerCare Lung Cancer Risk Prediction System</li>
+            <li><strong>Email:</strong> support@cancercare.edu</li>
+            <li><strong>GitHub:</strong> github.com/cancercare</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.subheader("Send a Message")
+    
+    with st.form("contact_form"):
+        name = st.text_input("Name")
+        email = st.text_input("Email")
+        message = st.text_area("Message")
+        
+        if st.form_submit_button("Send Message"):
+            if name and email and message:
+                st.success("✅ Message sent! We'll get back to you soon.")
+            else:
+                st.error("Please fill in all fields")
+    
+    if st.button("⬅️ Back to Home"):
+        st.query_params.page = "home"
+        st.rerun()
