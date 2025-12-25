@@ -1,0 +1,32 @@
+# ==============================
+# Model artifacts
+# ==============================
+data_science/model_1/models/*.pkl
+data_science/model_1/models/*.joblib
+data_science/model_1/models/*.part
+data_science/model_1/models/*.json
+data_science/model_1/models/*.txt
+data_science/model_1/data/*.csv
+# ==============================
+# Data files
+# ==============================
+
+data_science/model_1/results/*.csv
+data_science/model_1/results/*.json
+data_science/predictions/*.csv
+data_science/predictions/*.json
+data_science/results
+data_science/predictions
+
+# ==============================
+# Logs
+# ==============================
+data_science/prediction_logs/*.log
+
+# ==============================
+# Python cache / compiled files
+# ==============================
+__pycache__/
+data_science/__pycache__/
+data_science/utils/__pycache__/
+*.pyc
