@@ -106,6 +106,7 @@ from frontend import home_page, prediction_page, patients_page, doctors_page
 from frontend import about_page, search_page, service_page, contact_page
 from frontend import dashboard_page, lab_tech_page, notifications_page, messaging_page
 from frontend import lab_dashboard, batch_processing, patient_history, reports_page
+from frontend import post_diagnosis_page  # NEW post-diagnosis page
 
 st.set_page_config(page_title="CancerCare - Lab Technician System", layout="wide")
 
@@ -127,6 +128,7 @@ ALL_PAGES = {
     "search": search_page.show,
     "service": service_page.show,
     "contact": contact_page.show,
+    "post_diagnosis": post_diagnosis_page.show,  # NEW
 }
 
 # Only sidebar navigation pages - Lab-focused
@@ -140,6 +142,7 @@ SIDEBAR_PAGES = {
     "👥 Patient Records": "patients",
     "👨‍⚕️ Doctors": "doctors",
     "🔍 Search": "search",  # DSA-powered search
+    "🏥 Post-Diagnosis": "post_diagnosis",  # NEW: Post-diagnosis tracking
     "📈 Analytics": "dashboard",
     "🔔 Notifications": "notifications",
     "💬 Messages": "messaging",
