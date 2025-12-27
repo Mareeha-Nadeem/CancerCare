@@ -1,71 +1,69 @@
 """
 Enhanced Lab Technician Dashboard
-Primary interface for lab technicians with comprehensive tools
+Primary interface for lab technicians with teal theme and navbar
 """
 import streamlit as st
-import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 import plotly.graph_objects as go
-import plotly.express as px
-
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from core.services.patient_service import patient_service
 from core.services.prediction_service import prediction_service
-from core.services.appointment_service import appointment_service
-from core.notification_service import notification_service
-import json
+
 
 def show():
+    """Display lab dashboard with teal theme and navbar"""
+    
+    # Custom CSS matching landing page
     st.markdown("""
         <style>
-        [data-testid="stAppViewContainer"] {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        /* Match landing page colors */
+        .stApp {
+            background: linear-gradient(135deg, #1e7e8c 0%, #2c9db0 100%);
         }
         
-        .tech-dashboard {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            padding: 2rem;
+        /* Header section */
+        .lab-header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
             border-radius: 15px;
-            border: 3px solid #ffbe0b;
-            margin-bottom: 2rem;
-            box-shadow: 0 15px 40px rgba(255, 190, 11, 0.4);
-        }
-        
-        .tech-title {
-            font-size: 3rem;
-            font-weight: 900;
-            background: linear-gradient(90deg, #ffbe0b 0%, #ff006e 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            border: 3px solid rgba(255, 190, 11, 0.5);
+            color: white;
             text-align: center;
+            margin-bottom: 30px;
         }
         
-        .quick-action {
-            background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
-            padding: 2rem;
-            border-radius: 15px;
-            border: 2px solid #00d9ff;
-            text-align: center;
-            margin: 1rem 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .lab-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: #ffbe0b;
         }
         
-        .quick-action:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 217, 255, 0.5);
-            border-color: #ffbe0b;
+        /* Navigation bar */
+        .navbar {
+            background: #2d3748;
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
-        .stat-box {
+        .navbar h4 {
+            color: white;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        /* Stat cards */
+        .stat-card {
             background: linear-gradient(135deg, #ff006e 0%, #ffbe0b 100%);
-            padding: 1.5rem;
+            padding: 25px;
             border-radius: 12px;
             text-align: center;
             color: white;
-            margin: 1rem 0;
+            margin: 10px 0;
         }
         
         .stat-number {
@@ -73,152 +71,157 @@ def show():
             font-weight: 900;
         }
         
-        .pending-sample {
-            background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
-            padding: 1.5rem;
-            border-radius: 12px;
-            border-left: 5px solid #ff006e;
-            margin: 1rem 0;
+        .stat-label {
+            font-size: 1.1rem;
+            margin-top: 5px;
         }
         
-        .completed-sample {
-            border-left: 5px solid #00ff88;
+        /* Action cards */
+        .action-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 10px 0;
+            border: 2px solid #1e7e8c;
+        }
+        
+        .action-card h3 {
+            color: #1e7e8c;
+            margin-bottom: 10px;
         }
         </style>
     """, unsafe_allow_html=True)
     
+    # Logout button
+    col1, col2, col3 = st.columns([3, 1, 1])
+    with col3:
+        if st.button("Logout", use_container_width=True):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.rerun()
+    
     # Header
-    st.markdown("""
-        <div class="tech-dashboard">
-            <h1 class="tech-title">🔬 Lab Technician Control Center</h1>
-            <p style="color: #b0b0b0; text-align: center; font-size: 1.2rem;">
+    username = st.session_state.get('username', 'User')
+    st.markdown(f"""
+        <div class="lab-header">
+            <h1>Lab Technician Control Center</h1>
+            <p style="font-size: 1.2rem; margin: 10px 0;">
                 Your comprehensive workspace for sample analysis and risk assessment
+            </p>
+            <p style="font-size: 0.9rem; opacity: 0.9;">
+                Logged in as: <strong>{username}</strong>
             </p>
         </div>
     """, unsafe_allow_html=True)
     
-    # Quick stats row
-    st.markdown("## 📊 Today's Overview")
+    # Navigation Bar
+    st.markdown('<div class="navbar"><h4>Navigation</h4></div>', unsafe_allow_html=True)
     
+    nav_cols = st.columns(7)
+    nav_items = [
+        ("Lab Dashboard", "lab_dashboard"),
+        ("Single Analysis", "prediction"),
+        ("Batch Processing", "batch_processing"),
+        ("Patient History", "patient_history"),
+        ("Patient Records", "patients"),
+        ("Post-Diagnosis", "post_diagnosis"),
+        ("Search", "search")
+    ]
+    
+    for idx, (label, page) in enumerate(nav_items):
+        with nav_cols[idx]:
+            if st.button(label, key=f"nav_{page}", use_container_width=True):
+                st.query_params.page = page
+                st.rerun()
+    
+    # Get statistics
     try:
         all_predictions = prediction_service.get_all_predictions(limit=1000)
         today = datetime.now().date()
         today_predictions = [p for p in all_predictions if p.created_at.date() == today]
         
-        pending_patients = patient_service.get_all_patients(limit=1000)
+        all_patients = patient_service.get_all_patients(limit=1000)
         high_risk_today = [p for p in today_predictions if p.risk_level == "High"]
+        pending_count = max(0, len(all_patients) - len(all_predictions))
+        
+        # Statistics Cards
+        st.markdown("## Today's Overview")
         
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
             st.markdown(f"""
-                <div class="stat-box">
+                <div class="stat-card">
                     <div class="stat-number">{len(today_predictions)}</div>
-                    <div>Tests Today</div>
+                    <div class="stat-label">Tests Today</div>
                 </div>
             """, unsafe_allow_html=True)
         
         with col2:
             st.markdown(f"""
-                <div class="stat-box">
+                <div class="stat-card">
                     <div class="stat-number">{len(high_risk_today)}</div>
-                    <div>High Risk</div>
+                    <div class="stat-label">High Risk</div>
                 </div>
             """, unsafe_allow_html=True)
         
         with col3:
-            pending_count = len(pending_patients) - len([p for p in all_predictions])
             st.markdown(f"""
-                <div class="stat-box">
-                    <div class="stat-number">{max(0, pending_count)}</div>
-                    <div>Pending Samples</div>
+                <div class="stat-card">
+                    <div class="stat-number">{pending_count}</div>
+                    <div class="stat-label">Pending Samples</div>
                 </div>
             """, unsafe_allow_html=True)
         
         with col4:
             st.markdown(f"""
-                <div class="stat-box">
-                    <div class="stat-number">{len(pending_patients)}</div>
-                    <div>Total Patients</div>
+                <div class="stat-card">
+                    <div class="stat-number">{len(all_patients)}</div>
+                    <div class="stat-label">Total Patients</div>
                 </div>
             """, unsafe_allow_html=True)
         
         st.markdown("---")
         
         # Quick Actions
-        st.markdown("## ⚡ Quick Actions")
+        st.markdown("## Quick Actions")
         
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            if st.button("🧪 New Sample Analysis", key="new_analysis", use_container_width=True, type="primary"):
+            st.markdown("""
+                <div class="action-card">
+                    <h3>New Sample Analysis</h3>
+                </div>
+            """, unsafe_allow_html=True)
+            if st.button("Go to Prediction", key="action_new", use_container_width=True):
                 st.query_params.page = "prediction"
                 st.rerun()
         
         with col2:
-            if st.button("📊 Risk Analysis Report", key="risk_report", use_container_width=True):
-                st.session_state['show_risk_report'] = True
+            st.markdown("""
+                <div class="action-card">
+                    <h3>Risk Analysis Report</h3>
+                </div>
+            """, unsafe_allow_html=True)
+            if st.button("View Reports", key="action_report", use_container_width=True):
+                st.query_params.page = "reports"
+                st.rerun()
         
         with col3:
-            if st.button("📅 Schedule Follow-up", key="schedule", use_container_width=True):
+            st.markdown("""
+                <div class="action-card">
+                    <h3>Schedule Follow-up</h3>
+                </div>
+            """, unsafe_allow_html=True)
+            if st.button("Go to Appointments", key="action_appt", use_container_width=True):
                 st.query_params.page = "lab_tech"
                 st.rerun()
         
-        # Risk Analysis Report Section
-        if st.session_state.get('show_risk_report', False):
-            st.markdown("---")
-            st.markdown("## 📈 Risk Analysis Report")
-            
-            risk_dist = prediction_service.get_risk_distribution()
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                # Risk distribution pie chart
-                fig_pie = go.Figure(data=[go.Pie(
-                    labels=list(risk_dist['counts'].keys()),
-                    values=list(risk_dist['counts'].values()),
-                    marker=dict(colors=['#00ff88', '#ffbe0b', '#ff006e']),
-                    hole=0.5,
-                    textinfo='label+percent+value',
-                    textfont=dict(color='white', size=16)
-                )])
-                
-                fig_pie.update_layout(
-                    title="Risk Distribution",
-                    plot_bgcolor='rgba(0,0,0,0)',
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='#e0e0e0'),
-                    height=400
-                )
-                
-                st.plotly_chart(fig_pie, use_container_width=True)
-            
-            with col2:
-                # Statistics
-                st.markdown("### 📊 Statistics")
-                st.write(f"**Total Assessments:** {risk_dist['total']}")
-                st.write("")
-                st.write("**Risk Breakdown:**")
-                st.success(f"✅ Low Risk: {risk_dist['counts']['Low']} ({risk_dist['percentages']['Low']}%)")
-                st.warning(f"⚠️ Medium Risk: {risk_dist['counts']['Medium']} ({risk_dist['percentages']['Medium']}%)")
-                st.error(f"🔴 High Risk: {risk_dist['counts']['High']} ({risk_dist['percentages']['High']}%)")
-                
-                # Quality metrics
-                st.markdown("---")
-                st.markdown("### 🎯 Lab Quality Metrics")
-                
-                if all_predictions:
-                    avg_confidence = sum(p.confidence for p in all_predictions) / len(all_predictions)
-                    st.metric("Average Confidence", f"{avg_confidence:.1%}")
-                    
-                    # Completion rate
-                    completion_rate = (len(all_predictions) / len(pending_patients) * 100) if pending_patients else 0
-                    st.metric("Completion Rate", f"{completion_rate:.1f}%")
-        
-        # Recent High-Risk Cases
+        # High-Priority Cases
         st.markdown("---")
-        st.markdown("## 🔴 High-Priority Cases (Requires Immediate Attention)")
+        st.markdown("## High-Priority Cases")
         
         high_risk_recent = [p for p in all_predictions[:20] if p.risk_level == "High"]
         
@@ -227,131 +230,23 @@ def show():
                 patient = patient_service.get_patient_by_id(pred.patient_id)
                 
                 if patient:
-                    with st.container():
-                        st.markdown(f"""
-                            <div class="pending-sample">
-                                <h3 style="color: #ff006e;">🔴 URGENT: {patient.name}</h3>
-                                <p><strong>MRN:</strong> {patient.mrn} | <strong>Age:</strong> {patient.age} | <strong>Gender:</strong> {patient.gender}</p>
-                                <p><strong>Risk Level:</strong> HIGH ({pred.confidence:.1%} confidence)</p>
-                                <p><strong>Test Date:</strong> {pred.created_at.strftime('%Y-%m-%d %H:%M')}</p>
-                            </div>
-                        """, unsafe_allow_html=True)
-                        
-                        col1, col2, col3 = st.columns(3)
-                        
+                    with st.expander(f"URGENT: {patient.name} - {pred.risk_level} Risk"):
+                        col1, col2 = st.columns(2)
                         with col1:
-                            if st.button(f"📅 Schedule Urgent Appointment", key=f"urgent_{pred.id}"):
-                                st.session_state['selected_patient_id'] = patient.id
-                                st.session_state['selected_patient_name'] = patient.name
-                                st.session_state['prediction_risk'] = pred.risk_level
-                                st.query_params.page = "lab_tech"
-                                st.rerun()
-                        
+                            st.write(f"**MRN:** {patient.mrn}")
+                            st.write(f"**Age:** {patient.age}")
+                            st.write(f"**Gender:** {patient.gender}")
                         with col2:
-                            if st.button(f"📄 Generate Report", key=f"report_{pred.id}"):
-                                st.info("Report generation feature coming soon!")
+                            st.write(f"**Risk Level:** {pred.risk_level}")
+                            st.write(f"**Confidence:** {pred.confidence:.1%}")
+                            st.write(f"**Test Date:** {pred.created_at.strftime('%Y-%m-%d %H:%M')}")
                         
-                        with col3:
-                            if st.button(f"📨 Notify Doctor", key=f"notify_{pred.id}"):
-                                notification_service.broadcast(
-                                    "High-Risk Case Alert",
-                                    f"Patient {patient.name} has HIGH risk assessment. Immediate attention required.",
-                                    "error"
-                                )
-                                st.success("✅ Doctor notified!")
+                        if st.button(f"Schedule Appointment", key=f"sched_{pred.id}"):
+                            st.query_params.page = "lab_tech"
+                            st.rerun()
         else:
-            st.success("✅ No high-risk cases currently. Great work!")
+            st.success("No high-risk cases currently!")
         
-        # Today's workflow
-        st.markdown("---")
-        st.markdown("## 📋 Today's Workflow")
-        
-        if today_predictions:
-            # Create timeline
-            timeline_data = []
-            for pred in today_predictions:
-                patient = patient_service.get_patient_by_id(pred.patient_id)
-                if patient:
-                    timeline_data.append({
-                        'time': pred.created_at.strftime('%H:%M'),
-                        'patient': patient.name,
-                        'risk': pred.risk_level,
-                        'confidence': pred.confidence
-                    })
-            
-            for item in sorted(timeline_data, key=lambda x: x['time'], reverse=True):
-                risk_color = {'High': '🔴', 'Medium': '🟡', 'Low': '🟢'}
-                st.write(f"{item['time']} - {risk_color[item['risk']]} {item['patient']} - {item['risk']} Risk ({item['confidence']:.1%})")
-        else:
-            st.info("No tests performed today. Start your first analysis!")
-        
-        # Performance Chart
-        st.markdown("---")
-        st.markdown("## 📈 Weekly Performance")
-        
-        # Get last 7 days data
-        daily_counts = {}
-        for i in range(7):
-            day = today - timedelta(days=i)
-            count = len([p for p in all_predictions if p.created_at.date() == day])
-            daily_counts[day.strftime('%a')] = count
-        
-        fig_bar = go.Figure(data=[go.Bar(
-            x=list(daily_counts.keys()),
-            y=list(daily_counts.values()),
-            marker=dict(
-                color='#ffbe0b',
-                line=dict(color='#ff006e', width=2)
-            ),
-            text=list(daily_counts.values()),
-            textposition='auto'
-        )])
-        
-        fig_bar.update_layout(
-            title="Tests Performed (Last 7 Days)",
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font=dict(color='#e0e0e0'),
-            xaxis=dict(title="Day", gridcolor='rgba(0, 217, 255, 0.2)'),
-            yaxis=dict(title="Number of Tests", gridcolor='rgba(0, 217, 255, 0.2)'),
-            height=350
-        )
-        
-        st.plotly_chart(fig_bar, use_container_width=True)
-    
     except Exception as e:
         st.error(f"Error loading dashboard: {e}")
-        st.info("Make sure database is connected. Run: python fix_password.py then python init_db_simple.py")
-    
-    # Footer with tips
-    st.markdown("---")
-    with st.expander("💡 Lab Technician Tips & Shortcuts"):
-        st.markdown("""
-        **Quick Workflow:**
-        1. 🧪 Use "New Sample Analysis" for quick predictions
-        2. 🔴 Monitor high-risk cases daily
-        3. 📅 Schedule follow-ups immediately for high-risk patients
-        4. 📊 Review weekly performance to track productivity
-        
-        **Keyboard Shortcuts:**
-        - `Ctrl + R` - Refresh dashboard
-        - `N` - New analysis (when in prediction page)
-        
-        **Best Practices:**
-        - Process high-risk cases first
-        - Double-check patient information
-        - Document all findings
-        - Schedule appointments within 24 hours for high-risk
-        """)
-    
-    # Navigation
-    st.markdown("---")
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("⬅️ Back to Home"):
-            st.query_params.page = "home"
-            st.rerun()
-    with col2:
-        if st.button("📊 Full Dashboard"):
-            st.query_params.page = "dashboard"
-            st.rerun()
+        st.info("Make sure database is connected")

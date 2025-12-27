@@ -107,11 +107,15 @@ from frontend import about_page, search_page, service_page, contact_page
 from frontend import dashboard_page, lab_tech_page, notifications_page, messaging_page
 from frontend import lab_dashboard, batch_processing, patient_history, reports_page
 from frontend import post_diagnosis_page  # NEW post-diagnosis page
+from frontend import landing_page, auth_page, dashboard_home  # NEW authentication pages
 
 st.set_page_config(page_title="CancerCare - Lab Technician System", layout="wide")
 
 # All pages including top-nav pages
 ALL_PAGES = {
+    "landing": landing_page.show,  # NEW: Landing page
+    "auth": auth_page.show,  # NEW: Login/Signup page
+    "dashboard_home": dashboard_home.show,  # NEW: Dashboard home after login
     "lab_dashboard": lab_dashboard.show,  # Primary page for lab technicians
     "home": home_page.show,
     "prediction": prediction_page.show,
@@ -133,19 +137,19 @@ ALL_PAGES = {
 
 # Only sidebar navigation pages - Lab-focused
 SIDEBAR_PAGES = {
-    "🔬 Lab Dashboard": "lab_dashboard",
-    "🧪 Single Analysis": "prediction",
-    "📦 Batch Processing": "batch_processing",
-    "📜 Patient History": "patient_history",
-    "📊 Reports & Export": "reports",
-    "📅 Appointments": "lab_tech",
-    "👥 Patient Records": "patients",
-    "👨‍⚕️ Doctors": "doctors",
-    "🔍 Search": "search",  # DSA-powered search
-    "🏥 Post-Diagnosis": "post_diagnosis",  # NEW: Post-diagnosis tracking
-    "📈 Analytics": "dashboard",
-    "🔔 Notifications": "notifications",
-    "💬 Messages": "messaging",
+    "Lab Dashboard": "lab_dashboard",
+    "Single Analysis": "prediction",
+    "Batch Processing": "batch_processing",
+    "Patient History": "patient_history",
+    "Reports & Export": "reports",
+    "Appointments": "lab_tech",
+    "Patient Records": "patients",
+    "Doctors": "doctors",
+    "Search": "search",  # DSA-powered search
+    "Post-Diagnosis": "post_diagnosis",  # NEW: Post-diagnosis tracking
+    "Analytics": "dashboard",
+    "Notifications": "notifications",
+    "Messages": "messaging",
 }
 
 def set_page(page_name: str):
@@ -153,10 +157,39 @@ def set_page(page_name: str):
     st.rerun()
 
 def main():
-    # Default to lab dashboard for lab technicians
-    current_page = st.query_params.get("page", "lab_dashboard")
+    # Initialize session state for authentication if not exists
+    if 'authenticated' not in st.session_state:
+        st.session_state.authenticated = False
+    
+    # Check authentication status
+    if not st.session_state.authenticated:
+        # User not authenticated - show landing or auth page
+        current_page = st.session_state.get("page", "landing")
+        
+        if current_page in ["landing", "auth"]:
+            try:
+                ALL_PAGES[current_page]()
+            except Exception as e:
+                st.error(f"Error loading page: {e}")
+                # Fallback to landing
+                st.session_state.page = "landing"
+                ALL_PAGES["landing"]()
+        else:
+            # Trying to access protected page without auth - redirect to landing
+            st.session_state.page = "landing"
+            ALL_PAGES["landing"]()
+        return
+    
+    # User is authenticated - show full application
+    # Default to lab_dashboard for authenticated users
+    current_page = st.query_params.get("page", st.session_state.get("page", "lab_dashboard"))
 
-    st.sidebar.title("🔬 CancerCare Lab")
+    st.sidebar.title("CancerCare Lab")
+    
+    # Show user info in sidebar
+    username = st.session_state.get('username', 'User')
+    st.sidebar.success(f"Logged in as: **{username}**")
+    st.sidebar.markdown("---")
 
     # Show sidebar navigation
     if current_page in SIDEBAR_PAGES.values():
@@ -191,9 +224,9 @@ def main():
         ALL_PAGES[current_page]()
     except Exception as e:
         st.error(f"Error loading page: {e}")
-        st.write("Trying to load Lab Dashboard...")
+        st.write("Trying to load Dashboard Home...")
         try:
-            ALL_PAGES["lab_dashboard"]()
+            ALL_PAGES["dashboard_home"]()
         except:
             st.error("Could not load any page. Please check your installation.")
 
