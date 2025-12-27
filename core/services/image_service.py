@@ -4,6 +4,7 @@ Handles medical image upload, storage, and management
 """
 from core.models import MedicalImage
 from core.db_config import get_db_session
+from core.ml.image_classifier import medical_image_classifier
 from typing import List, Optional, Dict, BinaryIO
 from pathlib import Path
 from datetime import datetime
@@ -23,7 +24,8 @@ class ImageService:
         image_file: BinaryIO,
         image_type: str,
         post_diagnosis_id: Optional[int] = None,
-        filename: Optional[str] = None
+        filename: Optional[str] = None,
+        auto_analyze: bool = True
     ) -> tuple[Optional[MedicalImage], Optional[str]]:
         """
         Upload and store medical image
@@ -85,6 +87,23 @@ class ImageService:
                 db.add(medical_image)
                 db.commit()
                 db.refresh(medical_image)
+                
+                # Automatically analyze image with AI if requested
+                if auto_analyze:
+                    try:
+                        analysis_result = medical_image_classifier.detect_abnormalities(str(file_path))
+                        # Update image with AI results
+                        medical_image.ai_analyzed = True
+                        medical_image.tumor_detected = analysis_result.get('tumor_detected', False)
+                        medical_image.confidence_score = analysis_result.get('confidence_score', 0.0)
+                        medical_image.tumor_count = analysis_result.get('tumor_count', 0)
+                        medical_image.largest_tumor_size = analysis_result.get('largest_tumor_size', 0.0)
+                        medical_image.analysis_summary = analysis_result.get('analysis_summary', '')
+                        db.commit()
+                        print(f"✅ AI Analysis complete: {'Abnormal' if analysis_result.get('tumor_detected') else 'Normal'}")
+                    except Exception as ai_error:
+                        print(f"⚠️ AI analysis failed: {ai_error}")
+                        # Continue anyway - image is uploaded
                 
                 return medical_image, None
             except Exception as e:
