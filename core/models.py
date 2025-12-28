@@ -16,9 +16,10 @@ class Patient(Base):
     email = Column(String)  # NEW: Email field for notifications
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    reports = relationship("Report", back_populates="patient")
-    predictions = relationship("Prediction", back_populates="patient")
-    appointments = relationship("Appointment", back_populates="patient")
+    # Relationships - using lazy loading to avoid mapper initialization issues
+    reports = relationship("Report", back_populates="patient", lazy='select')
+    predictions = relationship("Prediction", back_populates="patient", lazy='select')
+    appointments = relationship("Appointment", back_populates="patient", lazy='select')
     
 
 class Report(Base):
@@ -30,7 +31,7 @@ class Report(Base):
     file_path = Column(Text)
     uploaded_at = Column(DateTime, default=datetime.utcnow)
     
-    patient = relationship("Patient", back_populates="reports")
+    patient = relationship("Patient", back_populates="reports", lazy='select')
     
 class Prediction(Base):
     __tablename__ = "predictions"
@@ -42,7 +43,7 @@ class Prediction(Base):
     probabilities = Column(Text)  # JSON string of all probabilities
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    patient = relationship("Patient", back_populates="predictions")
+    patient = relationship("Patient", back_populates="predictions", lazy='select')
 
 
 class Doctor(Base):
@@ -55,7 +56,7 @@ class Doctor(Base):
     phone = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    appointments = relationship("Appointment", back_populates="doctor")
+    appointments = relationship("Appointment", back_populates="doctor", lazy='select')
 
 
 class Appointment(Base):
@@ -71,8 +72,8 @@ class Appointment(Base):
     notes = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    patient = relationship("Patient", back_populates="appointments")
-    doctor = relationship("Doctor", back_populates="appointments")
+    patient = relationship("Patient", back_populates="appointments", lazy='select')
+    doctor = relationship("Doctor", back_populates="appointments", lazy='select')
 
 
 class User(Base):
@@ -108,9 +109,9 @@ class PostDiagnosis(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
-    patient = relationship("Patient")
-    medical_images = relationship("MedicalImage", back_populates="post_diagnosis")
-    tumor_markers = relationship("TumorMarker", back_populates="post_diagnosis")
+    patient = relationship("Patient", lazy='select')
+    medical_images = relationship("MedicalImage", back_populates="post_diagnosis", lazy='select')
+    tumor_markers = relationship("TumorMarker", back_populates="post_diagnosis", lazy='select')
 
 
 class MedicalImage(Base):
@@ -139,8 +140,8 @@ class MedicalImage(Base):
     notes = Column(Text)
     
     # Relationships
-    patient = relationship("Patient")
-    post_diagnosis = relationship("PostDiagnosis", back_populates="medical_images")
+    patient = relationship("Patient", lazy='select')
+    post_diagnosis = relationship("PostDiagnosis", back_populates="medical_images", lazy='select')
 
 
 class TumorMarker(Base):
@@ -170,5 +171,5 @@ class TumorMarker(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     
     # Relationships
-    patient = relationship("Patient")
-    post_diagnosis = relationship("PostDiagnosis", back_populates="tumor_markers")
+    patient = relationship("Patient", lazy='select')
+    post_diagnosis = relationship("PostDiagnosis", back_populates="tumor_markers", lazy='select')
