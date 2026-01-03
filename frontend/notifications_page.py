@@ -63,7 +63,7 @@ def show():
     # Header
     st.markdown("""
         <div class="notif-header">
-            <h1 class="notif-title">🔔 Live Notifications</h1>
+            <h1 class="notif-title"> Live Notifications</h1>
             <p style="color: #b0b0b0;">Real-time system updates and alerts</p>
         </div>
     """, unsafe_allow_html=True)
@@ -75,14 +75,14 @@ def show():
         auto_refresh = st.checkbox("Auto-refresh", value=False)
     
     with col3:
-        if st.button("🔄 Refresh Now"):
+        if st.button(" Refresh Now"):
             st.rerun()
     
     # Get statistics
     stats = notification_service.get_statistics()
     
     # Display metrics
-    st.markdown("## 📊 Notification Statistics")
+    st.markdown("##  Notification Statistics")
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -124,31 +124,31 @@ def show():
         notifications = [n for n in notifications if n['type'].lower() == filter_type.lower()]
     
     # Display notifications
-    st.markdown("## 📬 Recent Notifications")
+    st.markdown("##  Recent Notifications")
     
     if notifications:
         for notif in notifications:
             notif_type = notif['type']
             icon_map = {
-                'info': '💡',
-                'success': '✅',
-                'warning': '⚠️',
-                'error': '❌'
+                'info': '',
+                'success': '',
+                'warning': '',
+                'error': ''
             }
             
-            icon = icon_map.get(notif_type, '📌')
+            icon = icon_map.get(notif_type, '')
             
             with st.container():
                 st.markdown(f"""
                     <div class="notif-card notif-{notif_type}">
                         <h3 style="color: #00d9ff;">{icon} {notif['title']}</h3>
                         <p>{notif['message']}</p>
-                        <small style="color: #888;">📅 {notif['timestamp']}</small>
+                        <small style="color: #888;"> {notif['timestamp']}</small>
                     </div>
                 """, unsafe_allow_html=True)
         
         # Mark all as read button
-        if st.button("✅ Mark All as Read"):
+        if st.button(" Mark All as Read"):
             # In a real app, would mark notifications as read
             st.success("All notifications marked as read!")
             st.rerun()
@@ -164,6 +164,6 @@ def show():
     
     # Back button
     st.markdown("---")
-    if st.button("⬅️ Back to Home"):
+    if st.button(" Back to Home"):
         st.query_params.page = "home"
         st.rerun()

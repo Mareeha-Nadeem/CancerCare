@@ -48,11 +48,11 @@ def add_doctors():
     for doctor_data in doctors:
         doctor, error = doctor_service.create_doctor(doctor_data)
         if error:
-            print(f"❌ Error adding {doctor_data['name']}: {error}")
+            print(f" Error adding {doctor_data['name']}: {error}")
         else:
-            print(f"✅ Added: {doctor_data['name']} - {doctor_data['specialization']}")
+            print(f" Added: {doctor_data['name']} - {doctor_data['specialization']}")
     
-    print("\n✅ All doctors added successfully!")
+    print("\n All doctors added successfully!")
     print("\nYou can now:")
     print("  - Schedule appointments")
     print("  - View doctors in Doctors page")

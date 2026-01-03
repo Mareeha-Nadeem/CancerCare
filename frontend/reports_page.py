@@ -24,10 +24,10 @@ def show():
         </style>
     """, unsafe_allow_html=True)
     
-    st.title("📊 Reports & Data Export")
+    st.title(" Reports & Data Export")
     
     # Tabs for different report types
-    tab1, tab2, tab3, tab4 = st.tabs(["📈 Summary Reports", "📋 Detailed Export", "📊 Statistics", "⚙️ Custom Report"])
+    tab1, tab2, tab3, tab4 = st.tabs([" Summary Reports", " Detailed Export", " Statistics", " Custom Report"])
     
     with tab1:
         st.subheader("Generate Summary Reports")
@@ -37,7 +37,7 @@ def show():
             ["All Predictions Summary", "High-Risk Patients", "Today's Activity", "Weekly Summary"]
         )
         
-        if st.button("📄 Generate Report", type="primary"):
+        if st.button(" Generate Report", type="primary"):
             try:
                 predictions = prediction_service.get_all_predictions(limit=1000)
                 patients = patient_service.get_all_patients(limit=1000)
@@ -118,7 +118,7 @@ def show():
                     df = pd.DataFrame(data)
                 
                 # Display preview
-                st.success(f"✅ Report generated: {len(df)} records")
+                st.success(f" Report generated: {len(df)} records")
                 st.dataframe(df, use_container_width=True)
                 
                 # Download options
@@ -127,7 +127,7 @@ def show():
                 with col1:
                     csv = df.to_csv(index=False)
                     st.download_button(
-                        "💾 Download CSV",
+                        " Download CSV",
                         csv,
                         f"{report_type.lower().replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}.csv",
                         "text/csv",
@@ -137,7 +137,7 @@ def show():
                 with col2:
                     # Excel download requires openpyxl, but we can use CSV as alternative
                     st.download_button(
-                        "📊 Download Excel (CSV)",
+                        " Download Excel (CSV)",
                         csv,
                         f"{report_type.lower().replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}.xlsx",
                         "text/csv",
@@ -155,7 +155,7 @@ def show():
             ["Patients", "Predictions", "Doctors", "Appointments"]
         )
         
-        if st.button("📥 Export Selected Data"):
+        if st.button(" Export Selected Data"):
             try:
                 all_data = {}
                 
@@ -216,7 +216,7 @@ def show():
                         combined_csv += df.to_csv(index=False)
                     
                     st.download_button(
-                        "💾 Download All Data (CSV)",
+                        " Download All Data (CSV)",
                         combined_csv,
                         f"cancercare_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                         "text/csv"
@@ -283,7 +283,7 @@ def show():
         
         min_confidence = st.slider("Minimum Confidence", 0.0, 1.0, 0.0, 0.05)
         
-        if st.button("🔍 Build Custom Report"):
+        if st.button(" Build Custom Report"):
             try:
                 predictions = prediction_service.get_all_predictions(limit=10000)
                 
@@ -315,12 +315,12 @@ def show():
                 
                 if filtered:
                     df = pd.DataFrame(filtered)
-                    st.success(f"✅ Found {len(df)} matching records")
+                    st.success(f" Found {len(df)} matching records")
                     st.dataframe(df, use_container_width=True)
                     
                     csv = df.to_csv(index=False)
                     st.download_button(
-                        "💾 Download Custom Report",
+                        " Download Custom Report",
                         csv,
                         f"custom_report_{datetime.now().strftime('%Y%m%d')}.csv",
                         "text/csv"
@@ -333,6 +333,6 @@ def show():
     
     # Back button
     st.markdown("---")
-    if st.button("⬅️ Back to Lab Dashboard"):
+    if st.button(" Back to Lab Dashboard"):
         st.query_params.page = "lab_dashboard"
         st.rerun()

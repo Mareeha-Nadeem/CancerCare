@@ -16,7 +16,7 @@ try:
     TORCH_AVAILABLE = True
 except ImportError:
     TORCH_AVAILABLE = False
-    print("⚠️ PyTorch not available. Image classification will use mock predictions.")
+    print(" PyTorch not available. Image classification will use mock predictions.")
 
 class MedicalImageClassifier:
     """
@@ -38,12 +38,12 @@ class MedicalImageClassifier:
         if TORCH_AVAILABLE:
             self._load_model()
         else:
-            print("ℹ️ Running in fallback mode without PyTorch")
+            print("ℹ Running in fallback mode without PyTorch")
     
     def _load_model(self):
         """Load pre-trained ResNet50 model"""
         try:
-            print("📦 Loading ResNet50 model...")
+            print(" Loading ResNet50 model...")
             
             # Set device
             self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -65,10 +65,10 @@ class MedicalImageClassifier:
                 )
             ])
             
-            print("✅ Model loaded successfully!")
+            print(" Model loaded successfully!")
             
         except Exception as e:
-            print(f"❌ Error loading model: {e}")
+            print(f" Error loading model: {e}")
             self.model = None
     
     def analyze_image(self, image_path: str) -> Dict:
@@ -116,7 +116,7 @@ class MedicalImageClassifier:
             return result
             
         except Exception as e:
-            print(f"❌ Analysis error: {e}")
+            print(f" Analysis error: {e}")
             return self._mock_analysis(image_path)
     
     def detect_abnormalities(self, image_path: str) -> Dict:
@@ -208,7 +208,7 @@ class MedicalImageClassifier:
             return features
             
         except Exception as e:
-            print(f"❌ Feature extraction error: {e}")
+            print(f" Feature extraction error: {e}")
             return None
     
     def _mock_analysis(self, image_path: str) -> Dict:

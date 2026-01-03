@@ -45,9 +45,9 @@ class NotificationServer:
             self.server_socket.listen(5)
             self.running = True
             
-            print(f"✅ Notification Server started on {self.host}:{self.port}")
-            print(f"📡 Using TCP Socket Programming")
-            print(f"🔄 Client-Server Architecture Active")
+            print(f" Notification Server started on {self.host}:{self.port}")
+            print(f" Using TCP Socket Programming")
+            print(f" Client-Server Architecture Active")
             
             # Accept connections in separate thread
             accept_thread = threading.Thread(target=self._accept_connections, daemon=True)
@@ -56,7 +56,7 @@ class NotificationServer:
             return True
             
         except Exception as e:
-            print(f"❌ Server start error: {e}")
+            print(f" Server start error: {e}")
             return False
     
     def _accept_connections(self):
@@ -66,7 +66,7 @@ class NotificationServer:
                 # Accept connection (3-way TCP handshake)
                 client_socket, address = self.server_socket.accept()
                 
-                print(f"🔌 New client connected: {address}")
+                print(f" New client connected: {address}")
                 
                 with self.lock:
                     self.clients.add(client_socket)
@@ -81,7 +81,7 @@ class NotificationServer:
                 
             except Exception as e:
                 if self.running:
-                    print(f"❌ Accept error: {e}")
+                    print(f" Accept error: {e}")
     
     def _handle_client(self, client_socket, address):
         """Handle individual client connection"""
@@ -94,15 +94,15 @@ class NotificationServer:
                     break
                 
                 # Process client message
-                print(f"📨 Received from {address}: {data}")
+                print(f" Received from {address}: {data}")
                 
         except Exception as e:
-            print(f"❌ Client handler error: {e}")
+            print(f" Client handler error: {e}")
         finally:
             with self.lock:
                 self.clients.discard(client_socket)
             client_socket.close()
-            print(f"🔌 Client disconnected: {address}")
+            print(f" Client disconnected: {address}")
     
     def broadcast_notification(self, notification_data: dict):
         """
@@ -120,10 +120,10 @@ class NotificationServer:
                 try:
                     # Send message to client
                     client.send(message.encode('utf-8'))
-                    print(f"📤 Notification sent to client")
+                    print(f" Notification sent to client")
                     
                 except Exception as e:
-                    print(f"❌ Send error: {e}")
+                    print(f" Send error: {e}")
                     disconnected.add(client)
             
             # Remove disconnected clients
@@ -150,7 +150,7 @@ class NotificationServer:
         }
         
         self.broadcast_notification(notification)
-        print(f"✅ Notification sent to Patient {patient_id}")
+        print(f" Notification sent to Patient {patient_id}")
         
         return notification
     
@@ -167,7 +167,7 @@ class NotificationServer:
         self.running = False
         if self.server_socket:
             self.server_socket.close()
-        print("✅ Notification Server stopped")
+        print(" Notification Server stopped")
 
 # Global notification server instance
 notification_server = NotificationServer()
@@ -183,5 +183,5 @@ def start_notification_server():
 try:
     start_notification_server()
 except Exception as e:
-    print(f"⚠️ Could not start notification server: {e}")
+    print(f" Could not start notification server: {e}")
     print("   Notifications will work in offline mode")

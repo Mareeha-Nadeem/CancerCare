@@ -21,10 +21,10 @@ def init_database():
     print("=" * 70)
     
     try:
-        print("\n🔨 Creating all tables...")
+        print("\n Creating all tables...")
         Base.metadata.create_all(bind=engine)
         
-        print("\n✅ All tables created successfully!")
+        print("\n All tables created successfully!")
         print("\nTables created:")
         print("  - patients")
         print("  - doctors")
@@ -35,8 +35,8 @@ def init_database():
         
         return True
     except Exception as e:
-        print(f"\n❌ Error: {e}")
-        print("\n💡 Make sure PostgreSQL is running and database 'cancercare' exists")
+        print(f"\n Error: {e}")
+        print("\n Make sure PostgreSQL is running and database 'cancercare' exists")
         print("   You can create it with: CREATE DATABASE cancercare;")
         return False
 
@@ -49,10 +49,10 @@ def seed_sample_data():
     try:
         # Check if data exists
         if db.query(User).count() > 0:
-            print("\n✅ Sample data already exists")
+            print("\n Sample data already exists")
             return True
         
-        print("\n📦 Adding sample data...")
+        print("\n Adding sample data...")
         
         # Create users
         admin = User(
@@ -98,11 +98,11 @@ def seed_sample_data():
         db.add(doctor)
         
         db.commit()
-        print("✅ Sample data added!")
+        print(" Sample data added!")
         
         return True
     except Exception as e:
-        print(f"⚠️  Error adding sample data: {e}")
+        print(f"  Error adding sample data: {e}")
         db.rollback()
         return False
     finally:
@@ -110,11 +110,11 @@ def seed_sample_data():
 
 if __name__ == "__main__":
     print("""
-    ╔══════════════════════════════════════════════════════════════════╗
-    ║                                                                  ║
-    ║          🫁 CancerCare Database Initialization                   ║
-    ║                                                                  ║
-    ╚══════════════════════════════════════════════════════════════════╝
+    
+                                                                      
+               CancerCare Database Initialization                   
+                                                                      
+    
     """)
     
     if init_database():
@@ -125,10 +125,10 @@ if __name__ == "__main__":
             seed_sample_data()
         
         print("\n" + "=" * 70)
-        print("✅ Database setup complete!")
+        print(" Database setup complete!")
         print("\nYou can now run: streamlit run app.py")
         print("=" * 70)
     else:
         print("\n" + "=" * 70)
-        print("❌ Setup failed. Please check the error messages above.")
+        print(" Setup failed. Please check the error messages above.")
         print("=" * 70)

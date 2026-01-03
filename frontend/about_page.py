@@ -10,14 +10,14 @@ def show():
         </style>
     """, unsafe_allow_html=True)
     
-    st.title("ℹ️ About CancerCare")
+    st.title("ℹ About CancerCare")
     
     st.markdown("""
-    ## 🎓 Academic Project
+    ##  Academic Project
     
     CancerCare is a comprehensive lung cancer risk prediction system that integrates concepts from multiple computer science disciplines:
     
-    ### 📚 Course Integration
+    ###  Course Integration
     
     **1. Data Structures & Algorithms**
     - Priority Queue for appointment scheduling
@@ -45,7 +45,7 @@ def show():
     - Code organization and modularity
     - Documentation and version control
     
-    ### 🛠️ Technology Stack
+    ###  Technology Stack
     
     - **Frontend:** Streamlit with custom CSS
     - **Backend:** Python with SQLAlchemy ORM
@@ -54,7 +54,7 @@ def show():
     - **Authentication:** JWT tokens with bcrypt
     - **Visualization:** Plotly
     
-    ### ⚠️ Disclaimer
+    ###  Disclaimer
     
     This application is designed for educational and research purposes only. 
     It should not be used as a substitute for professional medical advice, 
@@ -62,6 +62,6 @@ def show():
     for medical decisions.
     """)
     
-    if st.button("⬅️ Back to Home"):
+    if st.button(" Back to Home"):
         st.query_params.page = "home"
         st.rerun()

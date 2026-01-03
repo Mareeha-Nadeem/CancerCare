@@ -18,36 +18,36 @@ def show():
         </style>
     """, unsafe_allow_html=True)
     
-    st.title("🏥 Our Services")
+    st.title(" Our Services")
     
     services = [
         {
-            "icon": "🤖",
+            "icon": "",
             "title": "AI-Powered Risk Assessment",
             "description": "Advanced machine learning algorithms analyze patient data to provide accurate lung cancer risk predictions."
         },
         {
-            "icon": "👥",
+            "icon": "",
             "title": "Patient Management",
             "description": "Comprehensive patient record system with search, tracking, and history management."
         },
         {
-            "icon": "📊",
+            "icon": "",
             "title": "Data Analytics",
             "description": "Detailed statistical analysis and visualization of prediction results and patient data."
         },
         {
-            "icon": "🔒",
+            "icon": "",
             "title": "Secure Data Storage",
             "description": "Enterprise-grade PostgreSQL database with encrypted storage and JWT authentication."
         },
         {
-            "icon": "📱",
+            "icon": "",
             "title": "Real-Time Monitoring",
             "description": "Network performance tracking and system health monitoring."
         },
         {
-            "icon": "📅",
+            "icon": "",
             "title": "Appointment Scheduling",
             "description": "Priority-based appointment system with doctor and patient management."
         }
@@ -61,6 +61,6 @@ def show():
             </div>
         """, unsafe_allow_html=True)
     
-    if st.button("⬅️ Back to Home"):
+    if st.button(" Back to Home"):
         st.query_params.page = "home"
         st.rerun()

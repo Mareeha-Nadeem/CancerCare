@@ -147,7 +147,7 @@ def show():
     # Header
     st.markdown("""
         <div class="prediction-header">
-            <h1 class="prediction-title">🔬 Lung Cancer Risk Prediction</h1>
+            <h1 class="prediction-title"> Lung Cancer Risk Prediction</h1>
             <p class="prediction-subtitle">
                 Enter patient information below for AI-powered risk assessment
             </p>
@@ -160,7 +160,7 @@ def show():
     
     # Patient Information Section
     st.markdown('<div class="input-section">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">👤 Patient Information</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"> Patient Information</div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
@@ -176,7 +176,7 @@ def show():
     
     # Risk Factors Section
     st.markdown('<div class="input-section">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">🚬 Lifestyle & Environmental Risk Factors</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"> Lifestyle & Environmental Risk Factors</div>', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     
@@ -196,46 +196,50 @@ def show():
     
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Medical History Section
+    # Symptoms Section (includes all clinical features)
     st.markdown('<div class="input-section">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">🏥 Medical History</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title"> Symptoms</div>', unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        genetic_risk = st.slider("Genetic Risk", 1, 8, 3)
-        chronic_lung_disease = st.slider("Chronic Lung Disease", 1, 8, 3)
-    
-    with col2:
-        chest_pain = st.slider("Chest Pain", 1, 8, 3)
-        fatigue = st.slider("Fatigue Level", 1, 8, 3)
-    
-    with col3:
-        weight_loss = st.slider("Weight Loss", 1, 8, 2)
-        shortness_of_breath = st.slider("Shortness of Breath", 1, 8, 3)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Symptoms Section
-    st.markdown('<div class="input-section">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">🩺 Symptoms</div>', unsafe_allow_html=True)
-    
+    # Row 1
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
+        genetic_risk = st.slider("Genetic Risk", 1, 8, 3)
         coughing_of_blood = st.slider("Coughing Blood", 1, 8, 2)
-        wheezing = st.slider("Wheezing", 1, 8, 3)
     
     with col2:
+        chronic_lung_disease = st.slider("Chronic Lung Disease", 1, 8, 3)
+        wheezing = st.slider("Wheezing", 1, 8, 3)
+    
+    with col3:
+        chest_pain = st.slider("Chest Pain", 1, 8, 3)
         swallowing_difficulty = st.slider("Swallowing Difficulty", 1, 8, 2)
+    
+    with col4:
+        fatigue = st.slider("Fatigue Level", 1, 8, 3)
         clubbing_of_finger_nails = st.slider("Finger Clubbing", 1, 8, 2)
+    
+    # Row 2
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        weight_loss = st.slider("Weight Loss", 1, 8, 2)
+    
+    with col2:
+        shortness_of_breath = st.slider("Shortness of Breath", 1, 8, 3)
     
     with col3:
         frequent_cold = st.slider("Frequent Cold", 1, 8, 3)
-        dry_cough = st.slider("Dry Cough", 1, 8, 3)
     
     with col4:
+        dry_cough = st.slider("Dry Cough", 1, 8, 3)
+    
+    # Row 3
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
         snoring = st.slider("Snoring", 1, 8, 3)
+
     
     st.markdown('</div>', unsafe_allow_html=True)
     
@@ -245,11 +249,11 @@ def show():
     col1, col2, col3 = st.columns([1, 1, 1])
     
     with col2:
-        predict_button = st.button("🔮 Predict Risk Level", use_container_width=True, type="primary")
+        predict_button = st.button(" Predict Risk Level", use_container_width=True, type="primary")
     
     # Make Prediction
     if predict_button:
-        with st.spinner("🤖 Analyzing patient data..."):
+        with st.spinner(" Analyzing patient data..."):
             # Log network request
             request_id = network_logger.log_request(
                 method="POST",
@@ -292,7 +296,7 @@ def show():
             
             # Validate patient name
             if not patient_name or patient_name.strip() == "":
-                st.error("❌ Please enter a patient name")
+                st.error(" Please enter a patient name")
                 return
             
             # Generate MRN if not provided
@@ -316,10 +320,10 @@ def show():
                     st.error(f"Error creating patient: {error}")
                     return
                 else:
-                    st.success(f"✅ New patient created: {patient_name} (MRN: {mrn})")
+                    st.success(f" New patient created: {patient_name} (MRN: {mrn})")
             else:
                 # Update existing patient info if needed
-                st.info(f"ℹ️ Using existing patient: {patient.name} (MRN: {patient.mrn})")
+                st.info(f"ℹ Using existing patient: {patient.name} (MRN: {patient.mrn})")
             
             # Make prediction
             if patient:
@@ -357,7 +361,7 @@ def show():
                                 confidence=prediction.confidence,
                                 recommendations=recommendations
                             )
-                            st.success(f"📧 Prediction report sent to {patient.email}")
+                            st.success(f" Prediction report sent to {patient.email}")
                         except Exception as e:
                             st.warning(f"Prediction saved but email notification failed: {e}")
             else:
@@ -385,19 +389,19 @@ def show():
         
         # Display patient info
         if 'patient_name' in result:
-            st.info(f"👤 **Patient:** {result['patient_name']} | **MRN:** {result.get('patient_mrn', 'N/A')}")
+            st.info(f" **Patient:** {result['patient_name']} | **MRN:** {result.get('patient_mrn', 'N/A')}")
         
         # Determine card style
         card_class = f"result-card result-{risk.lower()}"
         risk_class = f"risk-{risk.lower()}"
         
         st.markdown(f'<div class="{card_class}">', unsafe_allow_html=True)
-        st.markdown(f'<div class="risk-label {risk_class}">⚠️ {risk.upper()} RISK</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="risk-label {risk_class}"> {risk.upper()} RISK</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="confidence-text">Confidence: {confidence:.1%}</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
         
         # Probability Distribution Chart
-        st.subheader("📊 Risk Probability Distribution")
+        st.subheader(" Risk Probability Distribution")
         
         fig = go.Figure(data=[
             go.Bar(
@@ -432,7 +436,7 @@ def show():
         st.plotly_chart(fig, use_container_width=True)
         
         # Recommendations
-        st.subheader("💡 Recommendations")
+        st.subheader(" Recommendations")
         
         if risk == "High":
             st.error("""
@@ -460,12 +464,12 @@ def show():
             """)
         
         # Option to start new prediction
-        if st.button("🔄 New Prediction"):
+        if st.button(" New Prediction"):
             st.session_state.prediction_result = None
             st.rerun()
     
     # Back to home
     st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
-    if st.button("⬅️ Back to Home"):
+    if st.button(" Back to Home"):
         st.query_params.page = "home"
         st.rerun()

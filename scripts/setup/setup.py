@@ -18,10 +18,10 @@ def check_python_version():
     print(f"Python {version.major}.{version.minor}.{version.micro}")
     
     if version.major < 3 or (version.major == 3 and version.minor < 8):
-        print("❌ Python 3.8 or higher is required")
+        print(" Python 3.8 or higher is required")
         return False
     
-    print("✅ Python version is compatible")
+    print(" Python version is compatible")
     return True
 
 def install_dependencies():
@@ -29,14 +29,14 @@ def install_dependencies():
     print_header("Installing Dependencies")
     
     try:
-        print("📦 Installing packages from requirements.txt...")
+        print(" Installing packages from requirements.txt...")
         subprocess.check_call([
             sys.executable, "-m", "pip", "install", "-r", "requirements.txt"
         ])
-        print("✅ All dependencies installed successfully")
+        print(" All dependencies installed successfully")
         return True
     except subprocess.CalledProcessError:
-        print("❌ Failed to install dependencies")
+        print(" Failed to install dependencies")
         return False
 
 def initialize_database():
@@ -44,7 +44,7 @@ def initialize_database():
     print_header("Database Initialization")
     
     print("""
-    📋 Before proceeding, ensure PostgreSQL is running with the following configuration:
+     Before proceeding, ensure PostgreSQL is running with the following configuration:
     
     Database Name: cancercare
     Username: postgres
@@ -59,7 +59,7 @@ def initialize_database():
     
     if proceed.lower() == 'y':
         try:
-            print("\n🔧 Initializing database...")
+            print("\n Initializing database...")
             from core.database_init import init_database, seed_sample_data
             
             init_database()
@@ -68,14 +68,14 @@ def initialize_database():
             if seed.lower() == 'y':
                 seed_sample_data()
             
-            print("✅ Database initialized successfully")
+            print(" Database initialized successfully")
             return True
         except Exception as e:
-            print(f"⚠️  Database initialization failed: {e}")
+            print(f"  Database initialization failed: {e}")
             print("   You can initialize it later by running: python core/database_init.py")
             return True  # Continue anyway
     else:
-        print("⏭️  Skipping database initialization")
+        print("⏭  Skipping database initialization")
         return True
 
 def create_env_file():
@@ -88,11 +88,11 @@ def create_env_file():
             with open('.env.example', 'r') as example:
                 with open('.env', 'w') as env:
                     env.write(example.read())
-            print("✅ .env file created")
+            print(" .env file created")
         else:
-            print("⚠️  .env.example not found, skipping")
+            print("  .env.example not found, skipping")
     else:
-        print("✅ .env file already exists")
+        print(" .env file already exists")
     
     return True
 
@@ -101,7 +101,7 @@ def run_application():
     print_header("Starting CancerCare Application")
     
     print("""
-    🚀 Starting Streamlit application...
+     Starting Streamlit application...
     
     The application will open in your default browser.
     If it doesn't open automatically, navigate to: http://localhost:8501
@@ -116,19 +116,19 @@ def run_application():
             "--server.address=0.0.0.0"
         ])
     except KeyboardInterrupt:
-        print("\n\n👋 Application stopped")
+        print("\n\n Application stopped")
     except Exception as e:
-        print(f"\n❌ Error running application: {e}")
+        print(f"\n Error running application: {e}")
 
 def main():
     print("""
-    ╔══════════════════════════════════════════════════════════════════╗
-    ║                                                                  ║
-    ║               🫁 CancerCare Setup & Run Script                   ║
-    ║                                                                  ║
-    ║     Full Stack Lung Cancer Risk Prediction System               ║
-    ║                                                                  ║
-    ╚══════════════════════════════════════════════════════════════════╝
+    
+                                                                      
+                    CancerCare Setup & Run Script                   
+                                                                      
+         Full Stack Lung Cancer Risk Prediction System               
+                                                                      
+    
     """)
     
     # Step 1: Check Python version
@@ -151,14 +151,14 @@ def main():
     
     print_header("Setup Complete!")
     print("""
-    ✅ All setup tasks completed successfully!
+     All setup tasks completed successfully!
     
-    📌 What's been set up:
+     What's been set up:
        • Dependencies installed
        • Environment configured
        • Database initialized
     
-    🎯 Next Steps:
+     Next Steps:
        • The application will start now
        • Access it at http://localhost:8501
        • Explore the features:

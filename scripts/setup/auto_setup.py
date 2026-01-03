@@ -22,7 +22,7 @@ def run_command(cmd):
 
 def install_dependencies():
     """Install all required dependencies"""
-    print_header("📦 Installing Dependencies")
+    print_header(" Installing Dependencies")
     
     packages = [
         "streamlit",
@@ -36,15 +36,15 @@ def install_dependencies():
         print(f"Installing {package}...")
         result = run_command(f"pip install {package}")
         if result:
-            print(f"  ✅ {package} installed")
+            print(f"   {package} installed")
         else:
-            print(f"  ℹ️  {package} already installed or not needed")
+            print(f"  ℹ  {package} already installed or not needed")
     
-    print("\n✅ All dependencies installed!")
+    print("\n All dependencies installed!")
 
 def create_sqlite_database():
     """Create SQLite database with all tables"""
-    print_header("🗄️ Creating SQLite Database")
+    print_header(" Creating SQLite Database")
     
     try:
         from sqlalchemy import create_engine
@@ -72,25 +72,25 @@ DEBUG=True
         with open(".env", 'w') as f:
             f.write(env_content)
         
-        print(f"✅ SQLite database created: {db_path.absolute()}")
-        print(f"✅ .env file updated")
+        print(f" SQLite database created: {db_path.absolute()}")
+        print(f" .env file updated")
         
         # Verify tables
         from sqlalchemy import inspect
         inspector = inspect(engine)
         tables = inspector.get_table_names()
         
-        print(f"\n✅ Tables created: {', '.join(tables)}")
+        print(f"\n Tables created: {', '.join(tables)}")
         
         return True
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f" Error: {e}")
         return False
 
 def add_sample_data():
     """Add sample data for testing"""
-    print_header("📊 Adding Sample Data")
+    print_header(" Adding Sample Data")
     
     try:
         from core.services.patient_service import patient_service
@@ -106,7 +106,7 @@ def add_sample_data():
         for p in patients:
             patient, error = patient_service.create_patient(p)
             if not error:
-                print(f"  ✅ Added patient: {p['name']}")
+                print(f"   Added patient: {p['name']}")
         
         # Add doctors
         doctors = [
@@ -117,18 +117,18 @@ def add_sample_data():
         for d in doctors:
             doctor, error = doctor_service.create_doctor(d)
             if not error:
-                print(f"  ✅ Added doctor: {d['name']}")
+                print(f"   Added doctor: {d['name']}")
         
-        print("\n✅ Sample data added!")
+        print("\n Sample data added!")
         return True
         
     except Exception as e:
-        print(f"❌ Error adding sample data: {e}")
+        print(f" Error adding sample data: {e}")
         return False
 
 def verify_setup():
     """Verify everything works"""
-    print_header("✅ Verifying Setup")
+    print_header(" Verifying Setup")
     
     try:
         from core.db_config import engine
@@ -137,7 +137,7 @@ def verify_setup():
         # Test connection
         with engine.connect() as conn:
             result = conn.execute(text("SELECT 1"))
-            print("✅ Database connection works!")
+            print(" Database connection works!")
         
         # Check tables
         inspector = inspect(engine)
@@ -147,28 +147,28 @@ def verify_setup():
         missing = [t for t in required_tables if t not in tables]
         
         if missing:
-            print(f"❌ Missing tables: {missing}")
+            print(f" Missing tables: {missing}")
             return False
         
-        print("✅ All required tables present!")
+        print(" All required tables present!")
         print(f"   Tables: {', '.join(tables)}")
         
         # Check if data exists
         with engine.connect() as conn:
             result = conn.execute(text("SELECT COUNT(*) FROM patients"))
             count = result.fetchone()[0]
-            print(f"✅ Patients in database: {count}")
+            print(f" Patients in database: {count}")
         
         return True
         
     except Exception as e:
-        print(f"❌ Verification failed: {e}")
+        print(f" Verification failed: {e}")
         return False
 
 def main():
     """Complete automated setup"""
     
-    print_header("🔬 CancerCare - AUTOMATIC COMPLETE SETUP")
+    print_header(" CancerCare - AUTOMATIC COMPLETE SETUP")
     print("This will automatically:")
     print("  1. Install all dependencies")
     print("  2. Create database (SQLite - no password needed!)")
@@ -188,7 +188,7 @@ def main():
     
     # Step 2: Create database
     if not create_sqlite_database():
-        print("\n❌ Failed to create database")
+        print("\n Failed to create database")
         return
     
     # Step 3: Add sample data
@@ -198,30 +198,30 @@ def main():
     
     # Step 4: Verify
     if not verify_setup():
-        print("\n❌ Setup verification failed")
+        print("\n Setup verification failed")
         return
     
     # Success!
-    print_header("🎉 SETUP COMPLETE!")
+    print_header(" SETUP COMPLETE!")
     
-    print("✅ Database: SQLite (cancercare.db)")
-    print("✅ Tables: All 6 tables created")
-    print("✅ Frontend: Ready")
-    print("✅ Backend: Fully integrated")
+    print(" Database: SQLite (cancercare.db)")
+    print(" Tables: All 6 tables created")
+    print(" Frontend: Ready")
+    print(" Backend: Fully integrated")
     
-    print("\n🚀 Next Steps:")
+    print("\n Next Steps:")
     print("  1. Run your application:")
     print("     streamlit run app.py")
     print("\n  2. Application will open at:")
     print("     http://localhost:8501")
     
-    print("\n📝 Notes:")
+    print("\n Notes:")
     print("  - Using SQLite (no PostgreSQL password needed!)")
     print("  - All features work (including image storage via file paths)")
     print("  - Can switch to PostgreSQL later if needed")
     
     print("\n" + "="*70)
-    print("  ✅ PROJECT IS FULLY FUNCTIONAL!")
+    print("   PROJECT IS FULLY FUNCTIONAL!")
     print("="*70 + "\n")
 
 if __name__ == "__main__":

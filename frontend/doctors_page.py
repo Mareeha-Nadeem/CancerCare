@@ -68,13 +68,13 @@ def show():
     # Header
     st.markdown("""
         <div class="page-header">
-            <h1 class="page-title">👨‍⚕️ Doctors Portal</h1>
+            <h1 class="page-title">‍ Doctors Portal</h1>
             <p style="color: #b0b0b0;">Manage doctors and appointments</p>
         </div>
     """, unsafe_allow_html=True)
     
     # Tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["👨‍⚕️ Doctors", "➕ Add Doctor", "📅 Appointments", "📊 Network Stats"])
+    tab1, tab2, tab3, tab4 = st.tabs(["‍ Doctors", " Add Doctor", " Appointments", " Network Stats"])
     
     with tab1:
         st.subheader("All Doctors")
@@ -86,7 +86,7 @@ def show():
                 st.write(f"**Total Doctors:** {len(doctors)}")
                 
                 for doctor in doctors:
-                    with st.expander(f"👨‍⚕️ {doctor.name} - {doctor.specialization}"):
+                    with st.expander(f"‍ {doctor.name} - {doctor.specialization}"):
                         col1, col2 = st.columns(2)
                         
                         with col1:
@@ -105,23 +105,23 @@ def show():
                         col_edit, col_delete = st.columns(2)
                         
                         with col_edit:
-                            if st.button(f"✏️ Edit", key=f"edit_doctor_{doctor.id}"):
+                            if st.button(f" Edit", key=f"edit_doctor_{doctor.id}"):
                                 st.session_state[f'editing_doctor_{doctor.id}'] = True
                                 st.rerun()
                         
                         with col_delete:
-                            if st.button(f"🗑️ Delete", key=f"delete_doctor_{doctor.id}", type="secondary"):
+                            if st.button(f" Delete", key=f"delete_doctor_{doctor.id}", type="secondary"):
                                 if st.session_state.get(f'confirm_delete_doctor_{doctor.id}'):
                                     success, error = doctor_service.delete_doctor(doctor.id)
                                     if success:
-                                        st.success(f"✅ Doctor {doctor.name} deleted!")
+                                        st.success(f" Doctor {doctor.name} deleted!")
                                         st.session_state.pop(f'confirm_delete_doctor_{doctor.id}', None)
                                         st.rerun()
                                     else:
                                         st.error(f"Error: {error}")
                                 else:
                                     st.session_state[f'confirm_delete_doctor_{doctor.id}'] = True
-                                    st.warning("⚠️ Click Delete again to confirm")
+                                    st.warning(" Click Delete again to confirm")
                         
                         # Edit form
                         if st.session_state.get(f'editing_doctor_{doctor.id}'):
@@ -139,7 +139,7 @@ def show():
                                 col_save, col_cancel = st.columns(2)
                                 
                                 with col_save:
-                                    if st.form_submit_button("💾 Save Changes", use_container_width=True):
+                                    if st.form_submit_button(" Save Changes", use_container_width=True):
                                         update_data = {
                                             'name': edit_name,
                                             'email': edit_email,
@@ -151,12 +151,12 @@ def show():
                                         if error:
                                             st.error(f"Error: {error}")
                                         else:
-                                            st.success(f"✅ Doctor updated successfully!")
+                                            st.success(f" Doctor updated successfully!")
                                             st.session_state.pop(f'editing_doctor_{doctor.id}', None)
                                             st.rerun()
                                 
                                 with col_cancel:
-                                    if st.form_submit_button("❌ Cancel", use_container_width=True):
+                                    if st.form_submit_button(" Cancel", use_container_width=True):
                                         st.session_state.pop(f'editing_doctor_{doctor.id}', None)
                                         st.rerun()
             else:
@@ -195,7 +195,7 @@ def show():
                     if error:
                         st.error(f"Error: {error}")
                     else:
-                        st.success(f"✅ Doctor {name} registered successfully!")
+                        st.success(f" Doctor {name} registered successfully!")
                         st.balloons()
     
     with tab3:
@@ -240,13 +240,13 @@ def show():
             
             # Upcoming appointments
             st.markdown("---")
-            st.subheader("📅 Upcoming Appointments")
+            st.subheader(" Upcoming Appointments")
             
             upcoming = appointment_service.get_upcoming_appointments(10)
             
             if upcoming:
                 for apt in upcoming:
-                    priority_emoji = "🔴" if apt.priority >= 4 else "🟡" if apt.priority >= 2 else "🟢"
+                    priority_emoji = "" if apt.priority >= 4 else "🟡" if apt.priority >= 2 else "🟢"
                     st.write(f"{priority_emoji} **{apt.appointment_date.strftime('%Y-%m-%d %H:%M')}** - Priority: {apt.priority}")
             else:
                 st.info("No upcoming appointments")
@@ -255,7 +255,7 @@ def show():
             st.error(f"Error loading appointments: {e}")
     
     with tab4:
-        st.subheader("📊 Network Statistics (Computer Networks Feature)")
+        st.subheader(" Network Statistics (Computer Networks Feature)")
         
         try:
             from core.network_logger import network_logger
@@ -305,7 +305,7 @@ def show():
                 st.plotly_chart(fig, use_container_width=True)
             
             # System metrics
-            st.subheader("🖥️ System Metrics")
+            st.subheader(" System Metrics")
             system_metrics = network_monitor.get_system_metrics()
             
             col1, col2 = st.columns(2)
@@ -323,6 +323,6 @@ def show():
     
     # Back button
     st.markdown("---")
-    if st.button("⬅️ Back to Home"):
+    if st.button(" Back to Home"):
         st.query_params.page = "home"
         st.rerun()

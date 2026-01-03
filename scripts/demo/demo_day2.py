@@ -29,20 +29,20 @@ def create_mock_medical_image():
 
 def demo_day2():
     print("\n" + "="*70)
-    print("  🤖 DAY 2 DEMO - AI Integration Complete")
+    print("   DAY 2 DEMO - AI Integration Complete")
     print("="*70 + "\n")
     
     # Get patient
     patients = patient_service.get_all_patients()
     if patients:
         patient = patients[0]
-        print(f"📋 Using patient: {patient.name} (ID: {patient.id})\n")
+        print(f" Using patient: {patient.name} (ID: {patient.id})\n")
     else:
-        print("❌ No patients found. Please add a patient first.")
+        print(" No patients found. Please add a patient first.")
         return
     
     # Create diagnosis if doesn't exist
-    print("🔬 Step 1: Creating/Getting diagnosis...")
+    print(" Step 1: Creating/Getting diagnosis...")
     diagnosis_data = {
         'diagnosis_date': datetime.utcnow(),
         'cancer_type': 'Lung Cancer',
@@ -61,12 +61,12 @@ def demo_day2():
         diagnosis = diagnoses[0] if diagnoses else None
     
     if diagnosis:
-        print(f"   ✅ Diagnosis: {diagnosis.cancer_type}, {diagnosis.stage}")
+        print(f"    Diagnosis: {diagnosis.cancer_type}, {diagnosis.stage}")
     
     print("\n" + "-"*70 + "\n")
     
     # Upload and analyze image
-    print("📸 Step 2: Uploading medical image with AI analysis...")
+    print(" Step 2: Uploading medical image with AI analysis...")
     
     image_file = create_mock_medical_image()
     
@@ -80,12 +80,12 @@ def demo_day2():
     )
     
     if error:
-        print(f"   ❌ Error: {error}")
+        print(f"    Error: {error}")
     else:
-        print(f"   ✅ Image uploaded: ID {medical_image.id}")
-        print(f"   📁 Path: {medical_image.file_path}")
-        print(f"   📏 Size: {medical_image.image_width}x{medical_image.image_height}")
-        print(f"\n   🤖 AI Analysis Results:")
+        print(f"    Image uploaded: ID {medical_image.id}")
+        print(f"    Path: {medical_image.file_path}")
+        print(f"    Size: {medical_image.image_width}x{medical_image.image_height}")
+        print(f"\n    AI Analysis Results:")
         print(f"      Analyzed: {medical_image.ai_analyzed}")
         print(f"      Tumor Detected: {'Yes' if medical_image.tumor_detected else 'No'}")
         print(f"      Confidence: {medical_image.confidence_score:.2%}")
@@ -96,7 +96,7 @@ def demo_day2():
     print("\n" + "-"*70 + "\n")
     
     # Record tumor markers
-    print("💉 Step 3: Recording tumor markers...")
+    print(" Step 3: Recording tumor markers...")
     
     markers = [
         {'name': 'CEA', 'value': 5.2},
@@ -115,13 +115,13 @@ def demo_day2():
         )
         
         if not error:
-            status = "🔴 ABNORMAL" if marker.is_abnormal else "🟢 NORMAL"
+            status = " ABNORMAL" if marker.is_abnormal else "🟢 NORMAL"
             print(f"   {status} {marker.marker_name}: {marker.value} {marker.unit}")
     
     print("\n" + "-"*70 + "\n")
     
     # Summary
-    print("📊 Step 4: Complete Summary...")
+    print(" Step 4: Complete Summary...")
     
     all_images = image_service.get_patient_images(patient.id)
     all_markers = tumor_marker_service.get_patient_markers(patient.id)
@@ -136,15 +136,15 @@ def demo_day2():
     print(f"   Abnormal Markers: {sum(1 for m in all_markers if m.is_abnormal)}")
     
     print("\n" + "="*70)
-    print("  🎉 DAY 2 INTEGRATION COMPLETE!")
+    print("   DAY 2 INTEGRATION COMPLETE!")
     print("="*70)
-    print("\n✅ All AI features working:")
+    print("\n All AI features working:")
     print("   - Image upload with automatic AI analysis")
     print("   - Abnormality detection")
     print("   - Confidence scoring")
     print("   - Tumor counting and sizing")
     print("   - Integration with diagnosis records")
-    print("\n🚀 Ready for Day 3: Frontend Development!\n")
+    print("\n Ready for Day 3: Frontend Development!\n")
 
 if __name__ == "__main__":
     demo_day2()

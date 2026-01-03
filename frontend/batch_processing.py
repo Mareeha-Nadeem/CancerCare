@@ -44,13 +44,13 @@ def show():
     
     st.markdown("""
         <div class="batch-header">
-            <h1 class="batch-title">🧪 Batch Sample Processing</h1>
+            <h1 class="batch-title"> Batch Sample Processing</h1>
             <p style="color: #b0b0b0;">Process multiple patient samples efficiently</p>
         </div>
     """, unsafe_allow_html=True)
     
     # Tabs
-    tab1, tab2, tab3 = st.tabs(["📤 Upload Batch", "⚡ Quick Batch Entry", "📊 Batch Results"])
+    tab1, tab2, tab3 = st.tabs([" Upload Batch", " Quick Batch Entry", " Batch Results"])
     
     with tab1:
         st.subheader("Upload CSV File")
@@ -64,7 +64,7 @@ def show():
         """)
         
         # Download template
-        if st.button("📥 Download CSV Template"):
+        if st.button(" Download CSV Template"):
             template_data = {
                 'mrn': ['MRN001', 'MRN002'],
                 'age': [65, 55],
@@ -96,7 +96,7 @@ def show():
             csv = df_template.to_csv(index=False)
             
             st.download_button(
-                label="💾 Download Template",
+                label=" Download Template",
                 data=csv,
                 file_name="batch_template.csv",
                 mime="text/csv"
@@ -109,10 +109,10 @@ def show():
             try:
                 df = pd.DataFrame(uploaded_file)
                 
-                st.success(f"✅ File loaded: {len(df)} samples found")
+                st.success(f" File loaded: {len(df)} samples found")
                 st.dataframe(df.head(), use_container_width=True)
                 
-                if st.button("🚀 Process Batch", type="primary"):
+                if st.button(" Process Batch", type="primary"):
                     progress_bar = st.progress(0)
                     status_text = st.empty()
                     
@@ -151,7 +151,7 @@ def show():
                                 'MRN': row['mrn'],
                                 'Risk': prediction.risk_level,
                                 'Confidence': f"{prediction.confidence:.1%}",
-                                'Status': '✅ Success'
+                                'Status': ' Success'
                             })
                             
                             # Notify for high risk
@@ -166,10 +166,10 @@ def show():
                                 'MRN': row['mrn'],
                                 'Risk': 'N/A',
                                 'Confidence': 'N/A',
-                                'Status': f'❌ Error: {error}'
+                                'Status': f' Error: {error}'
                             })
                     
-                    st.success("✅ Batch processing complete!")
+                    st.success(" Batch processing complete!")
                     
                     # Show results
                     results_df = pd.DataFrame(results)
@@ -178,7 +178,7 @@ def show():
                     # Download results
                     csv_results = results_df.to_csv(index=False)
                     st.download_button(
-                        "📥 Download Results",
+                        " Download Results",
                         csv_results,
                         f"batch_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                         "text/csv"
@@ -241,7 +241,7 @@ def show():
                         'snoring': 3
                     })
         
-        if st.button("🚀 Process All Samples", type="primary") and batch_data:
+        if st.button(" Process All Samples", type="primary") and batch_data:
             st.write(f"Processing {len(batch_data)} samples...")
             
             for data in batch_data:
@@ -262,7 +262,7 @@ def show():
                     data
                 )
             
-            st.success("✅ All samples processed!")
+            st.success(" All samples processed!")
             st.balloons()
     
     with tab3:
@@ -283,17 +283,17 @@ def show():
                 by_date[date_key].append(pred)
             
             for date, preds in sorted(by_date.items(), reverse=True):
-                with st.expander(f"📅 {date} ({len(preds)} tests)"):
+                with st.expander(f" {date} ({len(preds)} tests)"):
                     for pred in preds:
                         patient = patient_service.get_patient_by_id(pred.patient_id)
                         if patient:
-                            risk_emoji = {'High': '🔴', 'Medium': '🟡', 'Low': '🟢'}
+                            risk_emoji = {'High': '', 'Medium': '🟡', 'Low': '🟢'}
                             st.write(f"{risk_emoji[pred.risk_level]} {patient.name} (MRN: {patient.mrn}) - {pred.risk_level} ({pred.confidence:.1%})")
         else:
             st.info("No batch results yet")
     
     # Back button
     st.markdown("---")
-    if st.button("⬅️ Back to Lab Dashboard"):
+    if st.button(" Back to Lab Dashboard"):
         st.query_params.page = "lab_dashboard"
         st.rerun()

@@ -5,14 +5,14 @@
 # st.set_page_config(page_title="CancerCare - Lung Cancer Risk", layout="wide")
 
 # PAGES = {
-#     "🏠 Home": home_page.show,
-#     "🧪 Prediction": prediction_page.show,
-#     "👨‍⚕️ Patients": patients_page.show,
-#     "🏥 Doctors": doctors_page.show,
+#     " Home": home_page.show,
+#     " Prediction": prediction_page.show,
+#     "‍ Patients": patients_page.show,
+#     " Doctors": doctors_page.show,
 # }
 
 # if "current_page" not in st.session_state:
-#     st.session_state["current_page"] = "🏠 Home"
+#     st.session_state["current_page"] = " Home"
 
 # def main():
 #     st.sidebar.title("CancerCare")
@@ -43,14 +43,14 @@
 
 # # Main sidebar pages only
 # PAGES = {
-#     "🏠 Home": home_page.show,
-#     "🧪 Prediction": prediction_page.show,
-#     "👨‍⚕️ Patients": patients_page.show,
-#     "🏥 Doctors": doctors_page.show,
+#     " Home": home_page.show,
+#     " Prediction": prediction_page.show,
+#     "‍ Patients": patients_page.show,
+#     " Doctors": doctors_page.show,
 # }
 
 # if "current_page" not in st.session_state:
-#     st.session_state["current_page"] = "🏠 Home"
+#     st.session_state["current_page"] = " Home"
 
 # def main():
 #     # Sidebar for main pages only
@@ -79,14 +79,14 @@
 # st.set_page_config(page_title="CancerCare - Lung Cancer Risk", layout="wide")
 
 # PAGES = {
-#     "🏠 Home": home_page.show,
-#     "🧪 Prediction": prediction_page.show,
-#     "👨‍⚕️ Patients": patients_page.show,
-#     "🏥 Doctors": doctors_page.show,
+#     " Home": home_page.show,
+#     " Prediction": prediction_page.show,
+#     "‍ Patients": patients_page.show,
+#     " Doctors": doctors_page.show,
 # }
 
 # if "current_page" not in st.session_state:
-#     st.session_state["current_page"] = "🏠 Home"
+#     st.session_state["current_page"] = " Home"
 
 # def main():
 #     st.sidebar.title("CancerCare")
@@ -101,6 +101,15 @@
 # if __name__ == "__main__":
 #     main()
 # app.py
+# CRITICAL: Add data_science path BEFORE any other imports
+# This allows the ML model to import the feature_engineer module
+import sys
+from pathlib import Path
+PROJECT_ROOT = Path(__file__).parent
+DS_PATH = PROJECT_ROOT / "data_science" / "model_1"
+if str(DS_PATH) not in sys.path:
+    sys.path.insert(0, str(DS_PATH))
+
 import streamlit as st
 from frontend import home_page, prediction_page, patients_page, doctors_page
 from frontend import about_page, search_page, service_page, contact_page

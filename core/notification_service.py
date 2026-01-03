@@ -40,9 +40,9 @@ class NotificationService:
         try:
             from core.notification_server import notification_server
             self.socket_server = notification_server
-            print("✅ Real-time socket server integrated!")
+            print(" Real-time socket server integrated!")
         except Exception as e:
-            print(f"⚠️ Socket server not available: {e}")
+            print(f" Socket server not available: {e}")
     
     def send_notification(self, recipient, title, message, notif_type="info"):
         """
@@ -77,9 +77,9 @@ class NotificationService:
                         message=message,
                         notif_type=notif_type
                     )
-                    print(f"📡 Real-time notification sent via socket to {recipient}")
+                    print(f" Real-time notification sent via socket to {recipient}")
                 except Exception as e:
-                    print(f"⚠️ Socket send failed: {e}")
+                    print(f" Socket send failed: {e}")
             
             return notification
     
@@ -111,9 +111,9 @@ class NotificationService:
             if self.socket_server and self.socket_server.running:
                 try:
                     self.socket_server.broadcast_notification(notification)
-                    print(f"📡 Real-time broadcast sent via socket to all clients")
+                    print(f" Real-time broadcast sent via socket to all clients")
                 except Exception as e:
-                    print(f"⚠️ Socket broadcast failed: {e}")
+                    print(f" Socket broadcast failed: {e}")
             
             return notification
     

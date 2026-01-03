@@ -2,6 +2,7 @@
 ML Service - Lung Cancer Risk Prediction
 Loads and uses the trained model from data_science/model_1
 """
+import sys
 import joblib
 import json
 import numpy as np
@@ -13,6 +14,11 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 MODEL_DIR = PROJECT_ROOT / "data_science" / "model_1" / "models"
 MODEL_PATH = MODEL_DIR / "lung_cancer_pipeline.pkl"
 METADATA_PATH = MODEL_DIR / "model_metadata.json"
+
+# Add data_science/model_1 to Python path for feature_engineer imports
+DS_PATH = PROJECT_ROOT / "data_science" / "model_1"
+if str(DS_PATH) not in sys.path:
+    sys.path.insert(0, str(DS_PATH))
 
 # Global variables for loaded model
 _model = None
@@ -32,7 +38,7 @@ def load_model():
                 "Please train the model first: python run_ds.py train"
             )
         
-        print(f"📦 Loading model from: {MODEL_PATH}")
+        print(f" Loading model from: {MODEL_PATH}")
         _model = joblib.load(MODEL_PATH)
         
         # Load metadata
@@ -42,12 +48,12 @@ def load_model():
         else:
             _metadata = {}
         
-        print(f"✅ Model loaded successfully!")
+        print(f" Model loaded successfully!")
         return _model, _metadata
         
     except Exception as e:
-        print(f"⚠️ Warning: Could not load ML model: {e}")
-        print("ℹ️ Predictions will use mock data until model is trained.")
+        print(f" Warning: Could not load ML model: {e}")
+        print("ℹ Predictions will use mock data until model is trained.")
         return None, None
 
 def predict_risk(features: Dict) -> Tuple[str, float, Dict[str, float]]:
@@ -55,7 +61,7 @@ def predict_risk(features: Dict) -> Tuple[str, float, Dict[str, float]]:
     Predict lung cancer risk level.
     
     Args:
-        features: Dictionary of patient features
+        features: Dictionary of patient features (case-insensitive)
         
     Returns:
         Tuple of (risk_level, confidence, probabilities)
@@ -67,50 +73,141 @@ def predict_risk(features: Dict) -> Tuple[str, float, Dict[str, float]]:
         return _mock_prediction(features)
     
     try:
-        # Expected feature order (15 features)
-        feature_names = [
-            'AGE', 'SMOKING', 'YELLOW_FINGERS', 'ANXIETY', 'PEER_PRESSURE',
-            'CHRONIC_DISEASE', 'FATIGUE', 'ALLERGY', 'WHEEZING',
-            'ALCOHOL_CONSUMING', 'COUGHING', 'SHORTNESS_OF_BREATH',
-            'SWALLOWING_DIFFICULTY', 'CHEST_PAIN', 'GENDER_M'
-        ]
+        import pandas as pd
         
-        # Convert gender to binary
-        gender_m = 1 if features.get('GENDER', 'M') == 'M' else 0
+        # Convert all keys to uppercase (frontend sends lowercase, model expects uppercase)
+        features_upper = {k.upper(): v for k, v in features.items()}
         
-        # Build feature vector
-        feature_vector = []
-        for feat in feature_names[:-1]:  # All except GENDER_M
-            value = features.get(feat, 0)
-            feature_vector.append(float(value))
+        # Create DataFrame with feature names (expected by the pipeline)
+        # The model expects all 23 features with exact column names from training
+        feature_data = {
+            'AGE': features_upper.get('AGE', 50),
+            'GENDER': features_upper.get('GENDER', 1),  # 1=M, 2=F
+            'AIR_POLLUTION': features_upper.get('AIR_POLLUTION', 3),
+            'ALCOHOL_USE': features_upper.get('ALCOHOL_USE', 3),
+            'DUST_ALLERGY': features_upper.get('DUST_ALLERGY', 3),
+            'OCCUPATIONAL_HAZARDS': features_upper.get('OCCUPATIONAL_HAZARDS', 3),
+            'GENETIC_RISK': features_upper.get('GENETIC_RISK', 3),
+            'CHRONIC_LUNG_DISEASE': features_upper.get('CHRONIC_LUNG_DISEASE', 3),
+            'BALANCED_DIET': features_upper.get('BALANCED_DIET', 5),
+            'OBESITY': features_upper.get('OBESITY', 3),
+            'SMOKING': features_upper.get('SMOKING', 3),
+            'PASSIVE_SMOKER': features_upper.get('PASSIVE_SMOKER', 3),
+            'CHEST_PAIN': features_upper.get('CHEST_PAIN', 3),
+            'COUGHING_OF_BLOOD': features_upper.get('COUGHING_OF_BLOOD', 2),
+            'FATIGUE': features_upper.get('FATIGUE', 3),
+            'WEIGHT_LOSS': features_upper.get('WEIGHT_LOSS', 2),
+            'SHORTNESS_OF_BREATH': features_upper.get('SHORTNESS_OF_BREATH', 3),
+            'WHEEZING': features_upper.get('WHEEZING', 3),
+            'SWALLOWING_DIFFICULTY': features_upper.get('SWALLOWING_DIFFICULTY', 2),
+            'CLUBBING_OF_FINGER_NAILS': features_upper.get('CLUBBING_OF_FINGER_NAILS', 2),
+            'FREQUENT_COLD': features_upper.get('FREQUENT_COLD', 3),
+            'DRY_COUGH': features_upper.get('DRY_COUGH', 3),
+            'SNORING': features_upper.get('SNORING', 3),
+        }
         
-        # Add gender
-        feature_vector.append(float(gender_m))
-        
-        # Reshape for prediction
-        X = np.array([feature_vector])
+        # Create DataFrame (single row)
+        X = pd.DataFrame([feature_data])
         
         # Make prediction
-        risk_class = model.predict(X)[0]
+        risk_class_raw = model.predict(X)[0]
         probabilities = model.predict_proba(X)[0]
         
-        # Map to risk levels
-        risk_levels = metadata.get('classes', ['Low', 'Medium', 'High'])
+        # CRITICAL: Ensure risk_class is an integer
+        risk_class = int(risk_class_raw)
+        
+        print(f" DEBUG: raw prediction = {risk_class_raw} (type: {type(risk_class_raw)})")
+        print(f" DEBUG: as integer = {risk_class}")
+        print(f" DEBUG: probabilities = {probabilities}")
+        
+        # CRITICAL FIX: Explicit mapping of numeric classes to risk levels
+        # The trained model uses numeric labels: 0='High', 1='Low', 2='Medium' (alphabetical)
+        # We need to map these integers to human-readable strings
+        
+        # Try to get the model's class ordering
+        model_classes = None
+        if hasattr(model, 'classes_'):
+            model_classes = list(model.classes_)
+            print(f" DEBUG: Model classes_: {model_classes} (types: {[type(c) for c in model_classes]})")
+        elif hasattr(model, 'named_steps'):
+            classifier = model.named_steps.get('classifier', None)
+            if classifier and hasattr(classifier, 'classes_'):
+                model_classes = list(classifier.classes_)
+                print(f" DEBUG: Pipeline classifier classes_: {model_classes}")
+        
+        # Create the mapping
+        # The model was trained with labels that are either integers (0,1,2) or strings
+        # Map them to proper risk level strings
+        if model_classes and len(model_classes) == 3:
+            # Convert model classes to strings
+            str_classes = [str(c) for c in model_classes]
+            print(f" DEBUG: String classes: {str_classes}")
+            
+            # Check if they're numeric strings
+            if all(c.isdigit() for c in str_classes):
+                # Model has numeric classes - need explicit mapping
+                # Assume alphabetical order: '0'=High, '1'=Low, '2'=Medium
+                numeric_to_risk = {'0': 'High', '1': 'Low', '2': 'Medium'}
+                risk_levels = [numeric_to_risk.get(str(i), 'Unknown') for i in range(3)]
+                print(f" DEBUG: Using numeric mapping: {risk_levels}")
+            else:
+                # Model has text classes already
+                risk_levels = str_classes
+                print(f" DEBUG: Using model's text classes: {risk_levels}")
+        else:
+            # Fallback: use standard alphabetical order
+            risk_levels = ['High', 'Low', 'Medium']
+            print(f" DEBUG: Using default alphabetical classes")
+        
+        # Validate index
+        if risk_class < 0 or risk_class >= len(risk_levels):
+            print(f" ERROR: Invalid risk_class {risk_class} for {len(risk_levels)} classes")
+            risk_class = 1  # Default to 'Low' (middle risk)
+        
+        # Get the risk level string
         risk_level = risk_levels[risk_class]
+        
+        # Ensure it's a valid risk level
+        if risk_level not in ['Low', 'Medium', 'High']:
+            print(f" WARNING: Invalid risk_level '{risk_level}', mapping to standard...")
+            # Try to map numeric strings to text
+            if risk_level in ['0', 0]:
+                risk_level = 'High'
+            elif risk_level in ['1', 1]:
+                risk_level = 'Low'
+            elif risk_level in ['2', 2]:
+                risk_level = 'Medium'
+            else:
+                risk_level = 'Low'  # Safe default
+        
+        # Ensure final type is string
+        risk_level = str(risk_level)
         
         # Get confidence (max probability)
         confidence = float(np.max(probabilities))
         
-        # Build probability dictionary
+        # Build probability dictionary with proper labels
         prob_dict = {
-            level: float(prob)
-            for level, prob in zip(risk_levels, probabilities)
+            'Low': float(probabilities[risk_levels.index('Low')] if 'Low' in risk_levels else 0.33),
+            'Medium': float(probabilities[risk_levels.index('Medium')] if 'Medium' in risk_levels else 0.33),
+            'High': float(probabilities[risk_levels.index('High')] if 'High' in risk_levels else 0.33)
         }
+        
+        print(f" ==================================")
+        print(f" PREDICTION RESULT:")
+        print(f" Raw class: {risk_class}")
+        print(f" Risk Level: {risk_level}")
+        print(f" Confidence: {confidence:.2%}")
+        print(f" Probabilities: {prob_dict}")
+        print(f" Type check: {type(risk_level)} = '{risk_level}'")
+        print(f" ==================================")
         
         return risk_level, confidence, prob_dict
         
     except Exception as e:
-        print(f"❌ Prediction error: {e}")
+        print(f" Prediction error: {e}")
+        import traceback
+        traceback.print_exc()
         return _mock_prediction(features)
 
 def _mock_prediction(features: Dict) -> Tuple[str, float, Dict[str, float]]:

@@ -9,7 +9,7 @@ def add_email_column():
     db_path = Path("cancercare.db")
     
     if not db_path.exists():
-        print("❌ Database not found!")
+        print(" Database not found!")
         return False
     
     try:
@@ -21,7 +21,7 @@ def add_email_column():
         columns = [column[1] for column in cursor.fetchall()]
         
         if 'email' in columns:
-            print("✅ Email column already exists!")
+            print(" Email column already exists!")
             conn.close()
             return True
         
@@ -29,7 +29,7 @@ def add_email_column():
         cursor.execute("ALTER TABLE patients ADD COLUMN email TEXT")
         conn.commit()
         
-        print("✅ Email column added successfully!")
+        print(" Email column added successfully!")
         
         # Verify
         cursor.execute("PRAGMA table_info(patients)")
@@ -40,7 +40,7 @@ def add_email_column():
         return True
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f" Error: {e}")
         return False
 
 if __name__ == "__main__":

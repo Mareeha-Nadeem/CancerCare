@@ -23,11 +23,11 @@ def create_test_image():
 
 def test_complete_system():
     print("\n" + "="*70)
-    print("  🎉 POST-DIAGNOSIS SYSTEM - COMPLETE TEST")
+    print("   POST-DIAGNOSIS SYSTEM - COMPLETE TEST")
     print("="*70 + "\n")
     
     # Step 1: Get patient
-    print("📋 Step 1: Getting patient...")
+    print(" Step 1: Getting patient...")
     patients = patient_service.get_all_patients()
     if not patients:
         patient, _ = patient_service.create_patient({
@@ -37,15 +37,15 @@ def test_complete_system():
             'gender': 'M',
             'contact': '555-TEST'
         })
-        print(f"   ✅ Created test patient: {patient.name}")
+        print(f"    Created test patient: {patient.name}")
     else:
         patient = patients[0]
-        print(f"   ✅ Using patient: {patient.name}")
+        print(f"    Using patient: {patient.name}")
     
     print("\n" + "-"*70 + "\n")
     
     # Step 2: Create diagnosis
-    print("🔬 Step 2: Creating diagnosis record...")
+    print(" Step 2: Creating diagnosis record...")
     diagnosis_data = {
         'diagnosis_date': datetime.utcnow(),
         'cancer_type': 'Lung Cancer (Adenocarcinoma)',
@@ -63,14 +63,14 @@ def test_complete_system():
     )
     
     if not error:
-        print(f"   ✅ Diagnosis created: {diagnosis.cancer_type}, {diagnosis.stage}")
+        print(f"    Diagnosis created: {diagnosis.cancer_type}, {diagnosis.stage}")
         print(f"      Tumor: {diagnosis.tumor_size_mm} mm")
         print(f"      Lymph nodes: {diagnosis.lymph_nodes_affected}")
     
     print("\n" + "-"*70 + "\n")
     
     # Step 3: Upload images with AI
-    print("📸 Step 3: Uploading medical images with AI analysis...")
+    print(" Step 3: Uploading medical images with AI analysis...")
     
     for i, img_type in enumerate(['CT Scan', 'MRI']):
         image_file = create_test_image()
@@ -85,13 +85,13 @@ def test_complete_system():
         )
         
         if not error:
-            result = "🔴 Abnormal" if image.tumor_detected else "🟢 Normal"
-            print(f"   ✅ {img_type}: {result} (confidence: {image.confidence_score:.1%})")
+            result = " Abnormal" if image.tumor_detected else "🟢 Normal"
+            print(f"    {img_type}: {result} (confidence: {image.confidence_score:.1%})")
     
     print("\n" + "-"*70 + "\n")
     
     # Step 4: Record tumor markers
-    print("💉 Step 4: Recording tumor marker tests...")
+    print(" Step 4: Recording tumor marker tests...")
     
     markers_to_record = [
         {'name': 'CEA', 'value': 6.2},
@@ -112,13 +112,13 @@ def test_complete_system():
         )
         
         if not error:
-            status = "🔴 ABNORMAL" if marker.is_abnormal else "🟢 NORMAL"
+            status = " ABNORMAL" if marker.is_abnormal else "🟢 NORMAL"
             print(f"   {status} {marker.marker_name}: {marker.value} {marker.unit}")
     
     print("\n" + "-"*70 + "\n")
     
     # Step 5: Generate summary
-    print("📊 Step 5: Complete System Summary...")
+    print(" Step 5: Complete System Summary...")
     
     all_diagnoses = post_diagnosis_service.get_patient_diagnosis(patient.id)
     all_images = image_service.get_patient_images(patient.id)
@@ -129,27 +129,27 @@ def test_complete_system():
     abnormal_markers = sum(1 for m in all_markers if m.is_abnormal)
     
     print(f"\n   Patient: {patient.name} (MRN: {patient.mrn})")
-    print(f"\n   📋 DIAGNOSES: {len(all_diagnoses)}")
+    print(f"\n    DIAGNOSES: {len(all_diagnoses)}")
     for diag in all_diagnoses[:3]:
         print(f"      - {diag.cancer_type}, {diag.stage}")
     
-    print(f"\n   📸 MEDICAL IMAGES: {len(all_images)}")
+    print(f"\n    MEDICAL IMAGES: {len(all_images)}")
     print(f"      - AI Analyzed: {ai_analyzed}/{len(all_images)}")
     print(f"      - Abnormalities: {abnormal_images}")
     
-    print(f"\n   💉 TUMOR MARKERS: {len(all_markers)}")
+    print(f"\n    TUMOR MARKERS: {len(all_markers)}")
     print(f"      - Abnormal: {abnormal_markers}/{len(all_markers)}")
     
     print("\n" + "="*70)
-    print("  ✅ ALL TESTS PASSED!")
+    print("   ALL TESTS PASSED!")
     print("="*70)
     
-    print("\n🎉 POST-DIAGNOSIS SYSTEM COMPLETE:\n")
-    print("   ✅ Day 1: Database & Backend")
-    print("   ✅ Day 2: AI Integration")
-    print("   ✅ Day 3: Frontend UI")
-    print("\n   🚀 System is PRODUCTION READY!")
-    print(f"\n   📊 Total Features:")
+    print("\n POST-DIAGNOSIS SYSTEM COMPLETE:\n")
+    print("    Day 1: Database & Backend")
+    print("    Day 2: AI Integration")
+    print("    Day 3: Frontend UI")
+    print("\n    System is PRODUCTION READY!")
+    print(f"\n    Total Features:")
     print(f"      - 3 Database models")
     print(f"      - 3 Backend services")
     print(f"      - 1 AI classifier")

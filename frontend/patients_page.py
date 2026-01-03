@@ -78,13 +78,13 @@ def show():
     # Header
     st.markdown("""
         <div class="page-header">
-            <h1 class="page-title">👥 Patient Management</h1>
+            <h1 class="page-title"> Patient Management</h1>
             <p style="color: #b0b0b0;">Manage patient records and view prediction history</p>
         </div>
     """, unsafe_allow_html=True)
     
     # Tabs
-    tab1, tab2, tab3 = st.tabs(["📋 All Patients", "➕ Add Patient", "🔍 Search Patient"])
+    tab1, tab2, tab3 = st.tabs([" All Patients", " Add Patient", " Search Patient"])
     
     with tab1:
         st.subheader("All Patients")
@@ -137,7 +137,7 @@ def show():
                 
                 # Patient list
                 for patient in patients:
-                    with st.expander(f"👤 {patient.name} (MRN: {patient.mrn})"):
+                    with st.expander(f" {patient.name} (MRN: {patient.mrn})"):
                         col1, col2 = st.columns(2)
                         
                         with col1:
@@ -158,8 +158,8 @@ def show():
                             latest = predictions[0]
                             probs = json.loads(latest.probabilities)
                             
-                            risk_color = {'High': '🔴', 'Medium': '🟡', 'Low': '🟢'}
-                            st.write(f"**Latest Risk:** {risk_color.get(latest.risk_level, '⚪')} {latest.risk_level} ({latest.confidence:.1%} confidence)")
+                            risk_color = {'High': '', 'Medium': '🟡', 'Low': '🟢'}
+                            st.write(f"**Latest Risk:** {risk_color.get(latest.risk_level, '')} {latest.risk_level} ({latest.confidence:.1%} confidence)")
                         else:
                             st.write("**Predictions:** None")
                         
@@ -169,23 +169,23 @@ def show():
                         col_edit, col_delete = st.columns(2)
                         
                         with col_edit:
-                            if st.button(f"✏️ Edit", key=f"edit_{patient.id}"):
+                            if st.button(f" Edit", key=f"edit_{patient.id}"):
                                 st.session_state[f'editing_{patient.id}'] = True
                                 st.rerun()
                         
                         with col_delete:
-                            if st.button(f"🗑️ Delete", key=f"delete_{patient.id}", type="secondary"):
+                            if st.button(f" Delete", key=f"delete_{patient.id}", type="secondary"):
                                 if st.session_state.get(f'confirm_delete_{patient.id}'):
                                     success, error = patient_service.delete_patient(patient.id)
                                     if success:
-                                        st.success(f"✅ Patient {patient.name} deleted!")
+                                        st.success(f" Patient {patient.name} deleted!")
                                         st.session_state.pop(f'confirm_delete_{patient.id}', None)
                                         st.rerun()
                                     else:
                                         st.error(f"Error: {error}")
                                 else:
                                     st.session_state[f'confirm_delete_{patient.id}'] = True
-                                    st.warning("⚠️ Click Delete again to confirm")
+                                    st.warning(" Click Delete again to confirm")
                         
                         # Edit form
                         if st.session_state.get(f'editing_{patient.id}'):
@@ -206,7 +206,7 @@ def show():
                                 col_save, col_cancel = st.columns(2)
                                 
                                 with col_save:
-                                    if st.form_submit_button("💾 Save Changes", use_container_width=True):
+                                    if st.form_submit_button(" Save Changes", use_container_width=True):
                                         update_data = {
                                             'name': edit_name,
                                             'age': edit_age,
@@ -220,12 +220,12 @@ def show():
                                         if error:
                                             st.error(f"Error: {error}")
                                         else:
-                                            st.success(f"✅ Patient updated successfully!")
+                                            st.success(f" Patient updated successfully!")
                                             st.session_state.pop(f'editing_{patient.id}', None)
                                             st.rerun()
                                 
                                 with col_cancel:
-                                    if st.form_submit_button("❌ Cancel", use_container_width=True):
+                                    if st.form_submit_button(" Cancel", use_container_width=True):
                                         st.session_state.pop(f'editing_{patient.id}', None)
                                         st.rerun()
             else:
@@ -270,15 +270,15 @@ def show():
                     if error:
                         st.error(f"Error: {error}")
                     else:
-                        st.success(f"✅ Patient {name} added successfully!")
+                        st.success(f" Patient {name} added successfully!")
                         if email:
-                            st.info(f"📧 Notifications will be sent to {email}")
+                            st.info(f" Notifications will be sent to {email}")
                         st.balloons()
     
     with tab3:
         st.subheader("Search Patient")
         
-        search_query = st.text_input("🔍 Search by Name or MRN")
+        search_query = st.text_input(" Search by Name or MRN")
         
         if search_query:
             try:
@@ -302,6 +302,6 @@ def show():
     
     # Back button
     st.markdown("---")
-    if st.button("⬅️ Back to Home"):
+    if st.button(" Back to Home"):
         st.query_params.page = "home"
         st.rerun()

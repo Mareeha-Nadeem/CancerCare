@@ -16,7 +16,7 @@ def create_postgres_database():
     print()
     
     # Get PostgreSQL credentials
-    print("📋 PostgreSQL Configuration")
+    print(" PostgreSQL Configuration")
     print("-" * 70)
     
     # Default values
@@ -31,7 +31,7 @@ def create_postgres_database():
     password = input(f"PostgreSQL Password: ").strip()
     
     if not password:
-        print("\n⚠️  No password provided. Trying without password (Windows Auth)...")
+        print("\n  No password provided. Trying without password (Windows Auth)...")
         password = ""
     
     host = input(f"PostgreSQL Host [{default_host}]: ").strip() or default_host
@@ -53,28 +53,28 @@ def create_postgres_database():
     try:
         # Check if database exists
         if database_exists(db_url):
-            print(f"\n✅ Database '{db_name}' already exists")
+            print(f"\n Database '{db_name}' already exists")
             use_existing = input("\nUse existing database? (y/n): ").strip().lower()
             
             if use_existing != 'y':
-                print("❌ Aborted by user")
+                print(" Aborted by user")
                 return None
         else:
-            print(f"\n📦 Creating database '{db_name}'...")
+            print(f"\n Creating database '{db_name}'...")
             create_database(db_url)
-            print(f"✅ Database '{db_name}' created successfully!")
+            print(f" Database '{db_name}' created successfully!")
         
         # Test connection
-        print("\n🔌 Testing connection...")
+        print("\n Testing connection...")
         engine = create_engine(db_url, echo=False)
         with engine.connect() as conn:
             result = conn.execute(text("SELECT version();"))
             version = result.fetchone()[0]
-            print(f"✅ Connected successfully!")
+            print(f" Connected successfully!")
             print(f"   PostgreSQL version: {version.split(',')[0]}")
         
         # Update .env file
-        print("\n📝 Updating .env file...")
+        print("\n Updating .env file...")
         env_path = ".env"
         
         if os.path.exists(env_path):
@@ -88,18 +88,18 @@ def create_postgres_database():
                     else:
                         f.write(line)
             
-            print(f"✅ Updated .env with connection string")
+            print(f" Updated .env with connection string")
         else:
-            print("⚠️  .env file not found, creating new one...")
+            print("  .env file not found, creating new one...")
             with open(env_path, 'w') as f:
                 f.write(f'DATABASE_URL={db_url}\n')
-            print(f"✅ Created .env file")
+            print(f" Created .env file")
         
         return db_url
         
     except Exception as e:
-        print(f"\n❌ Error: {e}")
-        print("\n💡 Troubleshooting tips:")
+        print(f"\n Error: {e}")
+        print("\n Troubleshooting tips:")
         print("  1. Make sure PostgreSQL is running")
         print("  2. Check your username and password")
         print("  3. Verify the host and port are correct")
@@ -116,14 +116,14 @@ def initialize_tables(db_url):
     
     try:
         # Import models to register them
-        print("\n📦 Loading database models...")
+        print("\n Loading database models...")
         from core.models import Base
         from core.db_config import engine
         
-        print("🔨 Creating tables...")
+        print(" Creating tables...")
         Base.metadata.create_all(bind=engine)
         
-        print("\n✅ All tables created successfully!")
+        print("\n All tables created successfully!")
         print("\nTables created:")
         print("  - patients")
         print("  - doctors")
@@ -135,7 +135,7 @@ def initialize_tables(db_url):
         return True
         
     except Exception as e:
-        print(f"\n❌ Error creating tables: {e}")
+        print(f"\n Error creating tables: {e}")
         return False
 
 
@@ -152,13 +152,13 @@ def seed_sample_data():
         try:
             from core.database_init import seed_sample_data as seed_func
             seed_func()
-            print("✅ Sample data added successfully!")
+            print(" Sample data added successfully!")
             return True
         except Exception as e:
-            print(f"⚠️  Warning: Could not seed data: {e}")
+            print(f"  Warning: Could not seed data: {e}")
             return False
     else:
-        print("⏭️  Skipped sample data seeding")
+        print("⏭  Skipped sample data seeding")
         return True
 
 
@@ -166,22 +166,22 @@ def main():
     """Main setup function"""
     
     print("""
-    ╔══════════════════════════════════════════════════════════════════╗
-    ║                                                                  ║
-    ║          🫁 CancerCare Database Setup Wizard                     ║
-    ║                                                                  ║
-    ╚══════════════════════════════════════════════════════════════════╝
+    
+                                                                      
+               CancerCare Database Setup Wizard                     
+                                                                      
+    
     """)
     
     # Step 1: Create database
     db_url = create_postgres_database()
     if not db_url:
-        print("\n❌ Database setup failed. Please try again.")
+        print("\n Database setup failed. Please try again.")
         return False
     
     # Step 2: Initialize tables
     if not initialize_tables(db_url):
-        print("\n❌ Table initialization failed.")
+        print("\n Table initialization failed.")
         return False
     
     # Step 3: Seed sample data
@@ -189,17 +189,17 @@ def main():
     
     # Success!
     print("\n" + "=" * 70)
-    print("  ✅ DATABASE SETUP COMPLETE!")
+    print("   DATABASE SETUP COMPLETE!")
     print("=" * 70)
     print("""
-    🎉 Your database is ready to use!
+     Your database is ready to use!
     
     Next steps:
     1. Run the application: streamlit run app.py
     2. Access it at: http://localhost:8501
     3. Start using CancerCare!
     
-    📝 Database connection saved to .env file
+     Database connection saved to .env file
     """)
     
     return True
@@ -213,8 +213,8 @@ if __name__ == "__main__":
         else:
             sys.exit(1)
     except KeyboardInterrupt:
-        print("\n\n⚠️  Setup interrupted by user")
+        print("\n\n  Setup interrupted by user")
         sys.exit(1)
     except Exception as e:
-        print(f"\n\n❌ Unexpected error: {e}")
+        print(f"\n\n Unexpected error: {e}")
         sys.exit(1)

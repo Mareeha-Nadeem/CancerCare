@@ -14,10 +14,10 @@ def init_post_diagnosis_tables():
     
     try:
         # Create all tables (will skip existing ones)
-        print("🔨 Creating tables...")
+        print(" Creating tables...")
         Base.metadata.create_all(engine)
         
-        print("\n✅ Post-diagnosis tables created successfully!")
+        print("\n Post-diagnosis tables created successfully!")
         print("\nNew tables:")
         print("  - post_diagnosis")
         print("  - medical_images")
@@ -25,7 +25,7 @@ def init_post_diagnosis_tables():
         
         return True
     except Exception as e:
-        print(f"\n❌ Error creating tables: {e}")
+        print(f"\n Error creating tables: {e}")
         return False
 
 if __name__ == "__main__":

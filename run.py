@@ -5,13 +5,13 @@ import subprocess
 import sys
 
 print("""
-╔══════════════════════════════════════════════════════════════════╗
-║                                                                  ║
-║               🫁 CancerCare Application                          ║
-║                                                                  ║
-╚══════════════════════════════════════════════════════════════════╝
 
-🚀 Starting application on http://localhost:8501
+                                                                  
+                CancerCare Application                          
+                                                                  
+
+
+ Starting application on http://localhost:8501
 Press Ctrl+C to stop
 """)
 
@@ -22,7 +22,7 @@ try:
         "--server.address=0.0.0.0"
     ])
 except KeyboardInterrupt:
-    print("\n\n👋 Application stopped")
+    print("\n\n Application stopped")
 except Exception as e:
-    print(f"\n❌ Error: {e}")
+    print(f"\n Error: {e}")
     print("\nIf you haven't set up the application yet, run: python setup.py")

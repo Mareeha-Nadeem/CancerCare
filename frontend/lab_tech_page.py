@@ -64,13 +64,13 @@ def show():
     # Header
     st.markdown("""
         <div class="lab-header">
-            <h1 class="lab-title">🔬 Lab Technician Portal</h1>
+            <h1 class="lab-title"> Lab Technician Portal</h1>
             <p style="color: #b0b0b0;">Manage predictions and schedule appointments</p>
         </div>
     """, unsafe_allow_html=True)
     
     # Tabs
-    tab1, tab2, tab3 = st.tabs(["📋 Recent Results", "📅 Book Appointment", "📊 My Activity"])
+    tab1, tab2, tab3 = st.tabs([" Recent Results", " Book Appointment", " My Activity"])
     
     with tab1:
         st.subheader("Recent Prediction Results")
@@ -89,7 +89,7 @@ def show():
                     
                     risk_class = f"{pred.risk_level.lower()}-risk"
                     
-                    with st.expander(f"👤 {patient.name} - {pred.risk_level} Risk ({pred.created_at.strftime('%Y-%m-%d %H:%M')})"):
+                    with st.expander(f" {patient.name} - {pred.risk_level} Risk ({pred.created_at.strftime('%Y-%m-%d %H:%M')})"):
                         col1, col2 = st.columns(2)
                         
                         with col1:
@@ -110,11 +110,11 @@ def show():
                         st.write(f"- High: {probs.get('High', 0):.1%}")
                         
                         # Quick action button
-                        if st.button(f"📅 Schedule Appointment for {patient.name}", key=f"appt_{pred.id}"):
+                        if st.button(f" Schedule Appointment for {patient.name}", key=f"appt_{pred.id}"):
                             st.session_state['selected_patient_id'] = patient.id
                             st.session_state['selected_patient_name'] = patient.name
                             st.session_state['prediction_risk'] = pred.risk_level
-                            st.success(f"✅ Patient selected! Go to 'Book Appointment' tab")
+                            st.success(f" Patient selected! Go to 'Book Appointment' tab")
             else:
                 st.info("No recent predictions available")
         
@@ -126,7 +126,7 @@ def show():
         
         # Check if patient was selected from tab1
         if 'selected_patient_id' in st.session_state:
-            st.success(f"✅ Selected Patient: {st.session_state.get('selected_patient_name')}")
+            st.success(f" Selected Patient: {st.session_state.get('selected_patient_name')}")
             st.info(f"Risk Level: {st.session_state.get('prediction_risk')}")
         
         with st.form("appointment_form"):
@@ -154,7 +154,7 @@ def show():
             doctor_options = {f"{d.name} - {d.specialization}": d.id for d in doctors}
             
             if not doctors:
-                st.warning("⚠️ No doctors available. Please add doctors first.")
+                st.warning(" No doctors available. Please add doctors first.")
                 selected_doctor = None
             else:
                 selected_doctor_name = st.selectbox("Select Doctor", list(doctor_options.keys()))
@@ -184,7 +184,7 @@ def show():
             notes = st.text_area("Additional Notes (Optional)")
             
             # Submit button
-            submit = st.form_submit_button("📅 Schedule Appointment", use_container_width=True)
+            submit = st.form_submit_button(" Schedule Appointment", use_container_width=True)
             
             if submit:
                 if not selected_doctor:
@@ -211,7 +211,7 @@ def show():
                             patient = patient_service.get_patient_by_id(patient_id)
                             doctor = doctor_service.get_doctor_by_id(selected_doctor)
                             
-                            st.success(f"✅ Appointment scheduled successfully!")
+                            st.success(f" Appointment scheduled successfully!")
                             st.balloons()
                             
                             # Send notification
@@ -233,7 +233,7 @@ def show():
                                         appointment_date=appointment_datetime.strftime('%Y-%m-%d %H:%M'),
                                         reason=reason
                                     )
-                                    st.success(f"📧 Appointment confirmation sent to {patient.email}")
+                                    st.success(f" Appointment confirmation sent to {patient.email}")
                                 except Exception as e:
                                     st.warning(f"Appointment saved but email failed: {e}")
                             
@@ -279,10 +279,10 @@ def show():
                     patient = patient_service.get_patient_by_id(apt.patient_id)
                     doctor = doctor_service.get_doctor_by_id(apt.doctor_id)
                     
-                    priority_emoji = "🔴" if apt.priority >= 4 else "🟡" if apt.priority >= 2 else "🟢"
+                    priority_emoji = "" if apt.priority >= 4 else "🟡" if apt.priority >= 2 else "🟢"
                     
                     st.write(f"{priority_emoji} **{patient.name}** with **Dr. {doctor.name}**")
-                    st.write(f"   📅 {apt.appointment_date.strftime('%Y-%m-%d %H:%M')} | Status: {apt.status}")
+                    st.write(f"    {apt.appointment_date.strftime('%Y-%m-%d %H:%M')} | Status: {apt.status}")
                     st.write(f"   Reason: {apt.reason}")
                     st.markdown("---")
             else:
@@ -293,6 +293,6 @@ def show():
     
     # Back button
     st.markdown("---")
-    if st.button("⬅️ Back to Home"):
+    if st.button(" Back to Home"):
         st.query_params.page = "home"
         st.rerun()

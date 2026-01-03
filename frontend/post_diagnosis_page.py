@@ -50,17 +50,17 @@ def show():
     # Header
     st.markdown("""
         <div class="diagnosis-header">
-            <h1 class="page-title">🏥 Post-Diagnosis Management</h1>
+            <h1 class="page-title"> Post-Diagnosis Management</h1>
             <p style="color: #b0b0b0;">Comprehensive cancer care tracking and monitoring</p>
         </div>
     """, unsafe_allow_html=True)
     
     # Patient selector
-    st.subheader("📋 Select Patient")
+    st.subheader(" Select Patient")
     patients = patient_service.get_all_patients()
     
     if not patients:
-        st.warning("⚠️ No patients found. Please add a patient first.")
+        st.warning(" No patients found. Please add a patient first.")
         return
     
     patient_options = {f"{p.name} (MRN: {p.mrn})": p for p in patients}
@@ -76,11 +76,11 @@ def show():
     
     # Main tabs
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "📋 Diagnosis Info",
-        "📸 Medical Images",
-        "💉 Tumor Markers",
-        "💊 Treatment Plan",
-        "📈 Progress Timeline"
+        " Diagnosis Info",
+        " Medical Images",
+        " Tumor Markers",
+        " Treatment Plan",
+        " Progress Timeline"
     ])
     
     with tab1:
@@ -101,7 +101,7 @@ def show():
 
 def show_diagnosis_tab(patient):
     """Tab 1: Diagnosis Information"""
-    st.subheader("🔬 Diagnosis Information")
+    st.subheader(" Diagnosis Information")
     
     # Get existing diagnoses
     diagnoses = post_diagnosis_service.get_patient_diagnosis(patient.id)
@@ -139,7 +139,7 @@ def show_diagnosis_tab(patient):
             treatment_plan = st.text_area("Treatment Plan", height=100)
             notes = st.text_area("Doctor's Notes", height=100)
             
-            submitted = st.form_submit_button("💾 Save Diagnosis", use_container_width=True)
+            submitted = st.form_submit_button(" Save Diagnosis", use_container_width=True)
             
             if submitted:
                 diagnosis_data = {
@@ -159,9 +159,9 @@ def show_diagnosis_tab(patient):
                 )
                 
                 if error:
-                    st.error(f"❌ Error: {error}")
+                    st.error(f" Error: {error}")
                 else:
-                    st.success("✅ Diagnosis saved successfully!")
+                    st.success(" Diagnosis saved successfully!")
                     st.rerun()
     
     with col2:
@@ -177,12 +177,12 @@ def show_diagnosis_tab(patient):
                 </div>
                 """, unsafe_allow_html=True)
         else:
-            st.info("ℹ️ No diagnoses recorded yet")
+            st.info("ℹ No diagnoses recorded yet")
 
 
 def show_images_tab(patient):
     """Tab 2: Medical Images"""
-    st.subheader("📸 Medical Images")
+    st.subheader(" Medical Images")
     
     col1, col2 = st.columns([1, 1])
     
@@ -203,7 +203,7 @@ def show_images_tab(patient):
         if uploaded_file:
             st.image(uploaded_file, caption="Preview", use_column_width=True)
             
-            if st.button("📤 Upload & Analyze", use_container_width=True):
+            if st.button(" Upload & Analyze", use_container_width=True):
                 with st.spinner("Uploading and analyzing..."):
                     # Get latest diagnosis
                     diagnoses = post_diagnosis_service.get_patient_diagnosis(patient.id)
@@ -220,9 +220,9 @@ def show_images_tab(patient):
                     )
                     
                     if error:
-                        st.error(f"❌ {error}")
+                        st.error(f" {error}")
                     else:
-                        st.success("✅ Image uploaded and analyzed!")
+                        st.success(" Image uploaded and analyzed!")
                         st.rerun()
     
     with col2:
@@ -237,8 +237,8 @@ def show_images_tab(patient):
                     st.markdown(f"**Size:** {img.image_width}x{img.image_height} px")
                     
                     if img.ai_analyzed:
-                        st.markdown("**🤖 AI Analysis:**")
-                        result = "🔴 Abnormal" if img.tumor_detected else "🟢 Normal"
+                        st.markdown("** AI Analysis:**")
+                        result = " Abnormal" if img.tumor_detected else "🟢 Normal"
                         st.markdown(f"- Result: {result}")
                         st.markdown(f"- Confidence: {img.confidence_score:.1%}")
                         if img.tumor_count:
@@ -251,12 +251,12 @@ def show_images_tab(patient):
                     except:
                         st.info("Image preview not available")
         else:
-            st.info("ℹ️ No images uploaded yet")
+            st.info("ℹ No images uploaded yet")
 
 
 def show_markers_tab(patient):
     """Tab 3: Tumor Markers"""
-    st.subheader("💉 Tumor Markers")
+    st.subheader(" Tumor Markers")
     
     col1, col2 = st.columns([1, 2])
     
@@ -273,7 +273,7 @@ def show_markers_tab(patient):
             test_date = st.date_input("Test Date", datetime.now())
             labname = st.text_input("Laboratory")
             
-            submit = st.form_submit_button("💾 Record Marker", use_container_width=True)
+            submit = st.form_submit_button(" Record Marker", use_container_width=True)
             
             if submit:
                 # Get latest diagnosis
@@ -294,9 +294,9 @@ def show_markers_tab(patient):
                 )
                 
                 if error:
-                    st.error(f"❌ {error}")
+                    st.error(f" {error}")
                 else:
-                    st.success("✅ Marker recorded!")
+                    st.success(" Marker recorded!")
                     st.rerun()
     
     with col2:
@@ -362,16 +362,16 @@ def show_markers_tab(patient):
             # Show recent results
             st.markdown("### Recent Results")
             for m in markers[:5]:
-                status = "🔴" if m.is_abnormal else "🟢"
+                status = "" if m.is_abnormal else "🟢"
                 st.markdown(f"{status} **{m.marker_name}**: {m.value} {m.unit} ({m.test_date.strftime('%Y-%m-%d')})")
         else:
-            st.info("ℹ️ No marker results recorded yet")
+            st.info("ℹ No marker results recorded yet")
 
 
 
 def show_treatment_tab(patient):
     """Tab 4: Treatment Plan"""
-    st.subheader("💊 Treatment Plan")
+    st.subheader(" Treatment Plan")
     
     diagnoses = post_diagnosis_service.get_patient_diagnosis(patient.id)
     
@@ -387,12 +387,12 @@ def show_treatment_tab(patient):
                 if diag.notes:
                     st.markdown(f"**Notes:** {diag.notes}")
     else:
-        st.info("ℹ️ No diagnoses found. Add diagnosis in Tab 1.")
+        st.info("ℹ No diagnoses found. Add diagnosis in Tab 1.")
 
 
 def show_timeline_tab(patient):
     """Tab 5: Progress Timeline"""
-    st.subheader("📈 Progress Timeline")
+    st.subheader(" Progress Timeline")
     
     # Collect all events
     events = []
@@ -404,7 +404,7 @@ def show_timeline_tab(patient):
             'date': diag.diagnosis_date,
             'type': 'Diagnosis',
             'description': f"{diag.cancer_type} - {diag.stage}",
-            'icon': '🔬'
+            'icon': ''
         })
     
     # Images
@@ -415,7 +415,7 @@ def show_timeline_tab(patient):
             'date': img.upload_date,
             'type': 'Imaging',
             'description': f"{img.image_type} - {result}",
-            'icon': '📸'
+            'icon': ''
         })
     
     # Markers
@@ -426,7 +426,7 @@ def show_timeline_tab(patient):
             'date': m.test_date,
             'type': 'Lab Test',
             'description': f"{m.marker_name}: {m.value} {m.unit} ({status})",
-            'icon': '💉'
+            'icon': ''
         })
     
     # Sort by date
@@ -443,7 +443,7 @@ def show_timeline_tab(patient):
             </div>
             """, unsafe_allow_html=True)
     else:
-        st.info("ℹ️ No events recorded yet")
+        st.info("ℹ No events recorded yet")
 
 
 if __name__ == "__main__":

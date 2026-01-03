@@ -43,7 +43,7 @@ def load_model_and_metadata():
             "Please train the model first: python train_model.py"
         )
     
-    print(f"📂 Loading model from {model_path}")
+    print(f" Loading model from {model_path}")
     model = joblib.load(model_path)
     
     # Load metadata = {}
@@ -51,7 +51,7 @@ def load_model_and_metadata():
     if metadata_path.exists():
         with open(metadata_path, 'r') as f:
             metadata = json.load(f)
-        print(f"✅ Model loaded (trained: {metadata.get('trained_on', 'Unknown')})")
+        print(f" Model loaded (trained: {metadata.get('trained_on', 'Unknown')})")
     
     # Load target encoder if exists
     target_encoder = None
@@ -73,7 +73,7 @@ def test_model(test_data_path=None):
     """
     
     print("\n" + "="*70)
-    print("🧪 MODEL TESTING")
+    print(" MODEL TESTING")
     print("="*70 + "\n")
     
     # ----------------------
@@ -90,7 +90,7 @@ def test_model(test_data_path=None):
     if not Path(test_data_path).exists():
         raise FileNotFoundError(f"Test data not found at {test_data_path}")
     
-    print(f"📂 Loading test data from: {test_data_path}")
+    print(f" Loading test data from: {test_data_path}")
     df_test = pd.read_csv(test_data_path)
     
     # Separate features and target
@@ -103,12 +103,12 @@ def test_model(test_data_path=None):
         y_test = None
         has_labels = False
     
-    print(f"✅ Loaded: {X_test.shape}")
+    print(f" Loaded: {X_test.shape}")
     
     # ----------------------
     # MAKE PREDICTIONS
     # ----------------------
-    print("\n🔮 Making predictions...")
+    print("\n Making predictions...")
     
     y_pred = model.predict(X_test)
     y_proba = model.predict_proba(X_test)
@@ -125,14 +125,14 @@ def test_model(test_data_path=None):
         if has_labels:
             y_test_labels = y_test
     
-    print("✅ Predictions complete")
+    print(" Predictions complete")
     
     # ----------------------
     # EVALUATE (if labels available)
     # ----------------------
     if has_labels:
         print("\n" + "="*70)
-        print("📊 TEST SET PERFORMANCE")
+        print(" TEST SET PERFORMANCE")
         print("="*70 + "\n")
         
         # Metrics
@@ -165,12 +165,12 @@ def test_model(test_data_path=None):
             test_mcc = None
         
         # Classification Report
-        print("\n📋 CLASSIFICATION REPORT:")
+        print("\n CLASSIFICATION REPORT:")
         print("-" * 70)
         print(classification_report(y_test, y_pred, target_names=target_names, zero_division=0))
         
         # Confusion Matrix
-        print("🔢 CONFUSION MATRIX:")
+        print(" CONFUSION MATRIX:")
         print("-" * 70)
         cm = confusion_matrix(y_test, y_pred)
         
@@ -189,7 +189,7 @@ def test_model(test_data_path=None):
             print(cm)
         
         # Per-class accuracy
-        print(f"\n📈 PER-CLASS ACCURACY:")
+        print(f"\n PER-CLASS ACCURACY:")
         for i, name in enumerate(target_names or range(len(cm))):
             class_acc = cm[i,i] / cm[i].sum() if cm[i].sum() > 0 else 0
             print(f"   {name}: {class_acc:.4f} ({class_acc:.1%})")
@@ -213,12 +213,12 @@ def test_model(test_data_path=None):
         with open(results_path, 'w') as f:
             json.dump(results, f, indent=2)
         
-        print(f"\n💾 Results saved to: {results_path}")
+        print(f"\n Results saved to: {results_path}")
     
     # ----------------------
     # SAVE PREDICTIONS
     # ----------------------
-    print("\n📊 SAVING PREDICTIONS...")
+    print("\n SAVING PREDICTIONS...")
     
     # Add predictions to dataframe
     predictions_df = X_test.copy()
@@ -238,16 +238,16 @@ def test_model(test_data_path=None):
     pred_path = RESULTS_DIR / f"predictions_{timestamp}.csv"
     predictions_df.to_csv(pred_path, index=False)
     
-    print(f"💾 Predictions saved to: {pred_path}")
+    print(f" Predictions saved to: {pred_path}")
     
     # Prediction summary
-    print(f"\n📊 PREDICTION SUMMARY:")
+    print(f"\n PREDICTION SUMMARY:")
     pred_counts = pd.Series(y_pred_labels).value_counts()
     for class_name, count in pred_counts.items():
         print(f"   {class_name}: {count} ({count/len(y_pred_labels)*100:.1f}%)")
     
     print("\n" + "="*70)
-    print("✅ TESTING COMPLETE")
+    print(" TESTING COMPLETE")
     print("="*70 + "\n")
     
     return predictions_df

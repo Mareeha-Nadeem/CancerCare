@@ -30,9 +30,9 @@ def test_day1():
     )
     
     if error:
-        print(f"   ❌ Error: {error}")
+        print(f"    Error: {error}")
     else:
-        print(f"   ✅ Diagnosis created: ID {diagnosis.id}")
+        print(f"    Diagnosis created: ID {diagnosis.id}")
     
     # Test 2: Record tumor marker
     print("\nTest 2: Recording tumor marker...")
@@ -49,15 +49,15 @@ def test_day1():
     )
     
     if error:
-        print(f"   ❌ Error: {error}")
+        print(f"    Error: {error}")
     else:
-        print(f"   ✅ Marker recorded: {marker.marker_name} = {marker.value} {marker.unit}")
+        print(f"    Marker recorded: {marker.marker_name} = {marker.value} {marker.unit}")
         print(f"      Abnormal: {marker.is_abnormal}")
     
     # Test 3: Get reference ranges
     print("\nTest 3: Getting reference ranges...")
     ranges = tumor_marker_service.get_reference_ranges()
-    print("   ✅ Available markers:")
+    print("    Available markers:")
     for name, ref in ranges.items():
         print(f"      - {name}: {ref['min']}-{ref['max']} {ref['unit']}")
     

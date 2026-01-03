@@ -30,3 +30,8 @@ __pycache__/
 data_science/__pycache__/
 data_science/utils/__pycache__/
 *.pyc
+
+# ==============================
+# Documentation files (local only)
+# ==============================
+Description/
