@@ -80,7 +80,7 @@ def show():
     # Header
     st.markdown("""
         <div class="dashboard-header">
-            <h1 class="dashboard-title">📊 Analytics Dashboard</h1>
+            <h1 class="dashboard-title"> Analytics Dashboard</h1>
             <p style="color: #b0b0b0;">Real-time insights and data visualization</p>
         </div>
     """, unsafe_allow_html=True)
@@ -88,7 +88,7 @@ def show():
     # Refresh button
     col1, col2, col3 = st.columns([2, 1, 1])
     with col3:
-        if st.button("🔄 Refresh Data"):
+        if st.button(" Refresh Data"):
             st.rerun()
     
     try:
@@ -102,7 +102,7 @@ def show():
         system_metrics = network_monitor.get_system_metrics()
         
         # Key Metrics Row
-        st.markdown("## 📈 Key Metrics")
+        st.markdown("##  Key Metrics")
         
         col1, col2, col3, col4 = st.columns(4)
         
@@ -143,7 +143,7 @@ def show():
         
         with col_left:
             # Risk Distribution Pie Chart
-            st.markdown("### 🎯 Risk Distribution")
+            st.markdown("###  Risk Distribution")
             
             if risk_dist['total'] > 0:
                 fig_risk = go.Figure(data=[go.Pie(
@@ -168,7 +168,7 @@ def show():
                 st.info("No predictions yet")
             
             # Patient Age Distribution
-            st.markdown("### 👥 Patient Age Distribution")
+            st.markdown("###  Patient Age Distribution")
             
             if patients:
                 ages = [p.age for p in patients]
@@ -195,7 +195,7 @@ def show():
         
         with col_right:
             # Appointment Status
-            st.markdown("### 📅 Appointment Status")
+            st.markdown("###  Appointment Status")
             
             fig_appointments = go.Figure(data=[go.Bar(
                 x=['Scheduled', 'Completed', 'Cancelled'],
@@ -228,7 +228,7 @@ def show():
             st.plotly_chart(fig_appointments, use_container_width=True)
             
             # Gender Distribution
-            st.markdown("### ⚧ Gender Distribution")
+            st.markdown("###  Gender Distribution")
             
             if patients:
                 male_count = sum(1 for p in patients if p.gender in ['M', 'Male'])
@@ -258,7 +258,7 @@ def show():
         
         # Network Statistics Section
         st.markdown("---")
-        st.markdown("## 🌐 Network Performance")
+        st.markdown("##  Network Performance")
         
         col1, col2, col3, col4 = st.columns(4)
         
@@ -277,7 +277,7 @@ def show():
         # Recent Predictions Table
         if predictions:
             st.markdown("---")
-            st.markdown("## 📋 Recent Predictions")
+            st.markdown("##  Recent Predictions")
             
             # Create DataFrame
             recent_predictions = []
@@ -296,7 +296,7 @@ def show():
         
         # Statistics Summary
         st.markdown("---")
-        st.markdown("## 📊 Summary Statistics")
+        st.markdown("##  Summary Statistics")
         
         col1, col2 = st.columns(2)
         
@@ -323,6 +323,6 @@ def show():
     
     # Back button
     st.markdown("---")
-    if st.button("⬅️ Back to Home"):
+    if st.button(" Back to Home"):
         st.query_params.page = "home"
         st.rerun()

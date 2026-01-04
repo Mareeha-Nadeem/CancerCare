@@ -66,13 +66,13 @@ class EmailService:
             with self.lock:
                 self.emails_sent += 1
             
-            print(f"✅ Email sent to {to_email}: {subject}")
+            print(f" Email sent to {to_email}: {subject}")
             return True
             
         except Exception as e:
             with self.lock:
                 self.emails_failed += 1
-            print(f"❌ Email failed to {to_email}: {e}")
+            print(f" Email failed to {to_email}: {e}")
             return False
     
     def send_email_async(self, to_email: str, subject: str, html_body: str, text_body: str = None):
@@ -156,7 +156,7 @@ class EmailService:
         </head>
         <body>
             <div class="header">
-                <h1>🔬 CancerCare Lab</h1>
+                <h1> CancerCare Lab</h1>
                 <p>Risk Assessment Report</p>
             </div>
             <div class="content">
@@ -164,18 +164,18 @@ class EmailService:
                 <p>Your lung cancer risk assessment has been completed. Please review the details below:</p>
                 
                 <div class="risk-box">
-                    ⚠️ {risk_level.upper()} RISK
+                     {risk_level.upper()} RISK
                     <br>
                     <span style="font-size: 16px;">Confidence: {confidence:.1%}</span>
                 </div>
                 
                 <div class="info-box">
-                    <h3>📋 Recommendations</h3>
+                    <h3> Recommendations</h3>
                     <p>{recommendations}</p>
                 </div>
                 
                 <div class="info-box">
-                    <h3>📅 Next Steps</h3>
+                    <h3> Next Steps</h3>
                     <p>
                         {'<strong>URGENT:</strong> Please schedule an immediate consultation with an oncologist.' if risk_level == 'High' else 
                          'We recommend scheduling a follow-up appointment within 3-6 months.' if risk_level == 'Medium' else
@@ -272,7 +272,7 @@ class EmailService:
         </head>
         <body>
             <div class="header">
-                <h1>📅 Appointment Scheduled</h1>
+                <h1> Appointment Scheduled</h1>
             </div>
             <div class="content">
                 <h2>Dear {patient_name},</h2>
@@ -286,12 +286,12 @@ class EmailService:
                 </div>
                 
                 <div class="appointment-box">
-                    <h3>📍 Location</h3>
+                    <h3> Location</h3>
                     <p>CancerCare Lab<br>Main Medical Center</p>
                 </div>
                 
                 <div class="appointment-box">
-                    <h3>ℹ️ Important Notes</h3>
+                    <h3>ℹ Important Notes</h3>
                     <ul>
                         <li>Please arrive 15 minutes before your appointment</li>
                         <li>Bring your medical records and ID</li>

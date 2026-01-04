@@ -35,17 +35,17 @@ Examples:
     }
     
     if script_name not in scripts:
-        print(f"❌ Unknown script: {script_name}")
+        print(f" Unknown script: {script_name}")
         print(f"Available: {', '.join(scripts.keys())}")
         sys.exit(1)
     
     script_path = Path(scripts[script_name])
     
     if not script_path.exists():
-        print(f"❌ Script not found: {script_path}")
+        print(f" Script not found: {script_path}")
         sys.exit(1)
     
-    print(f"🚀 Running: {script_path}")
+    print(f" Running: {script_path}")
     print("=" * 50)
     
     # Run the script

@@ -72,7 +72,7 @@ def show():
     # Header
     st.markdown("""
         <div class="msg-header">
-            <h1 class="msg-title">💬 Messaging Center</h1>
+            <h1 class="msg-title"> Messaging Center</h1>
             <p style="color: #b0b0b0;">Real-time communication system</p>
         </div>
     """, unsafe_allow_html=True)
@@ -98,7 +98,7 @@ def show():
     st.markdown("---")
     
     # Tabs
-    tab1, tab2, tab3 = st.tabs(["💬 Conversations", "📨 New Message", "📊 Statistics"])
+    tab1, tab2, tab3 = st.tabs([" Conversations", " New Message", " Statistics"])
     
     with tab1:
         st.subheader("Recent Conversations")
@@ -113,9 +113,9 @@ def show():
                 with st.container():
                     st.markdown(f"""
                         <div class="conversation-card">
-                            <h3 style="color: #ff006e;">👤 {conv['other_user']}</h3>
+                            <h3 style="color: #ff006e;"> {conv['other_user']}</h3>
                             <p>{conv['last_message']}</p>
-                            <small style="color: #888;">📅 {conv['last_timestamp']}</small>
+                            <small style="color: #888;"> {conv['last_timestamp']}</small>
                             {f'<span style="background: #ff006e; padding: 0.2rem 0.5rem; border-radius: 5px; color: white; font-size: 0.8rem;">{conv["unread_count"]} unread</span>' if conv['unread_count'] > 0 else ''}
                         </div>
                     """, unsafe_allow_html=True)
@@ -162,7 +162,7 @@ def show():
                 col1, col2 = st.columns([1, 5])
                 
                 with col1:
-                    send_btn = st.form_submit_button("Send 📨")
+                    send_btn = st.form_submit_button("Send ")
                 
                 if send_btn and message_content:
                     messaging_service.send_message(
@@ -184,7 +184,7 @@ def show():
             
             message = st.text_area("Message")
             
-            send = st.form_submit_button("Send Message 📨")
+            send = st.form_submit_button("Send Message ")
             
             if send and message:
                 current_user = "lab_tech"
@@ -195,7 +195,7 @@ def show():
                     message
                 )
                 
-                st.success(f"✅ Message sent to {recipient}!")
+                st.success(f" Message sent to {recipient}!")
                 st.balloons()
     
     with tab3:
@@ -214,16 +214,16 @@ def show():
         **Computer Networks Demonstration:**
         
         This messaging system demonstrates:
-        - 📡 Point-to-point communication (client-server model)
-        - 📦 Message routing and packet switching
-        - 🔗 Connection management
-        - 📊 Network performance metrics
-        - ⚡ Real-time message delivery
-        - 🔄 Asynchronous communication
+        -  Point-to-point communication (client-server model)
+        -  Message routing and packet switching
+        -  Connection management
+        -  Network performance metrics
+        -  Real-time message delivery
+        -  Asynchronous communication
         """)
     
     # Back button
     st.markdown("---")
-    if st.button("⬅️ Back to Home"):
+    if st.button(" Back to Home"):
         st.query_params.page = "home"
         st.rerun()

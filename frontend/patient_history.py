@@ -70,14 +70,14 @@ def show():
         </style>
     """, unsafe_allow_html=True)
     
-    st.markdown('<div class="history-header"><h1 style="color: #00d9ff;">📜 Patient History Tracker</h1></div>', unsafe_allow_html=True)
+    st.markdown('<div class="history-header"><h1 style="color: #00d9ff;"> Patient History Tracker</h1></div>', unsafe_allow_html=True)
     
     # Patient selection
     patients = patient_service.get_all_patients(limit=1000)
     
     if not patients:
         st.warning("No patients in database. Please add patients first.")
-        if st.button("➕ Add Patient"):
+        if st.button(" Add Patient"):
             st.query_params.page = "patients"
             st.rerun()
         return
@@ -87,7 +87,7 @@ def show():
     patient = patient_options[selected_patient_name]
     
     # Patient info card
-    st.markdown("## 👤 Patient Information")
+    st.markdown("##  Patient Information")
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -107,7 +107,7 @@ def show():
     appointments = appointment_service.get_patient_appointments(patient.id)
     
     # Statistics
-    st.markdown("## 📊 Patient Statistics")
+    st.markdown("##  Patient Statistics")
     
     col1, col2, col3 = st.columns(3)
     
@@ -127,7 +127,7 @@ def show():
     # Risk trend chart
     if predictions and len(predictions) > 1:
         st.markdown("---")
-        st.markdown("## 📈 Risk Trend Over Time")
+        st.markdown("##  Risk Trend Over Time")
         
         # Map risk levels to numbers for plotting
         risk_map = {'Low': 1, 'Medium': 2, 'High': 3}
@@ -166,7 +166,7 @@ def show():
     
     # Complete Timeline
     st.markdown("---")
-    st.markdown("## 🕐 Complete Medical Timeline")
+    st.markdown("##  Complete Medical Timeline")
     
     # Combine predictions and appointments into timeline
     timeline = []
@@ -176,7 +176,7 @@ def show():
         timeline.append({
             'date': pred.created_at,
             'type': 'Prediction',
-            'icon': '🔬',
+            'icon': '',
             'title': f"Risk Assessment: {pred.risk_level}",
             'details': f"Confidence: {pred.confidence:.1%}<br>Probabilities: Low {probs.get('Low', 0):.1%}, Medium {probs.get('Medium', 0):.1%}, High {probs.get('High', 0):.1%}",
             'risk': pred.risk_level
@@ -186,7 +186,7 @@ def show():
         timeline.append({
             'date': apt.created_at,
             'type': 'Appointment',
-            'icon': '📅',
+            'icon': '',
             'title': f"Appointment Scheduled",
             'details': f"Date: {apt.appointment_date.strftime('%Y-%m-%d %H:%M')}<br>Status: {apt.status}<br>Priority: {apt.priority}",
             'risk': 'Low'  # Default for appointments
@@ -212,16 +212,16 @@ def show():
     
     # Export options
     st.markdown("---")
-    st.markdown("## 📥 Export Patient Data")
+    st.markdown("##  Export Patient Data")
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📄 Generate PDF Report", use_container_width=True):
+        if st.button(" Generate PDF Report", use_container_width=True):
             st.info("PDF generation feature - coming soon!")
     
     with col2:
-        if st.button("📊 Export to CSV", use_container_width=True):
+        if st.button(" Export to CSV", use_container_width=True):
             import pandas as pd
             
             # Create CSV data
@@ -237,18 +237,18 @@ def show():
             csv = df.to_csv(index=False)
             
             st.download_button(
-                "💾 Download CSV",
+                " Download CSV",
                 csv,
                 f"patient_{patient.mrn}_history.csv",
                 "text/csv"
             )
     
     with col3:
-        if st.button("📧 Email Report", use_container_width=True):
+        if st.button(" Email Report", use_container_width=True):
             st.info("Email feature - configure SMTP settings first!")
     
     # Back button
     st.markdown("---")
-    if st.button("⬅️ Back to Lab Dashboard"):
+    if st.button(" Back to Lab Dashboard"):
         st.query_params.page = "lab_dashboard"
         st.rerun()

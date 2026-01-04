@@ -18,7 +18,7 @@ def show():
         </style>
     """, unsafe_allow_html=True)
     
-    st.title("📧 Contact Us")
+    st.title(" Contact Us")
     
     st.markdown("""
     <div class="contact-card">
@@ -41,10 +41,10 @@ def show():
         
         if st.form_submit_button("Send Message"):
             if name and email and message:
-                st.success("✅ Message sent! We'll get back to you soon.")
+                st.success(" Message sent! We'll get back to you soon.")
             else:
                 st.error("Please fill in all fields")
     
-    if st.button("⬅️ Back to Home"):
+    if st.button(" Back to Home"):
         st.query_params.page = "home"
         st.rerun()

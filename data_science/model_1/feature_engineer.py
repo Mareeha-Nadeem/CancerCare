@@ -17,7 +17,7 @@ class LungCancerFeatureEngineer(BaseEstimator, TransformerMixin):
         # Encode categorical
         # --------------------
         if self.debug:
-            print("🔧 Encoding categorical features...")
+            print(" Encoding categorical features...")
         # for col in X.columns:
         #     if X[col].dtype == 'object':
         #         try:
@@ -36,13 +36,13 @@ class LungCancerFeatureEngineer(BaseEstimator, TransformerMixin):
         # --------------------
         if 'SMOKING' in X.columns and 'PASSIVE_SMOKER' in X.columns:
             X['SMOKING_RISK'] = (X['SMOKING'] + X['PASSIVE_SMOKER']) / 2
-            if self.debug: print("➕ SMOKING_RISK created")
+            if self.debug: print(" SMOKING_RISK created")
 
         env_features = ['AIR_POLLUTION', 'DUST_ALLERGY', 'OCCUPATIONAL_HAZARDS']
         available_env = [f for f in env_features if f in X.columns]
         if available_env:
             X['ENVIRONMENTAL_RISK'] = X[available_env].mean(axis=1)
-            if self.debug: print("➕ ENVIRONMENTAL_RISK created")
+            if self.debug: print(" ENVIRONMENTAL_RISK created")
 
         if 'ALCOHOL_USE' in X.columns and 'OBESITY' in X.columns:
             X['LIFESTYLE_RISK'] = X['ALCOHOL_USE'] + X['OBESITY']
@@ -50,11 +50,11 @@ class LungCancerFeatureEngineer(BaseEstimator, TransformerMixin):
                 max_diet = X['BALANCED_DIET'].max()
                 X['LIFESTYLE_RISK'] += (max_diet - X['BALANCED_DIET'])
             X['LIFESTYLE_RISK'] = X['LIFESTYLE_RISK'] / 3
-            if self.debug: print("➕ LIFESTYLE_RISK created")
+            if self.debug: print(" LIFESTYLE_RISK created")
 
         if 'GENETIC_RISK' in X.columns and 'CHRONIC_LUNG_DISEASE' in X.columns:
             X['HEREDITARY_RISK'] = (X['GENETIC_RISK'] + X['CHRONIC_LUNG_DISEASE']) / 2
-            if self.debug: print("➕ HEREDITARY_RISK created")
+            if self.debug: print(" HEREDITARY_RISK created")
 
         symptom_features = [
             'CHEST_PAIN', 'COUGHING_OF_BLOOD', 'FATIGUE', 'WEIGHT_LOSS',
@@ -64,7 +64,7 @@ class LungCancerFeatureEngineer(BaseEstimator, TransformerMixin):
         available_symptoms = [f for f in symptom_features if f in X.columns]
         if available_symptoms:
             X['SYMPTOM_SEVERITY'] = X[available_symptoms].mean(axis=1)
-            if self.debug: print("➕ SYMPTOM_SEVERITY created")
+            if self.debug: print(" SYMPTOM_SEVERITY created")
 
         # Total Risk Score (weighted)
         risk_components = []
@@ -77,7 +77,7 @@ class LungCancerFeatureEngineer(BaseEstimator, TransformerMixin):
                 weights.append(weight)
         if risk_components:
             X['TOTAL_RISK_SCORE'] = sum(comp * w for comp, w in zip(risk_components, weights))
-            if self.debug: print("➕ TOTAL_RISK_SCORE created")
+            if self.debug: print(" TOTAL_RISK_SCORE created")
 
         # Age features
         if 'AGE' in X.columns:
@@ -90,21 +90,21 @@ class LungCancerFeatureEngineer(BaseEstimator, TransformerMixin):
             X['AGE_GROUP'] = pd.cut(
                 X['AGE'], bins=[0,40,50,60,70,100], labels=[0,1,2,3,4]
             ).astype(float)
-            if self.debug: print("➕ AGE_RISK and AGE_GROUP created")
+            if self.debug: print(" AGE_RISK and AGE_GROUP created")
 
         # Interaction features
         if 'SMOKING_RISK' in X.columns and 'AGE_RISK' in X.columns:
             X['SMOKING_AGE_INTERACTION'] = X['SMOKING_RISK'] * X['AGE_RISK']
-            if self.debug: print("➕ SMOKING_AGE_INTERACTION created")
+            if self.debug: print(" SMOKING_AGE_INTERACTION created")
         if 'ENVIRONMENTAL_RISK' in X.columns and 'SMOKING_RISK' in X.columns:
             X['ENV_SMOKING_INTERACTION'] = X['ENVIRONMENTAL_RISK'] * X['SMOKING_RISK']
-            if self.debug: print("➕ ENV_SMOKING_INTERACTION created")
+            if self.debug: print(" ENV_SMOKING_INTERACTION created")
         if 'GENETIC_RISK' in X.columns and 'AGE_RISK' in X.columns:
             X['GENETIC_AGE_INTERACTION'] = X['GENETIC_RISK'] * X['AGE_RISK']
-            if self.debug: print("➕ GENETIC_AGE_INTERACTION created")
+            if self.debug: print(" GENETIC_AGE_INTERACTION created")
 
         if self.debug:
-            print(f"\n📊 Transformed features shape: {X.shape}")
+            print(f"\n Transformed features shape: {X.shape}")
             print(f"Columns: {list(X.columns)}")
 
         return X
@@ -130,5 +130,5 @@ if __name__ == "__main__":
 
     fe = LungCancerFeatureEngineer(debug=True)
     X_transformed = fe.fit_transform(data)
-    print("\n✅ Feature engineering demo complete!")
+    print("\n Feature engineering demo complete!")
 

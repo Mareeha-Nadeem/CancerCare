@@ -87,7 +87,7 @@ def show():
     # Header
     st.markdown("""
         <div class="search-header">
-            <h1 class="page-title">🔍 Advanced Patient Search</h1>
+            <h1 class="page-title"> Advanced Patient Search</h1>
             <p style="color: #b0b0b0;">Using Data Structures & Algorithms for Efficient Search</p>
         </div>
     """, unsafe_allow_html=True)
@@ -163,13 +163,13 @@ def show():
         st.markdown("---")
         
         # Search and Filter Section
-        st.subheader("🔎 Search & Filter Options")
+        st.subheader(" Search & Filter Options")
         
         tab1, tab2, tab3, tab4 = st.tabs([
-            "🎯 Smart Filters", 
-            "🔍 Direct Search", 
-            "📊 Sort & Order", 
-            "🧮 Advanced (BST)"
+            " Smart Filters", 
+            " Direct Search", 
+            " Sort & Order", 
+            " Advanced (BST)"
         ])
         
         with tab1:
@@ -178,18 +178,18 @@ def show():
             col1, col2 = st.columns(2)
             
             with col1:
-                name_query = st.text_input("🔤 Search by Name", placeholder="Enter name...")
-                min_age, max_age = st.slider("🎂 Age Range", 0, 120, (0, 120))
+                name_query = st.text_input(" Search by Name", placeholder="Enter name...")
+                min_age, max_age = st.slider(" Age Range", 0, 120, (0, 120))
             
             with col2:
                 risk_options = st.multiselect(
-                    "⚠️ Risk Levels",
+                    " Risk Levels",
                     ["HIGH", "MEDIUM", "LOW", "UNKNOWN"],
                     default=["HIGH", "MEDIUM", "LOW", "UNKNOWN"]
                 )
-                gender_filter = st.selectbox("⚧ Gender", ["All", "M", "F"])
+                gender_filter = st.selectbox(" Gender", ["All", "M", "F"])
             
-            if st.button("🔍 Apply Filters", type="primary"):
+            if st.button(" Apply Filters", type="primary"):
                 # Use DSA filter function
                 filtered = filter_patients(
                     patients_data,
@@ -224,7 +224,7 @@ def show():
             with col2:
                 search_value = st.text_input("Search Value", placeholder="Enter value...")
             
-            if st.button("🔎 Search", type="primary"):
+            if st.button(" Search", type="primary"):
                 if search_type == "Linear Search":
                     # Linear search
                     idx, result = linear_search(patients_data, search_field, search_value)
@@ -262,15 +262,15 @@ def show():
             sort_option = st.selectbox(
                 "Order By",
                 [
-                    "🚨 Priority (High Risk + Older First)",
+                    " Priority (High Risk + Older First)",
                     "⏰ FIFO (First In, First Out)",
-                    "🆕 LIFO (Last In, First Out)",
-                    "🔤 Name (Merge Sort)",
-                    "🎂 Age (Merge Sort)"
+                    " LIFO (Last In, First Out)",
+                    " Name (Merge Sort)",
+                    " Age (Merge Sort)"
                 ]
             )
             
-            if st.button("📊 Apply Sorting", type="primary"):
+            if st.button(" Apply Sorting", type="primary"):
                 if "Priority" in sort_option:
                     # Priority Queue (Heap)
                     ordered = order_by_priority(patients_data)
@@ -339,7 +339,7 @@ def show():
             with col2:
                 bst_max_age = st.number_input("Maximum Age", 0, 120, 70)
             
-            if st.button("🌳 Search BST", type="primary"):
+            if st.button(" Search BST", type="primary"):
                 # Build BST and query
                 bst = build_age_bst(patients_data)
                 results = bst.range_query(bst_min_age, bst_max_age)
@@ -359,7 +359,7 @@ def show():
     
     # Back button
     st.markdown("---")
-    if st.button("⬅️ Back to Dashboard"):
+    if st.button(" Back to Dashboard"):
         st.query_params.page = "lab_dashboard"
         st.rerun()
 
@@ -372,13 +372,13 @@ def display_patients(patients):
     
     for patient in patients:
         risk_color = {
-            'HIGH': '🔴',
+            'HIGH': '',
             'MEDIUM': '🟡',
             'LOW': '🟢',
-            'UNKNOWN': '⚪'
+            'UNKNOWN': ''
         }
         
-        risk_emoji = risk_color.get(patient['risk_level'], '⚪')
+        risk_emoji = risk_color.get(patient['risk_level'], '')
         
         with st.expander(f"{risk_emoji} {patient['name']} (MRN: {patient['mrn']}) - {patient['risk_level']}"):
             col1, col2, col3 = st.columns(3)
