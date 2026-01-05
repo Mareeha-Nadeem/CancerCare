@@ -35,3 +35,4 @@ data_science/utils/__pycache__/
 # Documentation files (local only)
 # ==============================
 Description/
+.ipynb_checkpoints/

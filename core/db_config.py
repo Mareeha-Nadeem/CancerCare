@@ -33,7 +33,8 @@ session = scoped_session(SessionLocal)
 # This MUST happen after engine creation but before any code uses the models
 from core.models import (
     Base, Patient, Report, Prediction, Doctor, Appointment,
-    User, PostDiagnosis, MedicalImage, TumorMarker
+    User, PostDiagnosis, MedicalImage, TumorMarker, TreatmentRecord,
+    Notification, Message
 )
 
 def get_db():
@@ -51,3 +52,6 @@ def get_db_session():
 def init_database():
     """Initialize database tables - models already imported at module level"""
     Base.metadata.create_all(engine)
+
+# Alias for compatibility
+get_session = get_db_session

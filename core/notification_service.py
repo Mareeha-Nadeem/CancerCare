@@ -1,221 +1,167 @@
 """
-Enhanced Notification Service with Real-time Socket Integration
-Demonstrates Computer Networks Concepts
+Notification Service - Real-time notifications with priority queue
 """
-import threading
+from core.db_config import get_session
+from core.models import Notification
 from datetime import datetime
-from collections import defaultdict, deque
-from typing import Dict, List, Optional
+from typing import List, Optional, Dict
+from sqlalchemy import desc
+
 
 class NotificationService:
-    """
-    Notification service demonstrating Computer Networks concepts:
-    - Message Queue (FIFO)
-    - Publish-Subscribe Pattern
-    - Asynchronous Communication
-    - Network Packet Simulation
-    - Message Broadcasting
-    """
+    """Service for managing notifications with priority queue"""
     
-    def __init__(self):
-        # Message queue (simulates network packet queue)
-        self.notifications = deque(maxlen=1000)
+    @staticmethod
+    def create_notification(
+        user_id: int,
+        title: str,
+        message: str,
+        notification_type: str = 'info',
+        priority: str = 'normal',
+        link: str = None,
+        related_id: int = None,
+        related_type: str = None
+    ) -> Notification:
+        """
+        Create a new notification
         
-        # Subscriber management (pub-sub pattern)
-        self.subscribers = defaultdict(list)
-        
-        # Network statistics
-        self.stats = {
-            'messages_sent': 0,
-            'bytes_transferred': 0,
-            'broadcasts': 0,
-            'unicast': 0
-        }
-        
-        # Thread lock for concurrent access
-        self.lock = threading.Lock()
-        
-        # Try to import and start socket server
-        self.socket_server = None
+        Priority levels: low, normal, high, urgent
+        Types: info, warning, error, success
+        """
+        session = get_session()
         try:
-            from core.notification_server import notification_server
-            self.socket_server = notification_server
-            print(" Real-time socket server integrated!")
-        except Exception as e:
-            print(f" Socket server not available: {e}")
-    
-    def send_notification(self, recipient, title, message, notif_type="info"):
-        """
-        Send notification to specific recipient
-        Demonstrates: Unicast transmission
-        """
-        with self.lock:
-            notification = {
-                'id': len(self.notifications) + 1,
-                'recipient': recipient,
-                'title': title,
-                'message': message,
-                'type': notif_type,
-                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'read': False
-            }
-            
-            self.notifications.append(notification)
-            
-            # Update network stats
-            message_size = len(str(notification).encode('utf-8'))
-            self.stats['messages_sent'] += 1
-            self.stats['bytes_transferred'] += message_size
-            self.stats['unicast'] += 1
-            
-            # Send via socket server if available (REAL-TIME!)
-            if self.socket_server and self.socket_server.running:
-                try:
-                    self.socket_server.send_to_patient(
-                        patient_id=recipient,
-                        title=title,
-                        message=message,
-                        notif_type=notif_type
-                    )
-                    print(f" Real-time notification sent via socket to {recipient}")
-                except Exception as e:
-                    print(f" Socket send failed: {e}")
-            
+            notification = Notification(
+                user_id=user_id,
+                title=title,
+                message=message,
+                type=notification_type,
+                priority=priority,
+                link=link,
+                related_id=related_id,
+                related_type=related_type
+            )
+            session.add(notification)
+            session.commit()
+            session.refresh(notification)
             return notification
+        finally:
+            session.close()
     
-    def broadcast(self, title, message, notif_type="info"):
-        """
-        Broadcast notification to all users
-        Demonstrates: Broadcast transmission
-        """
-        with self.lock:
-            notification = {
-                'id': len(self.notifications) + 1,
-                'recipient': 'all',
-                'title': title,
-                'message': message,
-                'type': notif_type,
-                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'read': False
-            }
-            
-            self.notifications.append(notification)
-            
-            # Update network stats
-            message_size = len(str(notification).encode('utf-8'))
-            self.stats['messages_sent'] += 1
-            self.stats['bytes_transferred'] += message_size
-            self.stats['broadcasts'] += 1
-            
-            # Broadcast via socket server (REAL-TIME!)
-            if self.socket_server and self.socket_server.running:
-                try:
-                    self.socket_server.broadcast_notification(notification)
-                    print(f" Real-time broadcast sent via socket to all clients")
-                except Exception as e:
-                    print(f" Socket broadcast failed: {e}")
-            
-            return notification
-    
-    def get_notifications(self, recipient="all", limit=50, unread_only=False):
-        """Get notifications for recipient"""
-        with self.lock:
-            filtered = [
-                n for n in self.notifications
-                if n['recipient'] in [recipient, 'all']
-            ]
+    @staticmethod
+    def get_user_notifications(
+        user_id: int,
+        unread_only: bool = False,
+        priority_filter: Optional[str] = None,
+        type_filter: Optional[str] = None,
+        limit: int = 100
+    ) -> List[Notification]:
+        """Get notifications for a user with filters (priority queue)"""
+        session = get_session()
+        try:
+            query = session.query(Notification).filter(Notification.user_id == user_id)
             
             if unread_only:
-                filtered = [n for n in filtered if not n['read']]
+                query = query.filter(Notification.is_read == False)
             
-            return list(filtered)[-limit:]
-    
-    def mark_as_read(self, notification_id):
-        """Mark notification as read"""
-        with self.lock:
-            for n in self.notifications:
-                if n.get('id') == notification_id:
-                    n['read'] = True
-                    break
-    
-    def get_unread_count(self, recipient="all"):
-        """Get count of unread notifications"""
-        with self.lock:
-            count = 0
-            for n in self.notifications:
-                if n['recipient'] in [recipient, 'all'] and not n['read']:
-                    count += 1
-            return count
-    
-    def get_statistics(self):
-        """Get network statistics"""
-        with self.lock:
-            unread = sum(1 for n in self.notifications if not n['read'])
+            if priority_filter:
+                query = query.filter(Notification.priority == priority_filter)
             
-            stats = {
-                'total_notifications': len(self.notifications),
-                'unread_notifications': unread,
-                'messages_sent': self.stats['messages_sent'],
-                'kb_transferred': round(self.stats['bytes_transferred'] / 1024, 2),
-                'broadcasts': self.stats['broadcasts'],
-                'unicast': self.stats['unicast']
+            if type_filter:
+                query = query.filter(Notification.type == type_filter)
+            
+            # Priority queue: urgent > high > normal > low, then by created_at desc
+            priority_order = {
+                'urgent': 0,
+                'high': 1,
+                'normal': 2,
+                'low': 3
             }
             
-            # Add socket server stats if available
-            if self.socket_server and self.socket_server.running:
-                socket_stats = self.socket_server.get_stats()
-                stats['socket_clients_connected'] = socket_stats['active_clients']
-                stats['socket_server_status'] = socket_stats['server_status']
+            notifications = query.order_by(desc(Notification.created_at)).limit(limit).all()
+            
+            # Sort by priority first, then by created_at
+            notifications.sort(key=lambda n: (priority_order.get(n.priority, 2), -n.created_at.timestamp()))
+            
+            return notifications
+        finally:
+            session.close()
+    
+    @staticmethod
+    def mark_as_read(notification_id: int) -> bool:
+        """Mark notification as read"""
+        session = get_session()
+        try:
+            notification = session.query(Notification).filter(Notification.id == notification_id).first()
+            if notification:
+                notification.is_read = True
+                notification.read_at = datetime.utcnow()
+                session.commit()
+                return True
+            return False
+        finally:
+            session.close()
+    
+    @staticmethod
+    def mark_all_as_read(user_id: int) -> int:
+        """Mark all notifications as read for a user"""
+        session = get_session()
+        try:
+            count = session.query(Notification).filter(
+                Notification.user_id == user_id,
+                Notification.is_read == False
+            ).update({
+                'is_read': True,
+                'read_at': datetime.utcnow()
+            })
+            session.commit()
+            return count
+        finally:
+            session.close()
+    
+    @staticmethod
+    def get_unread_count(user_id: int) -> int:
+        """Get count of unread notifications"""
+        session = get_session()
+        try:
+            return session.query(Notification).filter(
+                Notification.user_id == user_id,
+                Notification.is_read == False
+            ).count()
+        finally:
+            session.close()
+    
+    @staticmethod
+    def delete_notification(notification_id: int) -> bool:
+        """Delete a notification"""
+        session = get_session()
+        try:
+            notification = session.query(Notification).filter(Notification.id == notification_id).first()
+            if notification:
+                session.delete(notification)
+                session.commit()
+                return True
+            return False
+        finally:
+            session.close()
+    
+    @staticmethod
+    def get_priority_stats(user_id: int) -> Dict[str, int]:
+        """Get notification counts by priority"""
+        session = get_session()
+        try:
+            notifications = session.query(Notification).filter(
+                Notification.user_id == user_id,
+                Notification.is_read == False
+            ).all()
+            
+            stats = {'urgent': 0, 'high': 0, 'normal': 0, 'low': 0}
+            for notif in notifications:
+                stats[notif.priority] = stats.get(notif.priority, 0) + 1
             
             return stats
+        finally:
+            session.close()
+
 
 # Global instance
 notification_service = NotificationService()
-
-# Helper functions for common notifications
-def notify_new_patient(patient_name, recipient="all"):
-    """Notify about new patient registration"""
-    return notification_service.send_notification(
-        recipient=recipient,
-        title="New Patient Registered",
-        message=f"Patient {patient_name} has been registered in the system.",
-        notif_type="info"
-    )
-
-def notify_prediction_complete(patient_name, risk_level, recipient="all"):
-    """Notify about prediction completion - REAL-TIME via socket!"""
-    notif_type = "error" if risk_level == "High" else "warning" if risk_level == "Medium" else "success"
-    
-    return notification_service.send_notification(
-        recipient=recipient,
-        title=f"Risk Assessment Complete: {patient_name}",
-        message=f"Cancer risk prediction completed. Risk Level: {risk_level}. Review required.",
-        notif_type=notif_type
-    )
-
-def notify_appointment_booked(patient_name, appointment_date, recipient="all"):
-    """Notify about new appointment - REAL-TIME via socket!"""
-    return notification_service.send_notification(
-        recipient=recipient,
-        title="Appointment Scheduled",
-        message=f"New appointment for {patient_name} on {appointment_date}.",
-        notif_type="info"
-    )
-
-def notify_appointment_reminder(patient_name, appointment_date, recipient):
-    """Send appointment reminder to specific patient - REAL-TIME via socket!"""
-    return notification_service.send_notification(
-        recipient=recipient,
-        title="Appointment Reminder",
-        message=f"Reminder: You have an appointment on {appointment_date}.",
-        notif_type="warning"
-    )
-
-def notify_report_uploaded(patient_name, recipient="all"):
-    """Notify about report upload"""
-    return notification_service.send_notification(
-        recipient=recipient,
-        title="New Report Uploaded",
-        message=f"Medical report uploaded for {patient_name}.",
-        notif_type="info"
-    )
