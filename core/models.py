@@ -130,7 +130,14 @@ class MedicalImage(Base):
     tumor_detected = Column(Boolean)
     confidence_score = Column(Float)  # 0.0 to 1.0
     tumor_count = Column(Integer)
-    largest_tumor_size = Column(Float)  # in mm
+    largest_tumor_size = Column(Float)  # in mm (diameter)
+    tumor_size_mm2 = Column(Float)  # Area in mm²
+    tumor_position_x = Column(Float)  # Normalized 0-1
+    tumor_position_y = Column(Float)  # Normalized 0-1
+    tumor_position_desc = Column(String(50))  # e.g., "Upper Right"
+    tumor_mass_g = Column(Float)  # Estimated mass in grams
+    aggression_level = Column(Integer)  # 1-5 scale
+    aggression_description = Column(String(100))  # Text description
     analysis_summary = Column(Text)  # JSON string of detailed analysis
     
     # Metadata
