@@ -115,8 +115,12 @@ from frontend import home_page, prediction_page, patients_page, doctors_page
 from frontend import about_page, search_page, service_page, contact_page
 from frontend import dashboard_page, lab_tech_page, notifications_page, messaging_page
 from frontend import lab_dashboard, batch_processing, patient_history, reports_page
-from frontend import post_diagnosis_page  # NEW post-diagnosis page
-from frontend import landing_page, auth_page, dashboard_home  # NEW authentication pages
+from frontend import post_diagnosis_page
+from frontend import landing_page, auth_page, dashboard_home
+from frontend.modern_styles import MODERN_CSS
+
+# Apply Ultra-Modern Design System
+st.markdown(MODERN_CSS, unsafe_allow_html=True)
 
 st.set_page_config(page_title="CancerCare - Lab Technician System", layout="wide")
 
@@ -193,6 +197,12 @@ def main():
     # Default to lab_dashboard for authenticated users
     current_page = st.query_params.get("page", st.session_state.get("page", "lab_dashboard"))
 
+    # Display logo in sidebar
+    try:
+        st.sidebar.image("assets/logo.png", width=100)
+    except:
+        pass
+    
     st.sidebar.title("CancerCare Lab")
     
     # Show user info in sidebar

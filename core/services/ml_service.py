@@ -145,11 +145,12 @@ def predict_risk(features: Dict) -> Tuple[str, float, Dict[str, float]]:
             
             # Check if they're numeric strings
             if all(c.isdigit() for c in str_classes):
-                # Model has numeric classes - need explicit mapping
-                # Assume alphabetical order: '0'=High, '1'=Low, '2'=Medium
-                numeric_to_risk = {'0': 'High', '1': 'Low', '2': 'Medium'}
+                # Model has numeric classes - CORRECTED MAPPING
+                # Based on actual model behavior: Higher class number = Higher risk
+                # 0 = Low Risk, 1 = Medium Risk, 2 = High Risk
+                numeric_to_risk = {'0': 'Low', '1': 'Medium', '2': 'High'}
                 risk_levels = [numeric_to_risk.get(str(i), 'Unknown') for i in range(3)]
-                print(f" DEBUG: Using numeric mapping: {risk_levels}")
+                print(f"🔧 DEBUG: Using CORRECTED numeric mapping: {risk_levels}")
             else:
                 # Model has text classes already
                 risk_levels = str_classes
@@ -274,9 +275,10 @@ class MLService:
         Returns dict with risk_level, confidence, probabilities
         """
         risk_level, confidence, probabilities = predict_risk(features)
+        
         return {
             'risk_level': risk_level,
-            'confidence': confidence,
+            'confidence': confidence * 100,  # Convert to percentage (0-100)
             'probabilities': probabilities
         }
     
