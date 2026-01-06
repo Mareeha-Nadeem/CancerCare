@@ -118,6 +118,8 @@ from frontend import lab_dashboard, batch_processing, patient_history, reports_p
 from frontend import post_diagnosis_page
 from frontend import landing_page, auth_page, dashboard_home
 from frontend.modern_styles import MODERN_CSS
+from core.db_config import init_database
+init_database()
 
 # Apply Ultra-Modern Design System
 st.markdown(MODERN_CSS, unsafe_allow_html=True)
@@ -170,6 +172,7 @@ def set_page(page_name: str):
     st.rerun()
 
 def main():
+    
     # Initialize session state for authentication if not exists
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False

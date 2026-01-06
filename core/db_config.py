@@ -48,10 +48,13 @@ def get_db():
 def get_db_session():
     """Get a new database session (for direct use)"""
     return session()
+def get_session():
+    """Get a new database session"""
+    return session()
+
 
 def init_database():
     """Initialize database tables - models already imported at module level"""
     Base.metadata.create_all(engine)
 
-# Alias for compatibility
-get_session = get_db_session
+print("DATABASE_URL USED =", DATABASE_URL)
