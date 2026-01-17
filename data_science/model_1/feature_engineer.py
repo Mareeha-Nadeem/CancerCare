@@ -69,14 +69,15 @@ class LungCancerFeatureEngineer(BaseEstimator, TransformerMixin):
         # Total Risk Score (weighted)
         risk_components = []
         weights = []
-        for col, weight in [('SMOKING_RISK', 0.3), ('ENVIRONMENTAL_RISK', 0.2),
+        for col, weight in [('ENVIRONMENTAL_RISK', 0.2),
                             ('LIFESTYLE_RISK', 0.15), ('HEREDITARY_RISK', 0.2),
-                            ('SYMPTOM_SEVERITY', 0.15)]:
+                            ('SYMPTOM_SEVERITY', 0.09)]:
             if col in X.columns:
                 risk_components.append(X[col])
                 weights.append(weight)
         if risk_components:
-            X['TOTAL_RISK_SCORE'] = sum(comp * w for comp, w in zip(risk_components, weights))
+            # Reduce overall weight of TOTAL_RISK_SCORE by scaling down the sum
+            X['TOTAL_RISK_SCORE'] = 0.5 * sum(comp * w for comp, w in zip(risk_components, weights))
             if self.debug: print(" TOTAL_RISK_SCORE created")
 
         # Age features

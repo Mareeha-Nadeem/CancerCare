@@ -107,7 +107,8 @@ def show():
         
         if uploaded_file:
             try:
-                df = pd.DataFrame(uploaded_file)
+                # df = pd.DataFrame(uploaded_file)
+                df = pd.read_csv(uploaded_file)
                 
                 st.success(f" File loaded: {len(df)} samples found")
                 st.dataframe(df.head(), use_container_width=True)
