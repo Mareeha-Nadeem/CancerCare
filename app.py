@@ -158,8 +158,8 @@ SIDEBAR_PAGES = {
     "Appointments": "lab_tech",
     "Patient Records": "patients",
     "Doctors": "doctors",
-    "Search": "search",  # DSA-powered search
-    "Post-Diagnosis": "post_diagnosis",  # NEW: Post-diagnosis tracking
+    "Search": "search",
+    "Post-Diagnosis": "post_diagnosis",
     "Analytics": "dashboard",
     "Notifications": "notifications",
     "Messages": "messaging",

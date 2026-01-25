@@ -136,6 +136,12 @@ MODERN_CSS = """
         background: var(--glass-bg) !important;
         backdrop-filter: blur(20px) !important;
         border-right: 1px solid var(--glass-border) !important;
+        display: block !important;
+        visibility: visible !important;
+    }
+    
+    [data-testid="stSidebar"] > div {
+        visibility: visible !important;
     }
     
     [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
@@ -307,10 +313,12 @@ MODERN_CSS = """
         overflow: hidden !important;
     }
     
-    /* ========== REMOVE STREAMLIT BRANDING ========== */
+    /* ========== STREAMLIT BRANDING ========== */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* Keep header visible for sidebar toggle */
+    header {visibility: visible !important;}
+    header[data-testid="stHeader"] {visibility: visible !important;}
     
     /* ========== SMOOTH ANIMATIONS ========== */
     * {

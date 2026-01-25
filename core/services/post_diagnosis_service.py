@@ -74,7 +74,7 @@ class PostDiagnosisService:
             db.close()
     
     @staticmethod
-    def get_patient_diagnosis(patient_id: int) -> List[PostDiagnosis]:
+    def get_patient_diagnoses(patient_id: int) -> List[PostDiagnosis]:
         """Get all diagnosis records for a patient"""
         db = get_db_session()
         try:
