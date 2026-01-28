@@ -34,5 +34,28 @@ data_science/utils/__pycache__/
 # ==============================
 # Documentation files (local only)
 # ==============================
-Description/
 .ipynb_checkpoints/
+
+# ==============================
+# Database files
+# ==============================
+*.db
+*.sqlite
+*.sqlite3
+cancercare.db
+cancercare_backup*.db
+
+# ==============================
+# Virtual Environment
+# ==============================
+.venv/
+venv/
+ENV/
+env/
+
+# ==============================
+# MD Files
+# ==============================
+*.MD
+*.png
+*.txt

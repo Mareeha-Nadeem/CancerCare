@@ -27,10 +27,24 @@ def save_doctors(doctors):
 
 
 def show():
-    """Advanced doctors page with CRUD"""
-    
     st.markdown("""
         <style>
+        /* FORCE HIDE THE ICON TEXT */
+        /* This targets the span that contains the icon name and makes it transparent */
+        [data-testid="stExpander"] svg + span, 
+        .st-ae span {
+            font-size: 0 !important;
+            visibility: hidden !important;
+            display: none !important;
+        }
+
+        /* ENSURE THE ACTUAL SVG ICON REMAINS VISIBLE */
+        [data-testid="stExpander"] svg {
+            visibility: visible !important;
+            display: block !important;
+        }
+
+        /* Your existing styling */
         .stApp {background: linear-gradient(135deg, #F0FDFA 0%, #F0F9FF 100%) !important;}
         .page-header {
             background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px);
@@ -38,14 +52,12 @@ def show():
         }
         .doctor-card {
             background: white; border-radius: 12px; padding: 20px; margin: 12px 0;
-            border: 1px solid #E2E8F0; transition: all 0.2s ease;
-        }
-        .doctor-card:hover {
-            border-color: #14B8A6;
-            box-shadow: 0 4px 12px rgba(20, 184, 166, 0.15);
+            border: 1px solid #E2E8F0;
         }
         </style>
     """, unsafe_allow_html=True)
+
+    
     
     st.markdown("""
         <div class="page-header">

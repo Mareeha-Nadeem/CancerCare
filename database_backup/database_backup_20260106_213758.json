@@ -1,0 +1,867 @@
+{
+  "patients": [
+    {
+      "id": 1,
+      "mrn": "MRN001",
+      "name": "Abdur Rafay",
+      "age": 19,
+      "gender": "M",
+      "contact": "03269666386",
+      "created_at": "2025-12-18 13:53:48.556376",
+      "email": null
+    },
+    {
+      "id": 2,
+      "mrn": "MRN002",
+      "name": "Muneeb Shafique",
+      "age": 20,
+      "gender": "M",
+      "contact": "03195345568",
+      "created_at": "2025-12-18 20:29:12.840611",
+      "email": "saifdoescode@gmail.com"
+    },
+    {
+      "id": 3,
+      "mrn": "MRN003",
+      "name": "Saif ur Rehman",
+      "age": 20,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2025-12-28 17:07:13.838721",
+      "email": null
+    },
+    {
+      "id": 4,
+      "mrn": "MRN004",
+      "name": "Aoun Khan",
+      "age": 19,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2025-12-28 17:11:30.502668",
+      "email": null
+    },
+    {
+      "id": 5,
+      "mrn": "MRN005",
+      "name": "Moazzam",
+      "age": 19,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2025-12-28 17:12:12.574761",
+      "email": null
+    },
+    {
+      "id": 6,
+      "mrn": "MRN006",
+      "name": "Emmaz Ahmed",
+      "age": 20,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2025-12-28 17:20:56.904701",
+      "email": null
+    },
+    {
+      "id": 7,
+      "mrn": "MRN007",
+      "name": "Dayyan",
+      "age": 20,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2025-12-28 17:22:35.968508",
+      "email": null
+    },
+    {
+      "id": 8,
+      "mrn": "MRN009",
+      "name": "Daniyal",
+      "age": 20,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2025-12-29 10:54:17.139606",
+      "email": null
+    },
+    {
+      "id": 9,
+      "mrn": "MRN010",
+      "name": "Ali",
+      "age": 20,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2025-12-29 11:30:36.716863",
+      "email": null
+    },
+    {
+      "id": 10,
+      "mrn": "MRN011",
+      "name": "Ahmed Sanghera",
+      "age": 29,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2025-12-29 11:36:11.888471",
+      "email": null
+    },
+    {
+      "id": 11,
+      "mrn": "MRN014",
+      "name": "Khubaib",
+      "age": 29,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2025-12-29 11:43:33.479905",
+      "email": null
+    },
+    {
+      "id": 12,
+      "mrn": "MRN017",
+      "name": "Umar Ayub",
+      "age": 26,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 11:53:11.532234",
+      "email": null
+    },
+    {
+      "id": 13,
+      "mrn": "MRN0015",
+      "name": "Haad Bukhari",
+      "age": 29,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 12:00:28.332082",
+      "email": null
+    },
+    {
+      "id": 14,
+      "mrn": "MRN029",
+      "name": "Hashir Ammar",
+      "age": 25,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 12:37:53.667477",
+      "email": null
+    },
+    {
+      "id": 15,
+      "mrn": "MRN030",
+      "name": "Abdullah Rana",
+      "age": 22,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 12:39:17.598673",
+      "email": null
+    },
+    {
+      "id": 16,
+      "mrn": "MRN031",
+      "name": "Abdullah Mehmood",
+      "age": 27,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 12:40:06.233329",
+      "email": null
+    },
+    {
+      "id": 17,
+      "mrn": "MRN033",
+      "name": "Hamdan Ala,",
+      "age": 27,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 13:13:15.282118",
+      "email": null
+    },
+    {
+      "id": 18,
+      "mrn": "MRN034",
+      "name": "Wahid Khan",
+      "age": 27,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 13:15:03.799918",
+      "email": null
+    },
+    {
+      "id": 19,
+      "mrn": "MRN035",
+      "name": "Taaha Butt",
+      "age": 22,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 13:23:04.678567",
+      "email": null
+    },
+    {
+      "id": 20,
+      "mrn": "MRN036",
+      "name": "Ali Asghar",
+      "age": 23,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 14:56:32.898416",
+      "email": null
+    },
+    {
+      "id": 21,
+      "mrn": "MRN0045",
+      "name": "Shaheer Amir",
+      "age": 22,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 17:03:13.841027",
+      "email": null
+    },
+    {
+      "id": 22,
+      "mrn": "MRN0046",
+      "name": "Ahmad Hussain",
+      "age": 24,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 17:04:02.095122",
+      "email": null
+    },
+    {
+      "id": 23,
+      "mrn": "MRN0047",
+      "name": "Altaf Hussain",
+      "age": 29,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-03 17:05:13.179499",
+      "email": null
+    },
+    {
+      "id": 24,
+      "mrn": "MRN50",
+      "name": "Rana Anas Naeem",
+      "age": 25,
+      "gender": "M",
+      "contact": "",
+      "created_at": "2026-01-04 19:19:31.605640",
+      "email": null
+    },
+    {
+      "id": 25,
+      "mrn": "MRN069",
+      "name": "Shaees Saeed",
+      "age": 28,
+      "gender": "M",
+      "contact": null,
+      "created_at": "2026-01-04 22:44:42.092064",
+      "email": null
+    },
+    {
+      "id": 26,
+      "mrn": "MRN093",
+      "name": "Sania Mirza",
+      "age": 23,
+      "gender": "F",
+      "contact": null,
+      "created_at": "2026-01-04 22:48:46.099022",
+      "email": null
+    },
+    {
+      "id": 27,
+      "mrn": "MRN079",
+      "name": "Wania Bashir",
+      "age": 24,
+      "gender": "F",
+      "contact": null,
+      "created_at": "2026-01-04 22:56:51.212498",
+      "email": null
+    },
+    {
+      "id": 28,
+      "mrn": "MRN20260105040424",
+      "name": "Eman Ahmed",
+      "age": 26,
+      "gender": "F",
+      "contact": null,
+      "created_at": "2026-01-04 23:04:24.881040",
+      "email": null
+    },
+    {
+      "id": 29,
+      "mrn": "MRN20260105040534",
+      "name": "Zunaira",
+      "age": 28,
+      "gender": "F",
+      "contact": null,
+      "created_at": "2026-01-04 23:05:34.712900",
+      "email": null
+    }
+  ],
+  "doctors": [
+    {
+      "id": 1,
+      "name": "Dr. Sarah Wilson",
+      "email": "sarah.wilson@hospital.com",
+      "specialization": "Oncology",
+      "phone": "555-0201",
+      "created_at": "2025-12-18 14:00:35.944181"
+    },
+    {
+      "id": 2,
+      "name": "Dr. Michael Chen",
+      "email": "michael.chen@hospital.com",
+      "specialization": "Pulmonology",
+      "phone": "555-0202",
+      "created_at": "2025-12-18 14:00:35.956842"
+    },
+    {
+      "id": 3,
+      "name": "Dr. Emily Rodriguez",
+      "email": "emily.rodriguez@hospital.com",
+      "specialization": "Radiology",
+      "phone": "555-0203",
+      "created_at": "2025-12-18 14:00:35.966612"
+    },
+    {
+      "id": 4,
+      "name": "Dr. James Anderson",
+      "email": "james.anderson@hospital.com",
+      "specialization": "Thoracic Surgery",
+      "phone": "555-0204",
+      "created_at": "2025-12-18 14:00:35.977736"
+    },
+    {
+      "id": 5,
+      "name": "Dr. Lisa Thompson",
+      "email": "lisa.thompson@hospital.com",
+      "specialization": "Internal Medicine",
+      "phone": "555-0205",
+      "created_at": "2025-12-18 14:00:35.989023"
+    },
+    {
+      "id": 6,
+      "name": "Dr Fajal Noor",
+      "email": "fajalnoor1234@gmail.com",
+      "specialization": "Pulmonology",
+      "phone": "03948328197",
+      "created_at": "2025-12-18 14:20:01.715977"
+    },
+    {
+      "id": 7,
+      "name": "Dr. Alia Batool",
+      "email": "alia123@gmail.com",
+      "specialization": "Surgery",
+      "phone": "03183948349",
+      "created_at": "2025-12-22 14:25:25.452534"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "Moose",
+      "email": "saif@gmail.com",
+      "password_hash": "$2b$12$igmt4IUddk5idThP2EVP6eoeXo8baHFuxcpG601P1H7oOXKr.G4Gu",
+      "role": "admin",
+      "is_active": 1,
+      "created_at": "2025-12-27 15:16:08.054667",
+      "last_login": "2025-12-27 15:45:21.638154"
+    },
+    {
+      "id": 2,
+      "username": "admin",
+      "email": "admin@cancercare.com",
+      "password_hash": "$2b$12$8OoYr0lsN6cRemWESdncVuIQQnm2CfyZh1vJwq2F71tJjFhntDYe.",
+      "role": "admin",
+      "is_active": 1,
+      "created_at": "2025-12-27 15:47:10.344964",
+      "last_login": "2026-01-04 23:24:14.910164"
+    }
+  ],
+  "reports": [],
+  "predictions": [
+    {
+      "id": 1,
+      "patient_id": 1,
+      "risk_level": "Medium",
+      "confidence": 0.75,
+      "probabilities": "{\"Low\": 0.15, \"Medium\": 0.75, \"High\": 0.1}",
+      "created_at": "2025-12-18 13:57:49.575344"
+    },
+    {
+      "id": 2,
+      "patient_id": 3,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-28 17:07:13.871516"
+    },
+    {
+      "id": 3,
+      "patient_id": 4,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-28 17:11:30.526014"
+    },
+    {
+      "id": 4,
+      "patient_id": 5,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-28 17:12:12.598137"
+    },
+    {
+      "id": 5,
+      "patient_id": 6,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-28 17:20:56.933118"
+    },
+    {
+      "id": 6,
+      "patient_id": 6,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-28 17:21:08.756289"
+    },
+    {
+      "id": 7,
+      "patient_id": 6,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-28 17:21:10.613702"
+    },
+    {
+      "id": 8,
+      "patient_id": 6,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-28 17:21:11.724415"
+    },
+    {
+      "id": 9,
+      "patient_id": 6,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-28 17:21:11.934374"
+    },
+    {
+      "id": 10,
+      "patient_id": 6,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-28 17:21:12.478189"
+    },
+    {
+      "id": 11,
+      "patient_id": 7,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-28 17:22:35.991438"
+    },
+    {
+      "id": 12,
+      "patient_id": 8,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-29 10:54:17.169545"
+    },
+    {
+      "id": 13,
+      "patient_id": 9,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-29 11:30:36.754420"
+    },
+    {
+      "id": 14,
+      "patient_id": 10,
+      "risk_level": "Low",
+      "confidence": 0.7,
+      "probabilities": "{\"Low\": 0.7, \"Medium\": 0.2, \"High\": 0.1}",
+      "created_at": "2025-12-29 11:36:11.918705"
+    },
+    {
+      "id": 15,
+      "patient_id": 11,
+      "risk_level": "Low",
+      "confidence": 0.999995317159873,
+      "probabilities": "{\"High\": 8.278746117659813e-07, \"Low\": 0.999995317159873, \"Medium\": 3.854965515160602e-06}",
+      "created_at": "2025-12-29 11:43:33.703991"
+    },
+    {
+      "id": 16,
+      "patient_id": 12,
+      "risk_level": "0",
+      "confidence": 0.9999967393808777,
+      "probabilities": "{\"0\": 0.9999967393808777, \"1\": 2.398738411033038e-06, \"2\": 8.618807112201059e-07}",
+      "created_at": "2026-01-03 11:53:11.765858"
+    },
+    {
+      "id": 17,
+      "patient_id": 13,
+      "risk_level": "0",
+      "confidence": 0.9999967393808777,
+      "probabilities": "{\"0\": 0.9999967393808777, \"1\": 2.398738411033038e-06, \"2\": 8.618807112201059e-07}",
+      "created_at": "2026-01-03 12:00:28.507931"
+    },
+    {
+      "id": 18,
+      "patient_id": 14,
+      "risk_level": "High",
+      "confidence": 0.9999967393808777,
+      "probabilities": "{\"Low\": 2.398738411033038e-06, \"Medium\": 8.618807112201059e-07, \"High\": 0.9999967393808777}",
+      "created_at": "2026-01-03 12:37:53.966110"
+    },
+    {
+      "id": 19,
+      "patient_id": 15,
+      "risk_level": "Low",
+      "confidence": 0.9999724875875484,
+      "probabilities": "{\"Low\": 0.9999724875875484, \"Medium\": 2.6488825430067136e-05, \"High\": 1.0235870213139636e-06}",
+      "created_at": "2026-01-03 12:39:17.697223"
+    },
+    {
+      "id": 20,
+      "patient_id": 16,
+      "risk_level": "High",
+      "confidence": 0.9999960957384866,
+      "probabilities": "{\"Low\": 2.3987229614648345e-06, \"Medium\": 1.505538551918969e-06, \"High\": 0.9999960957384866}",
+      "created_at": "2026-01-03 12:40:06.415273"
+    },
+    {
+      "id": 21,
+      "patient_id": 17,
+      "risk_level": "Medium",
+      "confidence": 0.9991780355953187,
+      "probabilities": "{\"Low\": 0.00010795471626558061, \"Medium\": 0.9991780355953187, \"High\": 0.000714009688415648}",
+      "created_at": "2026-01-03 13:13:15.477351"
+    },
+    {
+      "id": 22,
+      "patient_id": 18,
+      "risk_level": "Medium",
+      "confidence": 0.9996541469951528,
+      "probabilities": "{\"Low\": 0.00032270680868214173, \"Medium\": 0.9996541469951528, \"High\": 2.3146196165199266e-05}",
+      "created_at": "2026-01-03 13:15:04.042854"
+    },
+    {
+      "id": 23,
+      "patient_id": 19,
+      "risk_level": "Low",
+      "confidence": 0.9999967402822268,
+      "probabilities": "{\"Low\": 0.9999967402822268, \"Medium\": 2.4600439649536053e-06, \"High\": 7.99673808171511e-07}",
+      "created_at": "2026-01-03 13:23:04.953849"
+    },
+    {
+      "id": 24,
+      "patient_id": 20,
+      "risk_level": "High",
+      "confidence": 0.9999967393808777,
+      "probabilities": "{\"Low\": 2.398738411033038e-06, \"Medium\": 8.618807112201059e-07, \"High\": 0.9999967393808777}",
+      "created_at": "2026-01-03 14:56:33.026924"
+    },
+    {
+      "id": 25,
+      "patient_id": 21,
+      "risk_level": "High",
+      "confidence": 0.9999967393808777,
+      "probabilities": "{\"Low\": 2.398738411033038e-06, \"Medium\": 8.618807112201059e-07, \"High\": 0.9999967393808777}",
+      "created_at": "2026-01-03 17:03:14.168484"
+    },
+    {
+      "id": 26,
+      "patient_id": 22,
+      "risk_level": "Low",
+      "confidence": 0.9999967402822268,
+      "probabilities": "{\"Low\": 0.9999967402822268, \"Medium\": 2.4600439649536053e-06, \"High\": 7.99673808171511e-07}",
+      "created_at": "2026-01-03 17:04:02.439140"
+    },
+    {
+      "id": 27,
+      "patient_id": 23,
+      "risk_level": "Medium",
+      "confidence": 0.999539967949142,
+      "probabilities": "{\"Low\": 0.0004501292905646774, \"Medium\": 0.999539967949142, \"High\": 9.902760293265786e-06}",
+      "created_at": "2026-01-03 17:05:13.386416"
+    },
+    {
+      "id": 28,
+      "patient_id": 24,
+      "risk_level": "High",
+      "confidence": 0.9999967393808777,
+      "probabilities": "{\"Low\": 2.398738411033038e-06, \"Medium\": 8.618807112201059e-07, \"High\": 0.9999967393808777}",
+      "created_at": "2026-01-04 19:19:31.810282"
+    },
+    {
+      "id": 29,
+      "patient_id": 26,
+      "risk_level": "Medium",
+      "confidence": 0.968416384383755,
+      "probabilities": "{\"Low\": 0.007352821267322087, \"Medium\": 0.968416384383755, \"High\": 0.024230794348922936}",
+      "created_at": "2026-01-04 22:48:46.355779"
+    },
+    {
+      "id": 30,
+      "patient_id": 27,
+      "risk_level": "Medium",
+      "confidence": 96.8416384383755,
+      "probabilities": "{\"Low\": 0.007352821267322087, \"Medium\": 0.968416384383755, \"High\": 0.024230794348922936}",
+      "created_at": "2026-01-04 22:56:51.559507"
+    },
+    {
+      "id": 31,
+      "patient_id": 28,
+      "risk_level": "High",
+      "confidence": 96.8416384383755,
+      "probabilities": "{\"Low\": 0.024230794348922936, \"Medium\": 0.007352821267322087, \"High\": 0.968416384383755}",
+      "created_at": "2026-01-04 23:04:25.259382"
+    },
+    {
+      "id": 32,
+      "patient_id": 29,
+      "risk_level": "Medium",
+      "confidence": 99.99819701771615,
+      "probabilities": "{\"Low\": 8.172975050385429e-07, \"Medium\": 0.9999819701771615, \"High\": 1.7212525333465508e-05}",
+      "created_at": "2026-01-04 23:05:34.925720"
+    }
+  ],
+  "appointments": [
+    {
+      "id": 1,
+      "patient_id": 1,
+      "doctor_id": 2,
+      "appointment_date": "2025-12-19 19:03:22.973978",
+      "reason": "Follow-up consultation for lung cancer risk assessment",
+      "status": "scheduled",
+      "priority": 3,
+      "notes": "",
+      "created_at": "2025-12-18 14:03:22.987126"
+    }
+  ],
+  "post_diagnosis": [
+    {
+      "id": 1,
+      "patient_id": 1,
+      "diagnosis_date": "2025-12-22 13:41:40.848513",
+      "cancer_type": "Lung Cancer",
+      "stage": "Stage II",
+      "tumor_size_mm": 25.5,
+      "lymph_nodes_affected": 2,
+      "metastasis_status": "None",
+      "treatment_plan": "Chemotherapy + Radiation",
+      "notes": "Test diagnosis for Day 1",
+      "created_at": "2025-12-22 13:41:40.870256",
+      "updated_at": "2025-12-22 13:41:40.870259"
+    },
+    {
+      "id": 2,
+      "patient_id": 1,
+      "diagnosis_date": "2025-12-22 13:42:36.813427",
+      "cancer_type": "Lung Cancer (Adenocarcinoma)",
+      "stage": "Stage IIIA",
+      "tumor_size_mm": 32.5,
+      "lymph_nodes_affected": 3,
+      "metastasis_status": "Regional",
+      "treatment_plan": "Combined chemotherapy (Cisplatin + Pemetrexed) followed by radiation therapy",
+      "notes": "Demo diagnosis record for testing post-diagnosis features",
+      "created_at": "2025-12-22 13:42:36.816480",
+      "updated_at": "2025-12-22 13:42:36.816483"
+    },
+    {
+      "id": 3,
+      "patient_id": 1,
+      "diagnosis_date": "2025-12-22 13:44:19.383287",
+      "cancer_type": "Lung Cancer (Adenocarcinoma)",
+      "stage": "Stage IIIA",
+      "tumor_size_mm": 32.5,
+      "lymph_nodes_affected": 3,
+      "metastasis_status": "Regional",
+      "treatment_plan": "Combined chemotherapy (Cisplatin + Pemetrexed) followed by radiation therapy",
+      "notes": "Demo diagnosis record for testing post-diagnosis features",
+      "created_at": "2025-12-22 13:44:19.386385",
+      "updated_at": "2025-12-22 13:44:19.386388"
+    },
+    {
+      "id": 4,
+      "patient_id": 1,
+      "diagnosis_date": "2025-12-22 14:22:52.007097",
+      "cancer_type": "Lung Cancer (Adenocarcinoma)",
+      "stage": "Stage IIIA",
+      "tumor_size_mm": 32.5,
+      "lymph_nodes_affected": 3,
+      "metastasis_status": "Regional",
+      "treatment_plan": "Combined chemotherapy (Cisplatin + Pemetrexed) followed by radiation therapy",
+      "notes": "Demo diagnosis record for testing post-diagnosis features",
+      "created_at": "2025-12-22 14:22:52.009830",
+      "updated_at": "2025-12-22 14:22:52.009834"
+    }
+  ],
+  "medical_images": [],
+  "tumor_markers": [
+    {
+      "id": 1,
+      "patient_id": 1,
+      "post_diagnosis_id": null,
+      "marker_name": "CEA",
+      "value": 4.5,
+      "unit": "ng/mL",
+      "test_date": "2025-12-22 13:41:40.883842",
+      "reference_min": 0.0,
+      "reference_max": 3.0,
+      "is_abnormal": 1,
+      "lab_name": "Test Lab",
+      "test_method": "",
+      "notes": "",
+      "created_at": "2025-12-22 13:41:40.885239"
+    },
+    {
+      "id": 2,
+      "patient_id": 1,
+      "post_diagnosis_id": 2,
+      "marker_name": "CEA",
+      "value": 4.5,
+      "unit": "ng/mL",
+      "test_date": "2025-12-22 13:42:36.828317",
+      "reference_min": 0.0,
+      "reference_max": 3.0,
+      "is_abnormal": 1,
+      "lab_name": "CancerCare Laboratory",
+      "test_method": "",
+      "notes": "",
+      "created_at": "2025-12-22 13:42:36.830783"
+    },
+    {
+      "id": 3,
+      "patient_id": 1,
+      "post_diagnosis_id": 2,
+      "marker_name": "CA 19-9",
+      "value": 42.0,
+      "unit": "U/mL",
+      "test_date": "2025-12-22 13:42:36.839577",
+      "reference_min": 0.0,
+      "reference_max": 37.0,
+      "is_abnormal": 1,
+      "lab_name": "CancerCare Laboratory",
+      "test_method": "",
+      "notes": "",
+      "created_at": "2025-12-22 13:42:36.840449"
+    },
+    {
+      "id": 4,
+      "patient_id": 1,
+      "post_diagnosis_id": 2,
+      "marker_name": "CA 125",
+      "value": 28.0,
+      "unit": "U/mL",
+      "test_date": "2025-12-22 13:42:36.849037",
+      "reference_min": 0.0,
+      "reference_max": 35.0,
+      "is_abnormal": 0,
+      "lab_name": "CancerCare Laboratory",
+      "test_method": "",
+      "notes": "",
+      "created_at": "2025-12-22 13:42:36.849592"
+    },
+    {
+      "id": 5,
+      "patient_id": 1,
+      "post_diagnosis_id": 3,
+      "marker_name": "CEA",
+      "value": 4.5,
+      "unit": "ng/mL",
+      "test_date": "2025-12-22 13:44:19.400200",
+      "reference_min": 0.0,
+      "reference_max": 3.0,
+      "is_abnormal": 1,
+      "lab_name": "CancerCare Laboratory",
+      "test_method": "",
+      "notes": "",
+      "created_at": "2025-12-22 13:44:19.402261"
+    },
+    {
+      "id": 6,
+      "patient_id": 1,
+      "post_diagnosis_id": 3,
+      "marker_name": "CA 19-9",
+      "value": 42.0,
+      "unit": "U/mL",
+      "test_date": "2025-12-22 13:44:19.410318",
+      "reference_min": 0.0,
+      "reference_max": 37.0,
+      "is_abnormal": 1,
+      "lab_name": "CancerCare Laboratory",
+      "test_method": "",
+      "notes": "",
+      "created_at": "2025-12-22 13:44:19.410779"
+    },
+    {
+      "id": 7,
+      "patient_id": 1,
+      "post_diagnosis_id": 3,
+      "marker_name": "CA 125",
+      "value": 28.0,
+      "unit": "U/mL",
+      "test_date": "2025-12-22 13:44:19.418402",
+      "reference_min": 0.0,
+      "reference_max": 35.0,
+      "is_abnormal": 0,
+      "lab_name": "CancerCare Laboratory",
+      "test_method": "",
+      "notes": "",
+      "created_at": "2025-12-22 13:44:19.418744"
+    },
+    {
+      "id": 8,
+      "patient_id": 1,
+      "post_diagnosis_id": 4,
+      "marker_name": "CEA",
+      "value": 4.5,
+      "unit": "ng/mL",
+      "test_date": "2025-12-22 14:22:52.028051",
+      "reference_min": 0.0,
+      "reference_max": 3.0,
+      "is_abnormal": 1,
+      "lab_name": "CancerCare Laboratory",
+      "test_method": "",
+      "notes": "",
+      "created_at": "2025-12-22 14:22:52.030855"
+    },
+    {
+      "id": 9,
+      "patient_id": 1,
+      "post_diagnosis_id": 4,
+      "marker_name": "CA 19-9",
+      "value": 42.0,
+      "unit": "U/mL",
+      "test_date": "2025-12-22 14:22:52.044777",
+      "reference_min": 0.0,
+      "reference_max": 37.0,
+      "is_abnormal": 1,
+      "lab_name": "CancerCare Laboratory",
+      "test_method": "",
+      "notes": "",
+      "created_at": "2025-12-22 14:22:52.045583"
+    },
+    {
+      "id": 10,
+      "patient_id": 1,
+      "post_diagnosis_id": 4,
+      "marker_name": "CA 125",
+      "value": 28.0,
+      "unit": "U/mL",
+      "test_date": "2025-12-22 14:22:52.054414",
+      "reference_min": 0.0,
+      "reference_max": 35.0,
+      "is_abnormal": 0,
+      "lab_name": "CancerCare Laboratory",
+      "test_method": "",
+      "notes": "",
+      "created_at": "2025-12-22 14:22:52.055281"
+    }
+  ]
+}

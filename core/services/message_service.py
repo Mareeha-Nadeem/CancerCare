@@ -229,6 +229,73 @@ class MessageService:
             ).order_by(desc(Message.created_at)).all()
         finally:
             session.close()
+    
+    @staticmethod
+    def get_stats(user_id: int) -> Dict:
+        """
+        Get comprehensive messaging statistics for a user
+        Returns: {
+            'total_messages': int,
+            'active_conversations': int,
+            'data_transferred_kb': float,
+            'unread_count': int
+        }
+        """
+        session = get_session()
+        try:
+            # Total messages (sent + received)
+            total_sent = session.query(Message).filter(
+                Message.sender_id == user_id,
+                Message.is_deleted == False
+            ).count()
+            
+            total_received = session.query(Message).filter(
+                Message.recipient_id == user_id,
+                Message.is_deleted == False
+            ).count()
+            
+            total_messages = total_sent + total_received
+            
+            # Active conversations (unique threads)
+            messages = session.query(Message).filter(
+                or_(
+                    Message.sender_id == user_id,
+                    Message.recipient_id == user_id
+                ),
+                Message.is_deleted == False
+            ).all()
+            
+            unique_threads = set()
+            for msg in messages:
+                thread_key = msg.thread_id or str(msg.id)
+                unique_threads.add(thread_key)
+            
+            active_conversations = len(unique_threads)
+            
+            # Data transferred (approximate size in KB)
+            data_size = 0
+            for msg in messages:
+                # Approximate: subject + body length in bytes
+                msg_size = len(msg.subject.encode('utf-8')) + len(msg.body.encode('utf-8'))
+                data_size += msg_size
+            
+            data_transferred_kb = round(data_size / 1024, 2)
+            
+            # Unread count
+            unread_count = session.query(Message).filter(
+                Message.recipient_id == user_id,
+                Message.is_read == False,
+                Message.is_deleted == False
+            ).count()
+            
+            return {
+                'total_messages': total_messages,
+                'active_conversations': active_conversations,
+                'data_transferred_kb': data_transferred_kb,
+                'unread_count': unread_count
+            }
+        finally:
+            session.close()
 
 
 # Global instance
