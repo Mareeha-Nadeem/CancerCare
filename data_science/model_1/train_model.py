@@ -66,7 +66,7 @@
         
 #         # Save mapping
 #         mapping = {i: label for i, label in enumerate(le.classes_)}
-#         print(f"\n📊 Target Mapping:")
+#         print(f"\n Target Mapping:")
 #         for i, label in mapping.items():
 #             print(f"   {i}: {label}")
         
@@ -79,7 +79,7 @@
 #     """Comprehensive model evaluation."""
     
 #     print("\n" + "="*70)
-#     print("📊 MODEL EVALUATION")
+#     print(" MODEL EVALUATION")
 #     print("="*70 + "\n")
     
 #     # Predictions
@@ -96,7 +96,7 @@
 #     # ----------------------
 #     # TRAINING METRICS
 #     # ----------------------
-#     print("🏋️  TRAINING SET:")
+#     print("  TRAINING SET:")
 #     print("-" * 70)
     
 #     train_acc = accuracy_score(y_train, y_train_pred)
@@ -108,7 +108,7 @@
 #     # ----------------------
 #     # TEST METRICS
 #     # ----------------------
-#     print("\n🎯 TEST SET:")
+#     print("\n TEST SET:")
 #     print("-" * 70)
     
 #     test_acc = accuracy_score(y_test, y_test_pred)
@@ -146,25 +146,25 @@
 #     # ----------------------
 #     # OVERFITTING CHECK
 #     # ----------------------
-#     print(f"\n⚠️  OVERFITTING CHECK:")
+#     print(f"\n  OVERFITTING CHECK:")
 #     print(f"   Train-Test F1 Gap: {train_f1 - test_f1:.4f}")
     
 #     if train_f1 - test_f1 > 0.15:
-#         print("   ⚠️  Warning: Model may be overfitting")
+#         print("     Warning: Model may be overfitting")
 #     else:
-#         print("   ✅ Model generalizes well")
+#         print("    Model generalizes well")
     
 #     # ----------------------
 #     # CLASSIFICATION REPORT
 #     # ----------------------
-#     print("\n📋 CLASSIFICATION REPORT:")
+#     print("\n CLASSIFICATION REPORT:")
 #     print("-" * 70)
 #     print(classification_report(y_test, y_test_pred, target_names=target_names, zero_division=0))
     
 #     # ----------------------
 #     # CONFUSION MATRIX
 #     # ----------------------
-#     print("🔢 CONFUSION MATRIX:")
+#     print(" CONFUSION MATRIX:")
 #     print("-" * 70)
 #     cm = confusion_matrix(y_test, y_test_pred)
     
@@ -211,17 +211,17 @@
 #     """
     
 #     print("\n" + "="*70)
-#     print("🚀 LUNG CANCER RISK PREDICTION - MODEL TRAINING")
+#     print(" LUNG CANCER RISK PREDICTION - MODEL TRAINING")
 #     print("="*70 + "\n")
     
 #     # ----------------------
 #     # LOAD DATA
 #     # ----------------------
-#     print("📂 Loading preprocessed data...")
+#     print(" Loading preprocessed data...")
 #     X, y = load_preprocessed_data()
     
-#     print(f"✅ Loaded: {X.shape}")
-#     print(f"\n📊 Target Distribution:")
+#     print(f" Loaded: {X.shape}")
+#     print(f"\n Target Distribution:")
 #     print(y.value_counts())
     
 #     # ----------------------
@@ -244,7 +244,7 @@
 #         stratify=y
 #     )
     
-#     print(f"\n✂️  Train-Test Split:")
+#     print(f"\n  Train-Test Split:")
 #     print(f"   Training: {len(X_train)} samples")
 #     print(f"   Testing:  {len(X_test)} samples")
     
@@ -252,12 +252,12 @@
 #     test_data = X_test.copy()
 #     test_data['TARGET'] = y_test
 #     test_data.to_csv(DATA_DIR / "test_set.csv", index=False)
-#     print(f"   💾 Test set saved")
+#     print(f"    Test set saved")
     
 #     # ----------------------
 #     # BUILD PIPELINE
 #     # ----------------------
-#     print("\n🔧 Building model pipeline...")
+#     print("\n Building model pipeline...")
     
 #     # Check if data is imbalanced
 #     class_counts = y_train.value_counts()
@@ -300,7 +300,7 @@
 #     # ----------------------
 #     # CROSS-VALIDATION
 #     # ----------------------
-#     print("\n🔄 Performing 5-fold cross-validation...")
+#     print("\n Performing 5-fold cross-validation...")
     
 #     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=random_state)
 #     cv_scores = cross_val_score(pipeline, X_train, y_train, cv=cv, scoring='f1_weighted')
@@ -311,9 +311,9 @@
 #     # ----------------------
 #     # TRAIN MODEL
 #     # ----------------------
-#     print("\n🏋️  Training final model...")
+#     print("\n  Training final model...")
 #     pipeline.fit(X_train, y_train)
-#     print("✅ Training complete!")
+#     print(" Training complete!")
     
 #     # ----------------------
 #     # EVALUATE
@@ -323,7 +323,7 @@
 #     # ----------------------
 #     # FEATURE IMPORTANCE
 #     # ----------------------
-#     print("🔝 TOP 15 MOST IMPORTANT FEATURES:")
+#     print(" TOP 15 MOST IMPORTANT FEATURES:")
 #     print("-" * 70)
     
 #     try:
@@ -340,10 +340,10 @@
 #         print(feat_imp.head(15).to_string(index=False))
         
 #         feat_imp.to_csv(RESULTS_DIR / "feature_importance.csv", index=False)
-#         print(f"\n📁 Full feature importance saved to: {RESULTS_DIR / 'feature_importance.csv'}")
+#         print(f"\n Full feature importance saved to: {RESULTS_DIR / 'feature_importance.csv'}")
         
 #     except Exception as e:
-#         print(f"⚠️  Could not extract feature importance: {e}")
+#         print(f"  Could not extract feature importance: {e}")
     
 #     # ----------------------
 #     # SAVE MODEL
@@ -378,14 +378,14 @@
 #         json.dump(results, f, indent=2)
     
 #     print("\n" + "="*70)
-#     print("✅ TRAINING COMPLETE")
+#     print(" TRAINING COMPLETE")
 #     print("="*70)
-#     print(f"💾 Model saved to: {pipeline_path}")
-#     print(f"📄 Metadata saved to: {MODEL_DIR / 'model_metadata.json'}")
-#     print(f"📊 Test Accuracy: {results['test']['accuracy']:.4f}")
-#     print(f"📊 Test F1-Score: {results['test']['f1_score']:.4f}")
+#     print(f" Model saved to: {pipeline_path}")
+#     print(f" Metadata saved to: {MODEL_DIR / 'model_metadata.json'}")
+#     print(f" Test Accuracy: {results['test']['accuracy']:.4f}")
+#     print(f" Test F1-Score: {results['test']['f1_score']:.4f}")
 #     if results['test']['roc_auc']:
-#         print(f"📊 Test ROC-AUC: {results['test']['roc_auc']:.4f}")
+#         print(f" Test ROC-AUC: {results['test']['roc_auc']:.4f}")
 #     print("="*70 + "\n")
     
 #     return pipeline
@@ -394,7 +394,7 @@
 # if __name__ == "__main__":
 #     # Run preprocessing first if needed
 #     if not (DATA_DIR / "processed_features.csv").exists():
-#         print("⚠️  Preprocessed data not found. Running preprocessing first...")
+#         print("  Preprocessed data not found. Running preprocessing first...")
 #         # import preprocessing
 #         # preprocessing.run_preprocessing()
     
@@ -514,7 +514,7 @@
 # # ----------------------
 # pipeline.fit(X_train, y_train)
 # joblib.dump(pipeline, MODEL_DIR / "lung_cancer_model_gb_realistic.joblib")
-# print("✅ Gradient Boosting model trained and saved!")
+# print(" Gradient Boosting model trained and saved!")
 
 # # ----------------------
 # # Evaluate on test set
@@ -527,7 +527,7 @@
 
 # cm = confusion_matrix(y_test, y_test_pred)
 
-# print(f"\n📊 Test Metrics:")
+# print(f"\n Test Metrics:")
 # print(f"Accuracy: {test_acc:.4f}")
 # print(f"F1 Score: {test_f1:.4f}")
 # print(f"Precision: {test_precision:.4f}")
@@ -566,7 +566,7 @@
 # with open(MODEL_DIR / "model_metadata_realistic.json", 'w') as f:
 #     json.dump(metadata, f, indent=2)
 
-# print("\n✅ Training complete! Metadata saved.")
+# print("\n Training complete! Metadata saved.")
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
 from sklearn.ensemble import GradientBoostingClassifier
@@ -611,14 +611,14 @@ def train_model(debug=True):
     # ----------------------
     if debug:
         print("=" * 60)
-        print("🚀 Starting Model Training")
+        print(" Starting Model Training")
         print("=" * 60)
     
     X = pd.read_csv(DATA_DIR / "processed_features.csv")
     y = pd.read_csv(DATA_DIR / "target.csv").iloc[:, 0]
     
     if debug:
-        print(f"\n✅ Loaded data: X={X.shape}, y={y.shape}")
+        print(f"\n Loaded data: X={X.shape}, y={y.shape}")
     
     # ----------------------
     # ENCODE TARGET
@@ -629,7 +629,7 @@ def train_model(debug=True):
         joblib.dump(le, MODEL_DIR / "target_encoder.pkl")
         target_names = le.classes_.tolist()
         if debug:
-            print(f"🏷️  Encoded target classes: {target_names}")
+            print(f"  Encoded target classes: {target_names}")
     else:
         target_names = [str(c) for c in sorted(y.unique())]
         le = None
@@ -642,8 +642,8 @@ def train_model(debug=True):
     )
     
     if debug:
-        print(f"\n📊 Train set: {X_train.shape}")
-        print(f"📊 Test set: {X_test.shape}")
+        print(f"\n Train set: {X_train.shape}")
+        print(f" Test set: {X_test.shape}")
     
     # ----------------------
     # ADD REALISTIC NOISE (15%)
@@ -656,7 +656,7 @@ def train_model(debug=True):
     )
     
     if debug:
-        print(f"🎲 Added {noise_level*100}% noise to training data")
+        print(f" Added {noise_level*100}% noise to training data")
     
     # ----------------------
     # INJECT MISSING VALUES IN TEST SET (~5%)
@@ -668,7 +668,7 @@ def train_model(debug=True):
     
     if debug:
         missing_count = X_test_missing.isnull().sum().sum()
-        print(f"💧 Injected {missing_count} missing values in test set")
+        print(f" Injected {missing_count} missing values in test set")
     
     # ----------------------
     # CHECK IMBALANCE
@@ -678,9 +678,9 @@ def train_model(debug=True):
     use_smote = imbalance_ratio > 1.5
     
     if debug:
-        print(f"\n⚖️  Class distribution: {dict(zip(*np.unique(y_train, return_counts=True)))}")
-        print(f"⚖️  Imbalance ratio: {imbalance_ratio:.2f}")
-        print(f"{'✅ Using SMOTE' if use_smote else '❌ Skipping SMOTE'}")
+        print(f"\n  Class distribution: {dict(zip(*np.unique(y_train, return_counts=True)))}")
+        print(f"  Imbalance ratio: {imbalance_ratio:.2f}")
+        print(f"{' Using SMOTE' if use_smote else ' Skipping SMOTE'}")
     
     # ----------------------
     # BUILD PIPELINE
@@ -716,13 +716,13 @@ def train_model(debug=True):
         ])
     
     if debug:
-        print("\n🔧 Pipeline created with feature engineering")
+        print("\n Pipeline created with feature engineering")
     
     # ----------------------
     # CROSS-VALIDATION
     # ----------------------
     if debug:
-        print("\n🔄 Running 5-fold cross-validation...")
+        print("\n Running 5-fold cross-validation...")
     
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     cv_scores = cross_val_score(
@@ -731,27 +731,27 @@ def train_model(debug=True):
     )
     
     if debug:
-        print(f"📈 CV F1 Scores: {[f'{s:.4f}' for s in cv_scores]}")
-        print(f"📈 Mean CV F1: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
+        print(f" CV F1 Scores: {[f'{s:.4f}' for s in cv_scores]}")
+        print(f" Mean CV F1: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
     
     # ----------------------
     # TRAIN FINAL MODEL
     # ----------------------
     if debug:
-        print("\n🎯 Training final model...")
+        print("\n Training final model...")
     
     pipeline.fit(X_train_noisy, y_train)
     
     # Save the complete pipeline
     joblib.dump(pipeline, MODEL_DIR / "lung_cancer_pipeline.pkl")
     if debug:
-        print("✅ Pipeline saved to lung_cancer_pipeline.pkl")
+        print(" Pipeline saved to lung_cancer_pipeline.pkl")
     
     # ----------------------
     # EVALUATE ON TEST SET
     # ----------------------
     if debug:
-        print("\n📊 Evaluating on test set...")
+        print("\n Evaluating on test set...")
     
     y_test_pred = pipeline.predict(X_test_missing)
     y_test_proba = pipeline.predict_proba(X_test_missing)
@@ -769,7 +769,7 @@ def train_model(debug=True):
     
     if debug:
         print("\n" + "=" * 60)
-        print("📊 TEST SET RESULTS")
+        print(" TEST SET RESULTS")
         print("=" * 60)
         print(f"Accuracy:  {test_metrics['accuracy']:.4f}")
         print(f"F1 (weighted): {test_metrics['f1_weighted']:.4f}")
@@ -794,7 +794,7 @@ def train_model(debug=True):
     test_results.to_csv(RESULTS_DIR / "test_predictions.csv", index=False)
     
     if debug:
-        print(f"\n💾 Test predictions saved to {RESULTS_DIR / 'test_predictions.csv'}")
+        print(f"\n Test predictions saved to {RESULTS_DIR / 'test_predictions.csv'}")
     
     # ----------------------
     # SAVE METADATA
@@ -833,7 +833,7 @@ def train_model(debug=True):
     'n_samples_train': int(len(X_train)),
     'n_samples_test': int(len(X_test)),
     'test_size': 0.2,
-    'use_smote': bool(use_smote),                 # ✅ FIX
+    'use_smote': bool(use_smote),                 #  FIX
     'imbalance_ratio': float(imbalance_ratio),
     'noise_level': float(noise_level),
     'missing_injection_rate': 0.05,
@@ -852,9 +852,9 @@ def train_model(debug=True):
         json.dump(metadata, f, indent=2)
     
     if debug:
-        print(f"💾 Metadata saved to {MODEL_DIR / 'model_metadata.json'}")
+        print(f" Metadata saved to {MODEL_DIR / 'model_metadata.json'}")
         print("\n" + "=" * 60)
-        print("✅ TRAINING COMPLETE!")
+        print(" TRAINING COMPLETE!")
         print("=" * 60)
     
     return pipeline, metadata

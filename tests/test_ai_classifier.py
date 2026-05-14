@@ -31,7 +31,7 @@ def create_test_image(filename: str, add_anomaly: bool = False):
 
 def test_image_classifier():
     print("\n" + "="*70)
-    print("  🤖 TESTING AI IMAGE CLASSIFIER - Day 2")
+    print("   TESTING AI IMAGE CLASSIFIER - Day 2")
     print("="*70 + "\n")
     
     # Test 1: Create and analyze normal image
@@ -70,7 +70,7 @@ def test_image_classifier():
     print(f"   Result: {comparison.get('improvement', 'Unknown')}")
     
     print("\n" + "="*70)
-    print("  🎉 AI CLASSIFIER TESTS COMPLETE!")
+    print("   AI CLASSIFIER TESTS COMPLETE!")
     print(f"="*70 + "\n")
 
 if __name__ == "__main__":

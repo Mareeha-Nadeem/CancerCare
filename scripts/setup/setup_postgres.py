@@ -11,7 +11,7 @@ def print_header(msg):
     print("="*70 + "\n")
 
 def main():
-    print_header("🔬 CancerCare - Complete PostgreSQL Setup")
+    print_header(" CancerCare - Complete PostgreSQL Setup")
     
     print("IMPORTANT: PostgreSQL Password Issues")
     print("-" * 70)
@@ -55,7 +55,7 @@ def main():
     password = input("\nPostgreSQL Password: ").strip()
     
     if not password:
-        print("\n❌ No password provided.")
+        print("\n No password provided.")
         print("Please use METHOD 2 or 3 above to reset/bypass password.")
         return
     
@@ -76,7 +76,7 @@ DEBUG=True
     with open(env_path, 'w') as f:
         f.write(env_content)
     
-    print(f"\n✅ .env file created/updated: {env_path.absolute()}")
+    print(f"\n .env file created/updated: {env_path.absolute()}")
     
     # Test connection
     print("\nTesting PostgreSQL connection...")
@@ -88,7 +88,7 @@ DEBUG=True
         with engine.connect() as conn:
             result = conn.execute(text("SELECT version()"))
             version = result.fetchone()[0]
-            print(f"\n✅ SUCCESS! Connected to PostgreSQL!")
+            print(f"\n SUCCESS! Connected to PostgreSQL!")
             print(f"   Version: {version.split(',')[0]}")
             
             # Create database if needed
@@ -103,9 +103,9 @@ DEBUG=True
                 )
                 with engine2.connect() as conn2:
                     conn2.execute(text("CREATE DATABASE cancercare"))
-                print("   ✅ Database 'cancercare' created!")
+                print("    Database 'cancercare' created!")
             else:
-                print("   ✅ Database 'cancercare' exists!")
+                print("    Database 'cancercare' exists!")
             
             # Create tables
             print("\nCreating tables...")
@@ -113,7 +113,7 @@ DEBUG=True
             from core.db_config import engine as app_engine
             
             Base.metadata.create_all(app_engine)
-            print("   ✅ All tables created!")
+            print("    All tables created!")
             
             # Verify tables
             from sqlalchemy import inspect
@@ -122,7 +122,7 @@ DEBUG=True
             print(f"\n   Tables: {', '.join(tables)}")
             
             print("\n" + "="*70)
-            print("  ✅ SETUP COMPLETE!")
+            print("   SETUP COMPLETE!")
             print("="*70)
             print("\nNext steps:")
             print("  1. Run: streamlit run app.py")
@@ -130,7 +130,7 @@ DEBUG=True
             print("\n")
             
     except Exception as e:
-        print(f"\n❌ Connection failed: {e}")
+        print(f"\n Connection failed: {e}")
         print("\nThe password is still incorrect.")
         print("Please use METHOD 2 or 3 above to fix it, then run this script again.")
         return

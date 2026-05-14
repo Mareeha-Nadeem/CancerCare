@@ -21,15 +21,15 @@ def print_header(title):
 
 def print_success(message):
     """Print success message"""
-    print(f"✅ {message}")
+    print(f" {message}")
 
 def print_error(message):
     """Print error message"""
-    print(f"❌ {message}")
+    print(f" {message}")
 
 def print_info(message):
     """Print info message"""
-    print(f"ℹ️  {message}")
+    print(f"ℹ  {message}")
 
 def print_step(step_num, message):
     """Print step message"""
@@ -47,7 +47,7 @@ class DatabaseWizard:
         
     def welcome(self):
         """Show welcome message"""
-        print_header("🔬 CancerCare Database Setup Wizard")
+        print_header(" CancerCare Database Setup Wizard")
         print("This wizard will:")
         print("  1. Test PostgreSQL connection")
         print("  2. Create database (if not exists)")
@@ -200,7 +200,7 @@ class DatabaseWizard:
             for patient_data in sample_patients:
                 patient, error = patient_service.create_patient(patient_data)
                 if not error:
-                    print(f"    ✓ Added patient: {patient_data['name']}")
+                    print(f"     Added patient: {patient_data['name']}")
                     
             print_info("Adding sample doctors...")
             
@@ -213,7 +213,7 @@ class DatabaseWizard:
             for doctor_data in sample_doctors:
                 doctor, error = doctor_service.create_doctor(doctor_data)
                 if not error:
-                    print(f"    ✓ Added doctor: {doctor_data['name']}")
+                    print(f"     Added doctor: {doctor_data['name']}")
                     
             print_success("Sample data added successfully!")
             return True
@@ -297,7 +297,7 @@ class DatabaseWizard:
             
     def show_summary(self):
         """Show setup summary"""
-        print_header("✅ Setup Complete!")
+        print_header(" Setup Complete!")
         
         print("Database Configuration:")
         print(f"  Host:     {self.host}")
@@ -305,15 +305,15 @@ class DatabaseWizard:
         print(f"  Database: {self.database_name}")
         print(f"  Username: {self.username}")
         
-        print("\n📁 Configuration saved to: .env")
+        print("\n Configuration saved to: .env")
         
-        print("\n🚀 Next Steps:")
+        print("\n Next Steps:")
         print("  1. Run the application:")
         print("     streamlit run app.py")
         print("\n  2. Application will open at:")
         print("     http://localhost:8501")
         
-        print("\n📚 Documentation:")
+        print("\n Documentation:")
         print("  - README.md - General information")
         print("  - DATABASE_ISSUES_EXPLAINED.md - Troubleshooting")
         print("  - FINAL_FEATURES.md - Feature guide")
@@ -359,7 +359,7 @@ class DatabaseWizard:
             return True
             
         except KeyboardInterrupt:
-            print("\n\n❌ Setup cancelled by user")
+            print("\n\n Setup cancelled by user")
             return False
         except Exception as e:
             print_error(f"Unexpected error: {e}")
@@ -379,10 +379,10 @@ def main():
     success = wizard.run()
     
     if success:
-        print("\n✅ Database setup completed successfully!")
+        print("\n Database setup completed successfully!")
         sys.exit(0)
     else:
-        print("\n❌ Database setup failed. Please fix errors and try again.")
+        print("\n Database setup failed. Please fix errors and try again.")
         sys.exit(1)
 
 if __name__ == "__main__":

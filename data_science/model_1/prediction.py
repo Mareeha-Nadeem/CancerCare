@@ -14,7 +14,7 @@
 # # # ----------------------
 # # model_path = MODEL_DIR / "lung_cancer_model_gb_realistic.joblib"
 # # pipeline = joblib.load(model_path)
-# # print("✅ Model loaded!\n")
+# # print(" Model loaded!\n")
 
 # # # ----------------------
 # # # LOAD NEW DATA (or test set)
@@ -35,7 +35,7 @@
 # # # ----------------------
 # # # SHOW RESULTS
 # # # ----------------------
-# # print("📊 Predictions:")
+# # print(" Predictions:")
 # # for i, pred in enumerate(preds[:10]):  # show first 10 predictions
 # #     line = f"Sample {i+1}: Predicted = {pred}"
 # #     if probs is not None:
@@ -65,14 +65,14 @@
 # model_file = MODEL_DIR / "lung_cancer_model_gb_realistic.joblib"
 # pipeline = joblib.load(model_file)
 # model = pipeline.named_steps['model']
-# print("✅ Model loaded!\n")
+# print(" Model loaded!\n")
 
 # # ----------------------
 # # Load feature CSV
 # # ----------------------
 # features_file = DATA_DIR / "processed_features.csv"
 # X = pd.read_csv(features_file)
-# print(f"📊 Loaded {len(X)} samples, {X.shape[1]} features\n")
+# print(f" Loaded {len(X)} samples, {X.shape[1]} features\n")
 
 # # ----------------------
 # # Get feature names safely
@@ -91,7 +91,7 @@
 #     'importance': importances
 # }).sort_values(by='importance', ascending=False)
 
-# print("🔥 Top 15 Features by Importance:")
+# print(" Top 15 Features by Importance:")
 # print(feat_imp.head(15).to_string(index=False))
 # print("\n")
 
@@ -105,7 +105,7 @@
 # except:
 #     probs = None
 
-# print("📊 Sample Predictions (first 10):")
+# print(" Sample Predictions (first 10):")
 # for i in range(min(10, len(X))):
 #     line = f"Sample {i+1}: Predicted = {preds[i]}"
 #     if probs is not None:
@@ -130,7 +130,7 @@
 #     f1 = f1_score(y_true, preds, average='weighted')
 #     cm = confusion_matrix(y_true, preds)
 
-#     print("📊 Test Metrics:")
+#     print(" Test Metrics:")
 #     print(f"Accuracy: {acc:.4f}")
 #     print(f"F1 Score: {f1:.4f}")
 #     print("Confusion Matrix:")
@@ -348,7 +348,7 @@ class LungCancerPredictor:
         df = pd.read_csv(input_path)
         
         if verbose:
-            print(f"📂 Loaded {len(df)} patients from {input_path}")
+            print(f" Loaded {len(df)} patients from {input_path}")
         
         # Prepare input
         df_prepared = self._prepare_input(df)
@@ -381,7 +381,7 @@ class LungCancerPredictor:
         if output_path:
             results.to_csv(output_path, index=False)
             if verbose:
-                print(f"💾 Results saved to {output_path}")
+                print(f" Results saved to {output_path}")
         
         if verbose:
             self._print_batch_summary(results)
@@ -400,16 +400,16 @@ class LungCancerPredictor:
     def _print_single_result(self, result: Dict):
         """Pretty print single prediction result"""
         print("\n" + "=" * 60)
-        print("🏥 LUNG CANCER RISK PREDICTION")
+        print(" LUNG CANCER RISK PREDICTION")
         print("=" * 60)
         print(f"Predicted Risk Level: {result['predicted_class']}")
         print(f"Confidence: {result.get('confidence', 0):.1%}")
         print(f"\n{result['risk_interpretation']}")
         
         if 'probabilities' in result:
-            print("\n📊 Risk Probabilities:")
+            print("\n Risk Probabilities:")
             for class_name, prob in result['probabilities'].items():
-                bar = "█" * int(prob * 30)
+                bar = "" * int(prob * 30)
                 print(f"  {class_name:10s}: {prob:6.1%} {bar}")
         
         print("=" * 60)
@@ -417,7 +417,7 @@ class LungCancerPredictor:
     def _print_batch_summary(self, results: pd.DataFrame):
         """Print summary of batch predictions"""
         print("\n" + "=" * 60)
-        print("📊 BATCH PREDICTION SUMMARY")
+        print(" BATCH PREDICTION SUMMARY")
         print("=" * 60)
         
         # Class distribution
@@ -450,7 +450,7 @@ class LungCancerPredictor:
         info = self.get_model_info()
         
         print("\n" + "=" * 60)
-        print("🤖 MODEL INFORMATION")
+        print(" MODEL INFORMATION")
         print("=" * 60)
         print(f"Model Type: {info['model_type']}")
         print(f"Training Date: {info['training_date']}")
@@ -467,7 +467,7 @@ def main():
     """Example usage of the predictor"""
     
     # Initialize predictor
-    print("🚀 Initializing Lung Cancer Predictor...")
+    print(" Initializing Lung Cancer Predictor...")
     predictor = LungCancerPredictor()
     
     # Show model info
@@ -525,9 +525,9 @@ def main():
             verbose=True
         )
         
-        print(f"\n✅ Batch prediction complete!")
+        print(f"\n Batch prediction complete!")
     else:
-        print(f"⚠️  Test file not found at {test_file}")
+        print(f"  Test file not found at {test_file}")
         print("   Run preprocessing first to generate test data")
 
 

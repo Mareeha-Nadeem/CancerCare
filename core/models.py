@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Text, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Float, Text, DateTime, ForeignKey, Boolean, JSON
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime 
 
@@ -13,13 +13,13 @@ class Patient(Base):
     age = Column(Integer)
     gender = Column(String)
     contact = Column(String)
-    email = Column(String)  # NEW: Email field for notifications
+    email = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    reports = relationship("Report", back_populates="patient")
-    predictions = relationship("Prediction", back_populates="patient")
-    appointments = relationship("Appointment", back_populates="patient")
-    
+    reports = relationship("Report", back_populates="patient", lazy='select')
+    predictions = relationship("Prediction", back_populates="patient", lazy='select')
+    appointments = relationship("Appointment", back_populates="patient", lazy='select')
+
 
 class Report(Base):
     __tablename__ = "reports"
@@ -30,19 +30,20 @@ class Report(Base):
     file_path = Column(Text)
     uploaded_at = Column(DateTime, default=datetime.utcnow)
     
-    patient = relationship("Patient", back_populates="reports")
-    
+    patient = relationship("Patient", back_populates="reports", lazy='select')
+
+
 class Prediction(Base):
     __tablename__ = "predictions"
     
     id = Column(Integer, primary_key=True)
     patient_id = Column(Integer, ForeignKey("patients.id"))
-    risk_level = Column(String)  # Low, Medium, High
+    risk_level = Column(String)
     confidence = Column(Float)
-    probabilities = Column(Text)  # JSON string of all probabilities
+    probabilities = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    patient = relationship("Patient", back_populates="predictions")
+    patient = relationship("Patient", back_populates="predictions", lazy='select')
 
 
 class Doctor(Base):
@@ -55,7 +56,7 @@ class Doctor(Base):
     phone = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    appointments = relationship("Appointment", back_populates="doctor")
+    appointments = relationship("Appointment", back_populates="doctor", lazy='select')
 
 
 class Appointment(Base):
@@ -65,14 +66,14 @@ class Appointment(Base):
     patient_id = Column(Integer, ForeignKey("patients.id"))
     doctor_id = Column(Integer, ForeignKey("doctors.id"))
     appointment_date = Column(DateTime, nullable=False)
-    reason = Column(Text)  # Added reason field
-    status = Column(String, default="scheduled")  # scheduled, completed, cancelled
-    priority = Column(Integer, default=1)  # 1-5, higher is more urgent
+    reason = Column(Text)
+    status = Column(String, default="scheduled")
+    priority = Column(Integer, default=1)
     notes = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    patient = relationship("Patient", back_populates="appointments")
-    doctor = relationship("Doctor", back_populates="appointments")
+    patient = relationship("Patient", back_populates="appointments", lazy='select')
+    doctor = relationship("Doctor", back_populates="appointments", lazy='select')
 
 
 class User(Base):
@@ -82,13 +83,46 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
-    role = Column(String, default="patient")  # patient, doctor, admin
+    role = Column(String, default="patient")
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     last_login = Column(DateTime)
 
 
 # ========== POST-DIAGNOSIS MODELS ==========
+
+class TreatmentRecord(Base):
+    """Individual treatment session records - DEFINED FIRST to avoid forward reference"""
+    __tablename__ = 'treatment_records'
+    
+    id = Column(Integer, primary_key=True)
+    patient_id = Column(Integer, ForeignKey('patients.id'), nullable=False)
+    post_diagnosis_id = Column(Integer, ForeignKey('post_diagnosis.id'))
+    
+    treatment_type = Column(String(100), nullable=False)
+    treatment_date = Column(DateTime, nullable=False)
+    session_number = Column(Integer)
+    total_sessions = Column(Integer)
+    
+    medication_name = Column(String(200))
+    dosage = Column(String(100))
+    administration_route = Column(String(100))
+    
+    treatment_response = Column(Text)
+    side_effects = Column(Text)
+    vital_signs = Column(Text)
+    
+    administered_by = Column(String(100))
+    facility = Column(String(200))
+    
+    completed = Column(Boolean, default=False)
+    notes = Column(Text)
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    patient = relationship("Patient", foreign_keys=[patient_id])
+    post_diagnosis = relationship("PostDiagnosis", back_populates="treatment_records", lazy='select')
+
 
 class PostDiagnosis(Base):
     """Post-diagnosis patient information and treatment tracking"""
@@ -97,78 +131,132 @@ class PostDiagnosis(Base):
     id = Column(Integer, primary_key=True)
     patient_id = Column(Integer, ForeignKey('patients.id'), nullable=False)
     diagnosis_date = Column(DateTime, nullable=False)
-    cancer_type = Column(String(100))  # Lung, Breast, Colon, etc.
-    stage = Column(String(20))  # Stage I, II, III, IV
-    tumor_size_mm = Column(Float)  # Tumor size in millimeters
-    lymph_nodes_affected = Column(Integer)
-    metastasis_status = Column(String(50))  # None, Regional, Distant
-    treatment_plan = Column(Text)  # Detailed treatment plan
-    notes = Column(Text)  # Doctor's notes
+    cancer_type = Column(String(100), nullable=False)
+    stage = Column(String(50))
+    grade = Column(String(50))
+    
+    treatment_plan = Column(Text)
+    primary_physician = Column(String(100))
+    treatment_facility = Column(String(200))
+    
+    current_status = Column(String(100))
+    next_appointment = Column(DateTime)
+    
+    notes = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    # Relationships
-    patient = relationship("Patient")
-    medical_images = relationship("MedicalImage", back_populates="post_diagnosis")
-    tumor_markers = relationship("TumorMarker", back_populates="post_diagnosis")
+    patient = relationship("Patient", lazy='select')
+    medical_images = relationship("MedicalImage", back_populates="post_diagnosis", lazy='select')
+    tumor_markers = relationship("TumorMarker", back_populates="post_diagnosis", lazy='select')
+    treatment_records = relationship("TreatmentRecord", back_populates="post_diagnosis", lazy='select')
 
 
 class MedicalImage(Base):
-    """Medical imaging storage and AI analysis results"""
+    """Medical imaging records (CT, MRI, X-Ray, PET)"""
     __tablename__ = 'medical_images'
     
     id = Column(Integer, primary_key=True)
     patient_id = Column(Integer, ForeignKey('patients.id'), nullable=False)
     post_diagnosis_id = Column(Integer, ForeignKey('post_diagnosis.id'))
-    image_type = Column(String(50))  # MRI, CT, X-Ray, PET, Ultrasound
-    file_path = Column(String(500), nullable=False)  # Path to stored image
-    upload_date = Column(DateTime, default=datetime.utcnow)
     
-    # AI Analysis Results
-    ai_analyzed = Column(Boolean, default=False)
-    tumor_detected = Column(Boolean)
-    confidence_score = Column(Float)  # 0.0 to 1.0
-    tumor_count = Column(Integer)
-    largest_tumor_size = Column(Float)  # in mm
-    analysis_summary = Column(Text)  # JSON string of detailed analysis
+    image_type = Column(String(50), nullable=False)
+    image_path = Column(String(500), nullable=False)
+    scan_date = Column(DateTime, nullable=False)
     
-    # Metadata
-    image_width = Column(Integer)
-    image_height = Column(Integer)
-    file_size_kb = Column(Integer)
-    notes = Column(Text)
+    ai_analysis = Column(Text)
+    ai_confidence = Column(Float)
+    detected_anomalies = Column(Text)
     
-    # Relationships
-    patient = relationship("Patient")
-    post_diagnosis = relationship("PostDiagnosis", back_populates="medical_images")
+    radiologist_notes = Column(Text)
+    findings = Column(Text)
+    is_reviewed = Column(Boolean, default=False)
+    reviewed_by = Column(String(100))
+    reviewed_at = Column(DateTime)
+    
+    tumor_size_mm = Column(Float)
+    tumor_location = Column(String(200))
+    tumor_type = Column(String(100))
+    metastasis_detected = Column(Boolean, default=False)
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    patient = relationship("Patient", lazy='select')
+    post_diagnosis = relationship("PostDiagnosis", back_populates="medical_images", lazy='select')
 
 
 class TumorMarker(Base):
-    """Tumor marker test results and tracking"""
+    """Blood test tumor marker tracking"""
     __tablename__ = 'tumor_markers'
     
     id = Column(Integer, primary_key=True)
     patient_id = Column(Integer, ForeignKey('patients.id'), nullable=False)
     post_diagnosis_id = Column(Integer, ForeignKey('post_diagnosis.id'))
     
-    # Marker Information
-    marker_name = Column(String(50), nullable=False)  # CEA, CA19-9, CA125, PSA, AFP
-    value = Column(Float, nullable=False)  # Measured value
-    unit = Column(String(20))  # ng/mL, U/mL, etc.
+    marker_name = Column(String(100), nullable=False)
+    value = Column(Float, nullable=False)
+    unit = Column(String(50))
     test_date = Column(DateTime, nullable=False)
     
-    # Reference Ranges
-    reference_min = Column(Float)  # Normal range minimum
-    reference_max = Column(Float)  # Normal range maximum
-    is_abnormal = Column(Boolean)  # True if out of reference range
+    reference_min = Column(Float)
+    reference_max = Column(Float)
+    is_abnormal = Column(Boolean)
     
-    # Clinical Context
-    lab_name = Column(String(200))  # Testing laboratory
-    test_method = Column(String(100))  # Testing methodology
-    notes = Column(Text)  # Doctor's interpretation
+    lab_name = Column(String(200))
+    test_method = Column(String(100))
+    notes = Column(Text)
     
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    # Relationships
-    patient = relationship("Patient")
-    post_diagnosis = relationship("PostDiagnosis", back_populates="tumor_markers")
+    patient = relationship("Patient", lazy='select')
+    post_diagnosis = relationship("PostDiagnosis", back_populates="tumor_markers", lazy='select')
+
+
+# ========== NOTIFICATION & MESSAGING MODELS ==========
+
+class Notification(Base):
+    """Real-time notification system with priority queue"""
+    __tablename__ = 'notifications'
+    
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    title = Column(String(200), nullable=False)
+    message = Column(Text, nullable=False)
+    type = Column(String(50), default='info')
+    priority = Column(String(20), default='normal')
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    read_at = Column(DateTime, nullable=True)
+    link = Column(String(500), nullable=True)
+    related_id = Column(Integer, nullable=True)
+    related_type = Column(String(50), nullable=True)
+    
+    user = relationship("User", foreign_keys=[user_id])
+
+
+class Message(Base):
+    """Threaded messaging system with read receipts"""
+    __tablename__ = 'messages'
+    
+    id = Column(Integer, primary_key=True)
+    sender_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    recipient_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    subject = Column(String(200), nullable=False)
+    body = Column(Text, nullable=False)
+    thread_id = Column(String(100), nullable=True)
+    parent_message_id = Column(Integer, ForeignKey('messages.id'), nullable=True)
+    
+    is_read = Column(Boolean, default=False)
+    read_at = Column(DateTime, nullable=True)
+    delivered_at = Column(DateTime, default=datetime.utcnow)
+    
+    priority = Column(String(20), default='normal')
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    is_deleted = Column(Boolean, default=False)
+    deleted_at = Column(DateTime, nullable=True)
+    
+    sender = relationship("User", foreign_keys=[sender_id])
+    recipient = relationship("User", foreign_keys=[recipient_id])

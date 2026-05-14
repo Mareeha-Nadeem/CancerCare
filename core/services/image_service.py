@@ -98,11 +98,18 @@ class ImageService:
                         medical_image.confidence_score = analysis_result.get('confidence_score', 0.0)
                         medical_image.tumor_count = analysis_result.get('tumor_count', 0)
                         medical_image.largest_tumor_size = analysis_result.get('largest_tumor_size', 0.0)
+                        medical_image.tumor_size_mm2 = analysis_result.get('tumor_size_mm2', 0.0)
+                        medical_image.tumor_position_x = analysis_result.get('tumor_position_x', 0.0)
+                        medical_image.tumor_position_y = analysis_result.get('tumor_position_y', 0.0)
+                        medical_image.tumor_position_desc = analysis_result.get('tumor_position_desc', '')
+                        medical_image.tumor_mass_g = analysis_result.get('tumor_mass_g', 0.0)
+                        medical_image.aggression_level = analysis_result.get('aggression_level', 1)
+                        medical_image.aggression_description = analysis_result.get('aggression_description', '')
                         medical_image.analysis_summary = analysis_result.get('analysis_summary', '')
                         db.commit()
-                        print(f"✅ AI Analysis complete: {'Abnormal' if analysis_result.get('tumor_detected') else 'Normal'}")
+                        print(f" AI Analysis complete: {'Abnormal' if analysis_result.get('tumor_detected') else 'Normal'}")
                     except Exception as ai_error:
-                        print(f"⚠️ AI analysis failed: {ai_error}")
+                        print(f" AI analysis failed: {ai_error}")
                         # Continue anyway - image is uploaded
                 
                 return medical_image, None

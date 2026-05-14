@@ -28,6 +28,15 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 session = scoped_session(SessionLocal)
 
+# CRITICAL FIX: Import all models at module level to resolve SQLAlchemy relationships
+# This ensures all model classes are loaded before any code tries to use them
+# This MUST happen after engine creation but before any code uses the models
+from core.models import (
+    Base, Patient, Report, Prediction, Doctor, Appointment,
+    User, PostDiagnosis, MedicalImage, TumorMarker, TreatmentRecord,
+    Notification, Message
+)
+
 def get_db():
     """Get database session"""
     db = session()
@@ -41,6 +50,8 @@ def get_db_session():
     return session()
 
 def init_database():
-    """Initialize database tables"""
-    from core.models import Base
+    """Initialize database tables - models already imported at module level"""
     Base.metadata.create_all(engine)
+
+# Alias for compatibility
+get_session = get_db_session

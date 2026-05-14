@@ -172,47 +172,47 @@ def show():
     # Hero Section
     st.markdown("""
         <div class="hero-container">
-            <h1 class="hero-title">🫁 CancerCare</h1>
+            <h1 class="hero-title"> CancerCare</h1>
             <p class="hero-subtitle">
                 Advanced Lung Cancer Risk Prediction System<br>
                 Powered by Machine Learning & Modern Technology
             </p>
             <p class="hero-tagline">
-                ⚡ Real-time Analysis | 🔒 Secure | 🎯 Accurate
+                 Real-time Analysis |  Secure |  Accurate
             </p>
         </div>
     """, unsafe_allow_html=True)
     
     # Quick Actions
-    st.markdown("## 🚀 Quick Actions")
+    st.markdown("##  Quick Actions")
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🔬 Start Prediction", use_container_width=True):
+        if st.button(" Start Prediction", use_container_width=True):
             st.query_params.page = "prediction"
             st.rerun()
     
     with col2:
-        if st.button("👥 View Patients", use_container_width=True):
+        if st.button(" View Patients", use_container_width=True):
             st.query_params.page = "patients"
             st.rerun()
     
     with col3:
-        if st.button("👨‍⚕️ Doctors Portal", use_container_width=True):
+        if st.button("‍ Doctors Portal", use_container_width=True):
             st.query_params.page = "doctors"
             st.rerun()
     
     st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
     
     # About Section with Features
-    st.markdown("## ✨ Features")
+    st.markdown("##  Features")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
             <div class="feature-card">
-                <div class="feature-icon">🤖</div>
+                <div class="feature-icon"></div>
                 <div class="feature-title">AI-Powered Predictions</div>
                 <div class="feature-desc">
                     Advanced machine learning model trained on comprehensive medical data 
@@ -223,7 +223,7 @@ def show():
         
         st.markdown("""
             <div class="feature-card">
-                <div class="feature-icon">📊</div>
+                <div class="feature-icon"></div>
                 <div class="feature-title">Comprehensive Analytics</div>
                 <div class="feature-desc">
                     Detailed risk analysis with confidence scores, probability distributions,
@@ -235,7 +235,7 @@ def show():
     with col2:
         st.markdown("""
             <div class="feature-card">
-                <div class="feature-icon">🔒</div>
+                <div class="feature-icon"></div>
                 <div class="feature-title">Secure & Private</div>
                 <div class="feature-desc">
                     Enterprise-grade security with encrypted data storage, JWT authentication,
@@ -246,7 +246,7 @@ def show():
         
         st.markdown("""
             <div class="feature-card">
-                <div class="feature-icon">⚡</div>
+                <div class="feature-icon"></div>
                 <div class="feature-title">Real-Time Processing</div>
                 <div class="feature-desc">
                     Instant predictions with network monitoring, real-time updates,
@@ -258,14 +258,14 @@ def show():
     st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
     
     # Technology Stack
-    st.markdown("## 🛠️ Technology Integration")
+    st.markdown("##  Technology Integration")
     
     tech_col1, tech_col2, tech_col3, tech_col4 = st.columns(4)
     
     with tech_col1:
         st.markdown("""
             <div class="stat-box">
-                <div class="stat-number">📚</div>
+                <div class="stat-number"></div>
                 <div class="stat-label">Data Structures</div>
             </div>
         """, unsafe_allow_html=True)
@@ -273,7 +273,7 @@ def show():
     with tech_col2:
         st.markdown("""
             <div class="stat-box">
-                <div class="stat-number">🧬</div>
+                <div class="stat-number"></div>
                 <div class="stat-label">Data Science</div>
             </div>
         """, unsafe_allow_html=True)
@@ -281,7 +281,7 @@ def show():
     with tech_col3:
         st.markdown("""
             <div class="stat-box">
-                <div class="stat-number">🌐</div>
+                <div class="stat-number"></div>
                 <div class="stat-label">Networks</div>
             </div>
         """, unsafe_allow_html=True)
@@ -289,7 +289,7 @@ def show():
     with tech_col4:
         st.markdown("""
             <div class="stat-box">
-                <div class="stat-number">⚙️</div>
+                <div class="stat-number"></div>
                 <div class="stat-label">Engineering</div>
             </div>
         """, unsafe_allow_html=True)
@@ -297,11 +297,11 @@ def show():
     st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
     
     # Information Section
-    st.markdown("## ℹ️ Important Information")
+    st.markdown("## ℹ Important Information")
     
     st.markdown("""
         <div class="info-box">
-            <strong>🎓 Academic Project</strong><br>
+            <strong> Academic Project</strong><br>
             This system integrates concepts from Data Structures & Algorithms, 
             Data Science, Computer Networks, and Software Engineering.
         </div>
@@ -309,7 +309,7 @@ def show():
     
     st.markdown("""
         <div class="warning-box">
-            <strong>⚠️ Medical Disclaimer</strong><br>
+            <strong> Medical Disclaimer</strong><br>
             This tool is for educational and assessment purposes only. 
             Always consult qualified healthcare professionals for medical decisions.
         </div>
@@ -319,7 +319,7 @@ def show():
     st.markdown('<div class="gradient-divider"></div>', unsafe_allow_html=True)
     st.markdown(f"""
         <div style="text-align: center; color: #b0b0b0; padding: 2rem;">
-            <p>🏥 CancerCare System | Built with ❤️ using Modern Technologies</p>
+            <p> CancerCare System | Built with  using Modern Technologies</p>
             <p style="font-size: 0.9rem;">© {datetime.now().year} | All Rights Reserved</p>
         </div>
     """, unsafe_allow_html=True)

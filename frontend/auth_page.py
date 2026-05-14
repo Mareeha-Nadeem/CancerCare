@@ -129,7 +129,7 @@ def show_login_form():
                 user, error = auth_service.login_user(username, password)
                 
                 if error:
-                    st.error(f"❌ {error}")
+                    st.error(f" {error}")
                 else:
                     # Set session state
                     st.session_state.authenticated = True
@@ -204,11 +204,11 @@ def show_signup_form():
             if not username or not email or not password or not confirm_password:
                 st.error("Please fill in all fields")
             elif password != confirm_password:
-                st.error("❌ Passwords do not match")
+                st.error(" Passwords do not match")
             elif len(password) < 6:
-                st.error("❌ Password must be at least 6 characters")
+                st.error(" Password must be at least 6 characters")
             elif "@" not in email or "." not in email:
-                st.error("❌ Please enter a valid email address")
+                st.error(" Please enter a valid email address")
             else:
                 # Attempt registration
                 user, error = auth_service.register_user(
@@ -219,7 +219,7 @@ def show_signup_form():
                 )
                 
                 if error:
-                    st.error(f"❌ {error}")
+                    st.error(f" {error}")
                 else:
                     # Auto-login after signup
                     st.session_state.authenticated = True

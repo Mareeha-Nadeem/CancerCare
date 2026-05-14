@@ -67,7 +67,7 @@ class MessagingService:
             self.total_bytes += len(content)
             self.active_connections.add(conv_key)
             
-            print(f"📨 Message sent from {sender} to {recipient} ({len(content)} bytes)")
+            print(f" Message sent from {sender} to {recipient} ({len(content)} bytes)")
             
             return message.id
     
@@ -145,7 +145,7 @@ class MessagingService:
     def broadcast_system_message(self, content: str):
         """Broadcast system message to all"""
         # This would send to all users in a real system
-        print(f"📢 System Broadcast: {content}")
+        print(f" System Broadcast: {content}")
 
 # Global messaging service
 messaging_service = MessagingService()

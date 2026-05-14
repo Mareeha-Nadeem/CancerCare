@@ -18,22 +18,22 @@ STEP 2: FIND THE PAGE
 ----------------------
 After restart, look in the LEFT SIDEBAR for:
 
-   🏥 Post-Diagnosis   <-- NEW! This is the page
+    Post-Diagnosis   <-- NEW! This is the page
 
 It should appear in the navigation list between:
-   - 🔍 Search (above)
-   - 📈 Analytics (below)
+   -  Search (above)
+   -  Analytics (below)
 
 STEP 3: USE IT
 --------------
-1. Click "🏥 Post-Diagnosis"
+1. Click " Post-Diagnosis"
 2. Select a patient
 3. Use the 5 tabs:
-   - 📋 Diagnosis Info
-   - 📸 Medical Images
-   - 💉 Tumor Markers
-   - 💊 Treatment Plan
-   - 📈 Progress Timeline
+   -  Diagnosis Info
+   -  Medical Images
+   -  Tumor Markers
+   -  Treatment Plan
+   -  Progress Timeline
 
 TROUBLESHOOTING:
 ----------------
