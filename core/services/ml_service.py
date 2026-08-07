@@ -53,7 +53,7 @@ def load_model():
         
     except Exception as e:
         print(f" Warning: Could not load ML model: {e}")
-        print("ℹ Predictions will use mock data until model is trained.")
+        print("[INFO] Predictions will use mock data until model is trained.")
         return None, None
 
 def predict_risk(features: Dict) -> Tuple[str, float, Dict[str, float]]:
@@ -108,105 +108,58 @@ def predict_risk(features: Dict) -> Tuple[str, float, Dict[str, float]]:
         
         # Create DataFrame (single row)
         X = pd.DataFrame([feature_data])
-        
-        # Make prediction
+                # Make prediction
         risk_class_raw = model.predict(X)[0]
-        probabilities = model.predict_proba(X)[0]
-        
-        # CRITICAL: Ensure risk_class is an integer
-        risk_class = int(risk_class_raw)
-        
-        print(f" DEBUG: raw prediction = {risk_class_raw} (type: {type(risk_class_raw)})")
-        print(f" DEBUG: as integer = {risk_class}")
-        print(f" DEBUG: probabilities = {probabilities}")
-        
-        # CRITICAL FIX: Explicit mapping of numeric classes to risk levels
-        # The trained model uses numeric labels: 0='High', 1='Low', 2='Medium' (alphabetical)
-        # We need to map these integers to human-readable strings
-        
-        # Try to get the model's class ordering
+        probabilities  = model.predict_proba(X)[0]
+        risk_class     = int(risk_class_raw)
+
+        # Resolve class labels from the pipeline or fall back to LabelEncoder order.
+        # The model was trained with LabelEncoder on ['High','Low','Medium'] which
+        # produces the alphabetical mapping: 0=High, 1=Low, 2=Medium
         model_classes = None
         if hasattr(model, 'classes_'):
-            model_classes = list(model.classes_)
-            print(f" DEBUG: Model classes_: {model_classes} (types: {[type(c) for c in model_classes]})")
+            model_classes = [str(c) for c in model.classes_]
         elif hasattr(model, 'named_steps'):
-            classifier = model.named_steps.get('classifier', None)
-            if classifier and hasattr(classifier, 'classes_'):
-                model_classes = list(classifier.classes_)
-                print(f" DEBUG: Pipeline classifier classes_: {model_classes}")
-        
-        # Create the mapping
-        # The model was trained with labels that are either integers (0,1,2) or strings
-        # Map them to proper risk level strings
-        if model_classes and len(model_classes) == 3:
-            # Convert model classes to strings
-            str_classes = [str(c) for c in model_classes]
-            print(f" DEBUG: String classes: {str_classes}")
-            
-            # Check if they're numeric strings
-            if all(c.isdigit() for c in str_classes):
-                # Model has numeric classes - CORRECTED MAPPING
-                # Based on actual model behavior: Higher class number = Higher risk
-                # 0 = Low Risk, 1 = Medium Risk, 2 = High Risk
-                numeric_to_risk = {'0': 'Low', '1': 'Medium', '2': 'High'}
-                risk_levels = [numeric_to_risk.get(str(i), 'Unknown') for i in range(3)]
-                print(f"🔧 DEBUG: Using CORRECTED numeric mapping: {risk_levels}")
-            else:
-                # Model has text classes already
-                risk_levels = str_classes
-                print(f" DEBUG: Using model's text classes: {risk_levels}")
+            clf = model.named_steps.get('classifier') or model.named_steps.get('model')
+            if clf and hasattr(clf, 'classes_'):
+                model_classes = [str(c) for c in clf.classes_]
+
+        # Map integer class indices to risk-level strings
+        if model_classes and all(c.isdigit() for c in model_classes):
+            # Numeric classes from LabelEncoder: 0=High, 1=Low, 2=Medium (alphabetical)
+            idx_to_risk = {0: 'High', 1: 'Low', 2: 'Medium'}
+            risk_levels = [idx_to_risk.get(i, 'Unknown') for i in range(len(model_classes))]
+        elif model_classes and all(c in ('High', 'Low', 'Medium') for c in model_classes):
+            risk_levels = model_classes  # already strings
         else:
-            # Fallback: use standard alphabetical order
+            # Safe alphabetical fallback
             risk_levels = ['High', 'Low', 'Medium']
-            print(f" DEBUG: Using default alphabetical classes")
-        
-        # Validate index
+
+        # Clamp index
         if risk_class < 0 or risk_class >= len(risk_levels):
-            print(f" ERROR: Invalid risk_class {risk_class} for {len(risk_levels)} classes")
-            risk_class = 1  # Default to 'Low' (middle risk)
-        
-        # Get the risk level string
-        risk_level = risk_levels[risk_class]
-        
-        # Ensure it's a valid risk level
-        if risk_level not in ['Low', 'Medium', 'High']:
-            print(f" WARNING: Invalid risk_level '{risk_level}', mapping to standard...")
-            # Try to map numeric strings to text
-            if risk_level in ['0', 0]:
-                risk_level = 'High'
-            elif risk_level in ['1', 1]:
-                risk_level = 'Low'
-            elif risk_level in ['2', 2]:
-                risk_level = 'Medium'
-            else:
-                risk_level = 'Low'  # Safe default
-        
-        # Ensure final type is string
-        risk_level = str(risk_level)
-        
-        # Get confidence (max probability)
-        confidence = float(np.max(probabilities))
-        
-        # Build probability dictionary with proper labels
-        prob_dict = {
-            'Low': float(probabilities[risk_levels.index('Low')] if 'Low' in risk_levels else 0.33),
-            'Medium': float(probabilities[risk_levels.index('Medium')] if 'Medium' in risk_levels else 0.33),
-            'High': float(probabilities[risk_levels.index('High')] if 'High' in risk_levels else 0.33)
-        }
-        
-        print(f" ==================================")
-        print(f" PREDICTION RESULT:")
-        print(f" Raw class: {risk_class}")
-        print(f" Risk Level: {risk_level}")
-        print(f" Confidence: {confidence:.2%}")
-        print(f" Probabilities: {prob_dict}")
-        print(f" Type check: {type(risk_level)} = '{risk_level}'")
-        print(f" ==================================")
-        
+            risk_class = 0
+
+        risk_level = str(risk_levels[risk_class])
+
+        # Validate
+        if risk_level not in ('Low', 'Medium', 'High'):
+            risk_level = 'Low'
+
+        # Confidence = probability of predicted class
+        confidence = float(probabilities[risk_class])
+
+        # Build labelled probability dict
+        prob_dict = {}
+        for i, label in enumerate(risk_levels):
+            if label in ('Low', 'Medium', 'High') and i < len(probabilities):
+                prob_dict[label] = float(probabilities[i])
+        # Fill any missing keys
+        for k in ('Low', 'Medium', 'High'):
+            prob_dict.setdefault(k, 0.0)
+
         return risk_level, confidence, prob_dict
-        
+
     except Exception as e:
-        print(f" Prediction error: {e}")
         import traceback
         traceback.print_exc()
         return _mock_prediction(features)

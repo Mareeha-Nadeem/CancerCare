@@ -38,7 +38,7 @@ class MedicalImageClassifier:
         if TORCH_AVAILABLE:
             self._load_model()
         else:
-            print("ℹ Running in fallback mode without PyTorch")
+            print("[INFO] Running in fallback mode without PyTorch")
     
     def _load_model(self):
         """Load pre-trained ResNet50 model"""

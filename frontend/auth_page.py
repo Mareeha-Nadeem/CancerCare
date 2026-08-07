@@ -193,8 +193,8 @@ def show_signup_form():
         
         role = st.selectbox(
             "Role",
-            options=["admin", "doctor", "lab_tech"],
-            help="Select your role in the system"
+            options=["lab_tech", "doctor"],
+            help="Select your role. Admin accounts are created by administrators only."
         )
         
         submit = st.form_submit_button("Create Account", use_container_width=True)

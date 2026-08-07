@@ -1,108 +1,5 @@
-# # app.py
-# import streamlit as st
-# from frontend import home_page, prediction_page, patients_page, doctors_page
-
-# st.set_page_config(page_title="CancerCare - Lung Cancer Risk", layout="wide")
-
-# PAGES = {
-#     " Home": home_page.show,
-#     " Prediction": prediction_page.show,
-#     "‍ Patients": patients_page.show,
-#     " Doctors": doctors_page.show,
-# }
-
-# if "current_page" not in st.session_state:
-#     st.session_state["current_page"] = " Home"
-
-# def main():
-#     st.sidebar.title("CancerCare")
-#     choice = st.sidebar.radio(
-#         "Navigation",
-#         list(PAGES.keys()),
-#         index=list(PAGES.keys()).index(st.session_state["current_page"])
-#     )
-#     st.session_state["current_page"] = choice
-#     PAGES[choice]()
-
-# if __name__ == "__main__":
-#     main()
-
-# import streamlit as st
-# from frontend import home_page, prediction_page, patients_page, doctors_page
-# from frontend import about_page, search_page, service_page, contact_page
-
-# st.set_page_config(page_title="CancerCare - Lung Cancer Risk", layout="wide")
-
-# # Pages NOT shown in sidebar
-# HIDDEN_PAGES = {
-#     "About": about_page.show,
-#     "Search": search_page.show,
-#     "Service": service_page.show,
-#     "Contact": contact_page.show,
-# }
-
-# # Main sidebar pages only
-# PAGES = {
-#     " Home": home_page.show,
-#     " Prediction": prediction_page.show,
-#     "‍ Patients": patients_page.show,
-#     " Doctors": doctors_page.show,
-# }
-
-# if "current_page" not in st.session_state:
-#     st.session_state["current_page"] = " Home"
-
-# def main():
-#     # Sidebar for main pages only
-#     st.sidebar.title("CancerCare")
-#     choice = st.sidebar.radio(
-#         "Navigation",
-#         list(PAGES.keys()),
-#         index=list(PAGES.keys()).index(st.session_state["current_page"])
-#     )
-
-#     st.session_state["current_page"] = choice
-
-#     # Render selected main page
-#     PAGES[choice]()
-
-#     # Render hidden pages only when directly selected from banner buttons
-#     if st.session_state["current_page"] in HIDDEN_PAGES:
-#         HIDDEN_PAGES[st.session_state["current_page"]]()
-
-# if __name__ == "__main__":
-#     main()
-# app.py
-# import streamlit as st
-# from frontend import home_page, prediction_page, patients_page, doctors_page
-
-# st.set_page_config(page_title="CancerCare - Lung Cancer Risk", layout="wide")
-
-# PAGES = {
-#     " Home": home_page.show,
-#     " Prediction": prediction_page.show,
-#     "‍ Patients": patients_page.show,
-#     " Doctors": doctors_page.show,
-# }
-
-# if "current_page" not in st.session_state:
-#     st.session_state["current_page"] = " Home"
-
-# def main():
-#     st.sidebar.title("CancerCare")
-#     choice = st.sidebar.radio(
-#         "Navigation",
-#         list(PAGES.keys()),
-#         index=list(PAGES.keys()).index(st.session_state["current_page"])
-#     )
-#     st.session_state["current_page"] = choice
-#     PAGES[choice]()   # call selected page's show()
-
-# if __name__ == "__main__":
-#     main()
 # app.py
 # CRITICAL: Add data_science path BEFORE any other imports
-# This allows the ML model to import the feature_engineer module
 import sys
 from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent
@@ -119,136 +16,130 @@ from frontend import post_diagnosis_page
 from frontend import landing_page, auth_page, dashboard_home
 from frontend.modern_styles import MODERN_CSS
 
-# Apply Ultra-Modern Design System
-st.markdown(MODERN_CSS, unsafe_allow_html=True)
-
+# MUST be the VERY FIRST Streamlit command
 st.set_page_config(page_title="CancerCare - Lab Technician System", layout="wide")
 
-# All pages including top-nav pages
+# Apply design system
+st.markdown(MODERN_CSS, unsafe_allow_html=True)
+
 ALL_PAGES = {
-    "landing": landing_page.show,  # NEW: Landing page
-    "auth": auth_page.show,  # NEW: Login/Signup page
-    "dashboard_home": dashboard_home.show,  # NEW: Dashboard home after login
-    "lab_dashboard": lab_dashboard.show,  # Primary page for lab technicians
-    "home": home_page.show,
-    "prediction": prediction_page.show,
+    "landing":        landing_page.show,
+    "auth":           auth_page.show,
+    "dashboard_home": dashboard_home.show,
+    "lab_dashboard":  lab_dashboard.show,
+    "home":           home_page.show,
+    "prediction":     prediction_page.show,
     "batch_processing": batch_processing.show,
-    "patient_history": patient_history.show,
-    "reports": reports_page.show,
-    "patients": patients_page.show,
-    "doctors": doctors_page.show,
-    "dashboard": dashboard_page.show,
-    "lab_tech": lab_tech_page.show,
-    "notifications": notifications_page.show,
-    "messaging": messaging_page.show,
-    "about": about_page.show,
-    "search": search_page.show,
-    "service": service_page.show,
-    "contact": contact_page.show,
-    "post_diagnosis": post_diagnosis_page.show,  # NEW
+    "patient_history":  patient_history.show,
+    "reports":        reports_page.show,
+    "patients":       patients_page.show,
+    "doctors":        doctors_page.show,
+    "dashboard":      dashboard_page.show,
+    "lab_tech":       lab_tech_page.show,
+    "notifications":  notifications_page.show,
+    "messaging":      messaging_page.show,
+    "about":          about_page.show,
+    "search":         search_page.show,
+    "service":        service_page.show,
+    "contact":        contact_page.show,
+    "post_diagnosis": post_diagnosis_page.show,
 }
 
-# Only sidebar navigation pages - Lab-focused
 SIDEBAR_PAGES = {
-    "Lab Dashboard": "lab_dashboard",
-    "Single Analysis": "prediction",
+    "Lab Dashboard":    "lab_dashboard",
+    "Single Analysis":  "prediction",
     "Batch Processing": "batch_processing",
-    "Patient History": "patient_history",
+    "Patient History":  "patient_history",
     "Reports & Export": "reports",
-    "Appointments": "lab_tech",
-    "Patient Records": "patients",
-    "Doctors": "doctors",
-    "Search": "search",
-    "Post-Diagnosis": "post_diagnosis",
-    "Analytics": "dashboard",
-    "Notifications": "notifications",
-    "Messages": "messaging",
+    "Appointments":     "lab_tech",
+    "Patient Records":  "patients",
+    "Doctors":          "doctors",
+    "Search":           "search",
+    "Post-Diagnosis":   "post_diagnosis",
+    "Analytics":        "dashboard",
+    "Notifications":    "notifications",
+    "Messages":         "messaging",
 }
 
 def set_page(page_name: str):
-    st.query_params.page = page_name
+    st.session_state.page = page_name
     st.rerun()
 
 def main():
-    # Initialize session state for authentication if not exists
-    if 'authenticated' not in st.session_state:
+    # Initialise session state defaults
+    if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
-    
-    # Check authentication status
+    if "page" not in st.session_state:
+        st.session_state.page = "landing"
+
+    # ── Unauthenticated flow ──────────────────────────────────────
     if not st.session_state.authenticated:
-        # User not authenticated - show landing or auth page
         current_page = st.session_state.get("page", "landing")
-        
-        if current_page in ["landing", "auth"]:
-            try:
-                ALL_PAGES[current_page]()
-            except Exception as e:
-                st.error(f"Error loading page: {e}")
-                # Fallback to landing
-                st.session_state.page = "landing"
-                ALL_PAGES["landing"]()
-        else:
-            # Trying to access protected page without auth - redirect to landing
+        if current_page not in ("landing", "auth"):
+            st.session_state.page = "landing"
+            current_page = "landing"
+        try:
+            ALL_PAGES[current_page]()
+        except Exception as e:
+            st.error(f"Error loading page: {e}")
             st.session_state.page = "landing"
             ALL_PAGES["landing"]()
         return
-    
-    # User is authenticated - show full application
-    # Default to lab_dashboard for authenticated users
-    current_page = st.query_params.get("page", st.session_state.get("page", "lab_dashboard"))
 
-    # Display logo in sidebar
+    # ── Authenticated flow ────────────────────────────────────────
+    current_page = st.session_state.get("page", "lab_dashboard")
+
+    # Sidebar — logo
     try:
         st.sidebar.image("assets/logo.png", width=100)
-    except:
+    except Exception:
         pass
-    
+
     st.sidebar.title("CancerCare Lab")
-    
-    # Show user info in sidebar
-    username = st.session_state.get('username', 'User')
+
+    # User info
+    username = st.session_state.get("username", "User")
+    role     = st.session_state.get("user_role", "user")
     st.sidebar.success(f"Logged in as: **{username}**")
+    st.sidebar.caption(f"Role: {role.title()}")
     st.sidebar.markdown("---")
 
-    # Show sidebar navigation
+    # Navigation radio
     if current_page in SIDEBAR_PAGES.values():
         labels = list(SIDEBAR_PAGES.keys())
         values = list(SIDEBAR_PAGES.values())
-
-        # Select current page
         try:
             current_index = values.index(current_page)
         except ValueError:
             current_index = 0
 
-        choice = st.sidebar.radio(
-            "Navigation",
-            labels,
-            index=current_index
-        )
-
+        choice = st.sidebar.radio("Navigation", labels, index=current_index)
         selected_page = SIDEBAR_PAGES[choice]
 
-        # If user changed page
         if selected_page != current_page:
             set_page(selected_page)
             return
-
     else:
-        # For other pages
-        st.sidebar.write("Use the top navigation to switch sections.")
+        st.sidebar.info("Use in-page navigation to move between sections.")
 
-    # Render the current page
+    # Logout
+    st.sidebar.markdown("---")
+    if st.sidebar.button("🚪 Logout", use_container_width=True):
+        st.session_state.clear()
+        st.rerun()
+
+    # Render page
     try:
         ALL_PAGES[current_page]()
+    except KeyError:
+        st.error(f"Page '{current_page}' not found. Redirecting…")
+        set_page("lab_dashboard")
     except Exception as e:
         st.error(f"Error loading page: {e}")
-        st.write("Trying to load Dashboard Home...")
         try:
             ALL_PAGES["dashboard_home"]()
-        except:
+        except Exception:
             st.error("Could not load any page. Please check your installation.")
 
 if __name__ == "__main__":
     main()
-

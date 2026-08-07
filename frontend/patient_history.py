@@ -37,8 +37,7 @@ def show():
         selected_name = st.selectbox("👤 Select Patient", list(patient_options.keys()))
         selected_patient = patient_options[selected_name]
         
-        predictions = [p for p in prediction_service.get_all_predictions() 
-                      if p.patient_id == selected_patient.id]
+        predictions = prediction_service.get_patient_predictions(selected_patient.id)
         
         if predictions:
             st.success(f"📊 **{len(predictions)} predictions** found")
