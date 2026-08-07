@@ -59,3 +59,9 @@ env/
 *.MD
 *.png
 *.txt
+
+# ==============================
+# Environment / Secrets — NEVER push these
+# ==============================
+.env
+*.env

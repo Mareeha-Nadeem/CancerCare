@@ -182,17 +182,7 @@ class MedicalImage(Base):
     ai_analysis = Column(Text)
     ai_confidence = Column(Float)
     detected_anomalies = Column(Text)
-    
-    radiologist_notes = Column(Text)
-    findings = Column(Text)
-    is_reviewed = Column(Boolean, default=False)
-    reviewed_by = Column(String(100))
-    reviewed_at = Column(DateTime)
-    
-    ai_analysis = Column(Text)
-    ai_confidence = Column(Float)
-    detected_anomalies = Column(Text)
-    
+
     radiologist_notes = Column(Text)
     findings = Column(Text)
     is_reviewed = Column(Boolean, default=False)

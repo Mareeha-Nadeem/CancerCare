@@ -11,13 +11,13 @@
   "noise_level": 0.15,
   "missing_injection_rate": 0.05,
   "cv_folds": 5,
-  "cv_mean_f1": 0.9583341130604289,
-  "cv_std_f1": 0.037213464138740215,
+  "cv_mean_f1": 0.9190948933419522,
+  "cv_std_f1": 0.09179847060480245,
   "test_metrics": {
     "accuracy": 0.9354838709677419,
-    "f1_weighted": 0.9364552272521912,
-    "f1_macro": 0.9367413632119513,
-    "precision_weighted": 0.945409429280397,
+    "f1_weighted": 0.9352363666364162,
+    "f1_macro": 0.9355963729365264,
+    "precision_weighted": 0.9381720430107526,
     "recall_weighted": 0.9354838709677419
   },
   "target_classes": [
@@ -27,9 +27,9 @@
   ],
   "confusion_matrix": [
     [
-      10,
+      11,
       0,
-      1
+      0
     ],
     [
       0,
@@ -37,11 +37,11 @@
       1
     ],
     [
+      1,
       0,
-      0,
-      11
+      10
     ]
   ],
-  "trained_on": "2025-12-29 15:52:04",
-  "model_path": "E:\\Project\\CancerCare -- Copy\\data_science\\model_1\\models\\lung_cancer_pipeline.pkl"
+  "trained_on": "2026-08-07 17:56:34",
+  "model_path": "E:\\DS\\3rd Semester\\Projects\\CancerCare -- Copy\\data_science\\model_1\\models\\lung_cancer_pipeline.pkl"
 }

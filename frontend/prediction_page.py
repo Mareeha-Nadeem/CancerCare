@@ -203,22 +203,31 @@ def show():
                     st.stop()
             
             # Prediction features
+            # All 23 features matching the trained ML model schema exactly
             features = {
-                'AGE': age,
-                'GENDER': 1 if gender == "M" else 2,
-                'SMOKING': smoking,
-                'YELLOW_FINGERS': obesity,  # Using obesity as proxy
-                'ANXIETY': fatigue,
-                'PEER_PRESSURE': passive_smoker,
-                'CHRONIC_DISEASE': chronic_lung_disease,
-                'FATIGUE': fatigue,
-                'ALLERGY': dust_allergy,
-                'WHEEZING': wheezing,
-                'ALCOHOL_CONSUMING': alcohol_use,
-                'COUGHING': dry_cough,
-                'SHORTNESS_OF_BREATH': shortness_of_breath,
-                'SWALLOWING_DIFFICULTY': swallowing_difficulty,
-                'CHEST_PAIN': chest_pain
+                'AGE':                    age,
+                'GENDER':                 1 if gender == "M" else 2,
+                'AIR_POLLUTION':          air_pollution,
+                'ALCOHOL_USE':            alcohol_use,
+                'DUST_ALLERGY':           dust_allergy,
+                'OCCUPATIONAL_HAZARDS':   occupational_hazards,
+                'GENETIC_RISK':           genetic_risk,
+                'CHRONIC_LUNG_DISEASE':   chronic_lung_disease,
+                'BALANCED_DIET':          balanced_diet,
+                'OBESITY':                obesity,
+                'SMOKING':                smoking,
+                'PASSIVE_SMOKER':         passive_smoker,
+                'CHEST_PAIN':             chest_pain,
+                'COUGHING_OF_BLOOD':      coughing_of_blood,
+                'FATIGUE':                fatigue,
+                'WEIGHT_LOSS':            weight_loss,
+                'SHORTNESS_OF_BREATH':    shortness_of_breath,
+                'WHEEZING':               wheezing,
+                'SWALLOWING_DIFFICULTY':  swallowing_difficulty,
+                'CLUBBING_OF_FINGER_NAILS': clubbing_of_finger_nails,
+                'FREQUENT_COLD':          frequent_cold,
+                'DRY_COUGH':              dry_cough,
+                'SNORING':                snoring,
             }
             
             # Get prediction
