@@ -83,7 +83,7 @@ def show():
         
         /* Stat cards */
         .stat-card {
-            background: white;
+            background: var(--bg-surface-elevated);
             border-left: 5px solid #1e7e8c;
             border-radius: 10px;
             padding: 25px;

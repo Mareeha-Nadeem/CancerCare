@@ -36,7 +36,7 @@ def show():
         }
         
         .info-card {
-            background: white;
+            background: var(--bg-surface-elevated);
             border-radius: 12px;
             padding: 20px;
             margin: 12px 0;
@@ -54,14 +54,14 @@ def show():
         
         .metric-label {
             font-size: 12px;
-            color: #64748B;
+            color: var(--text-muted);
             text-transform: uppercase;
             font-weight: 600;
         }
         
         .metric-value {
             font-size: 18px;
-            color: #1F2937;
+            color: var(--text-main);
             font-weight: 700;
         }
         </style>
@@ -74,7 +74,7 @@ def show():
                 -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
                 Post-Diagnosis Management
             </h1>
-            <p style="color: #64748B; margin-top: 8px;">Track diagnosis, images, markers, and treatment</p>
+            <p style="color: var(--text-muted); margin-top: 8px;">Track diagnosis, images, markers, and treatment</p>
         </div>
     """, unsafe_allow_html=True)
     
@@ -82,15 +82,15 @@ def show():
     patients = patient_service.get_all_patients()
     
     if not patients:
-        st.warning("⚠️ No patients found. Add a patient first.")
+        st.warning("No patients found. Add a patient first.")
         return
     
     patient_options = {f"{p.name} (MRN: {p.mrn})": p for p in patients}
-    selected_patient_name = st.selectbox("👤 Select Patient", list(patient_options.keys()))
+    selected_patient_name = st.selectbox("Select Patient", list(patient_options.keys()))
     selected_patient = patient_options[selected_patient_name]
     
     # Tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["📋 Diagnosis", "🔬 Images", "📊 Tumor Markers", "💊 Treatment"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Diagnosis", "Images", "Tumor Markers", "Treatment"])
     
     with tab1:
         st.markdown("### Diagnosis Information")
@@ -101,20 +101,20 @@ def show():
             for diag in diagnoses:
                 st.markdown(f"""
                     <div class="info-card">
-                        <div style="font-weight: 700; color: #1F2937; font-size: 18px; margin-bottom: 12px;">
+                        <div style="font-weight: 700; color: var(--text-main); font-size: 18px; margin-bottom: 12px;">
                             {diag.diagnosis_type or 'General Diagnosis'}
                         </div>
-                        <div style="color: #64748B; margin-bottom: 16px;">
+                        <div style="color: var(--text-muted); margin-bottom: 16px;">
                             Date: {diag.diagnosis_date.strftime('%B %d, %Y') if diag.diagnosis_date else 'N/A'} | 
                             Stage: {diag.cancer_stage or 'N/A'}
                         </div>
-                        <div style="color: #475569;">
+                        <div style="color: var(--text-muted);">
                             {diag.diagnosis_notes or 'No notes available'}
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
         else:
-            st.info("📝 No diagnosis records yet")
+            st.info("No diagnosis records yet")
             
             with st.form("add_diagnosis"):
                 st.subheader("Add Diagnosis")
@@ -131,7 +131,7 @@ def show():
                         diagnosis_date=diagnosis_date,
                         diagnosis_notes=notes
                     )
-                    st.success("✅ Diagnosis saved!")
+                    st.success("Diagnosis saved!")
                     st.rerun()
     
     with tab2:
@@ -151,7 +151,7 @@ def show():
                 selected_diagnosis = diagnosis_options[selected_diag_name]
                 diagnosis_id = selected_diagnosis.id
             else:
-                st.warning("⚠️ Create a diagnosis first")
+                st.warning("Create a diagnosis first")
                 diagnosis_id = None
             
             uploaded_file = st.file_uploader("Choose Image", type=['png', 'jpg', 'jpeg', 'dcm'])
@@ -165,7 +165,7 @@ def show():
                         image_file=uploaded_file,
                         image_type=image_type
                     )
-                    st.success("✅ Image uploaded and analyzed!")
+                    st.success("Image uploaded and analyzed!")
                     st.rerun()
         
         # Display images
@@ -197,7 +197,7 @@ def show():
                             st.markdown(f"""
                                 <div style="background: {color}22; padding: 12px; border-radius: 8px; border-left: 3px solid {color};">
                                     <div style="font-weight: 600; color: {color};">Aggression Level: {img.aggression_level}/5</div>
-                                    <div style="color: #64748B; font-size: 14px;">{img.aggression_description or ''}</div>
+                                    <div style="color: var(--text-muted); font-size: 14px;">{img.aggression_description or ''}</div>
                                 </div>
                             """, unsafe_allow_html=True)
         else:
@@ -209,7 +209,7 @@ def show():
         diagnoses = post_diagnosis_service.get_patient_diagnoses(selected_patient.id)
         
         if not diagnoses:
-            st.warning("⚠️ Create a diagnosis first")
+            st.warning("Create a diagnosis first")
         else:
             diagnosis_options = {f"{d.diagnosis_type} - {d.diagnosis_date.strftime('%m/%d/%Y') if d.diagnosis_date else 'N/A'}": d 
                                for d in diagnoses}
@@ -234,7 +234,7 @@ def show():
                         marker_value=marker_value,
                         test_date=test_date
                     )
-                    st.success("✅ Marker added!")
+                    st.success("Marker added!")
                     st.rerun()
             
             # Display markers
@@ -247,13 +247,13 @@ def show():
                             <div style="font-weight: 700; color: #14B8A6; font-size: 16px;">
                                 {marker.marker_name}: {marker.marker_value}
                             </div>
-                            <div style="color: #64748B; font-size: 14px; margin-top: 4px;">
+                            <div style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">
                                 {marker.test_date.strftime('%B %d, %Y') if marker.test_date else 'N/A'}
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
             else:
-                st.info("📊 No tumor markers recorded yet")
+                st.info("No tumor markers recorded yet")
     
     with tab4:
         st.markdown("### Treatment Plan")
@@ -265,15 +265,15 @@ def show():
                 if diag.treatment_plan:
                     st.markdown(f"""
                         <div class="info-card">
-                            <div style="font-weight: 700; color: #1F2937; font-size: 18px; margin-bottom: 12px;">
+                            <div style="font-weight: 700; color: var(--text-main); font-size: 18px; margin-bottom: 12px;">
                                 Treatment for {diag.diagnosis_type}
                             </div>
-                            <div style="color: #475569; line-height: 1.6;">
+                            <div style="color: var(--text-muted); line-height: 1.6;">
                                 {diag.treatment_plan}
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
                 else:
-                    st.info(f"📋 No treatment plan for {diag.diagnosis_type}")
+                    st.info(f"No treatment plan for {diag.diagnosis_type}")
         else:
-            st.info("📋 No diagnoses to show treatment for")
+            st.info("No diagnoses to show treatment for")

@@ -26,7 +26,7 @@ def show():
         }
         
         .patient-card {
-            background: white;
+            background: var(--bg-surface-elevated);
             border-radius: 12px;
             padding: 20px;
             margin: 12px 0;
@@ -42,12 +42,12 @@ def show():
         .patient-name {
             font-size: 18px;
             font-weight: 700;
-            color: #1F2937;
+            color: var(--text-main);
         }
         
         .patient-info {
             font-size: 14px;
-            color: #64748B;
+            color: var(--text-muted);
             margin-top: 8px;
         }
         </style>
@@ -60,14 +60,14 @@ def show():
                 -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
                 Patient Management
             </h1>
-            <p style="color: #64748B; margin-top: 8px;">View and manage patient records</p>
+            <p style="color: var(--text-muted); margin-top: 8px;">View and manage patient records</p>
         </div>
     """, unsafe_allow_html=True)
     
     # Search
     col1, col2 = st.columns([3, 1])
     with col1:
-        search = st.text_input("🔍 Search patients", placeholder="Search by name or MRN...")
+        search = st.text_input("Search patients", placeholder="Search by name or MRN...")
     with col2:
         if st.button("➕ Add Patient", use_container_width=True):
             st.session_state.show_add_form = True
@@ -81,7 +81,7 @@ def show():
                    (p.mrn and search.lower() in p.mrn.lower())]
     
     # Display count
-    st.markdown(f"<p style='color: #64748B; margin: 16px 0;'>**{len(patients)} patients** found</p>", 
+    st.markdown(f"<p style='color: var(--text-muted); margin: 16px 0;'>**{len(patients)} patients** found</p>", 
                 unsafe_allow_html=True)
     
     # Patient list

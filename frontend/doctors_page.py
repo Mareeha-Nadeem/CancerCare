@@ -51,7 +51,7 @@ def show():
             border-radius: 16px; padding: 32px; margin-bottom: 24px;
         }
         .doctor-card {
-            background: white; border-radius: 12px; padding: 20px; margin: 12px 0;
+            background: var(--bg-surface-elevated); border-radius: 12px; padding: 20px; margin: 12px 0;
             border: 1px solid #E2E8F0;
         }
         </style>
@@ -65,7 +65,7 @@ def show():
                 -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
                 Doctors Directory
             </h1>
-            <p style="color: #64748B; margin-top: 8px;">Manage medical staff and specialists</p>
+            <p style="color: var(--text-muted); margin-top: 8px;">Manage medical staff and specialists</p>
         </div>
     """, unsafe_allow_html=True)
     
@@ -73,13 +73,13 @@ def show():
     doctors = load_doctors()
     
     # Tabs for different views
-    tab1, tab2 = st.tabs(["👨‍⚕️ All Doctors", "➕ Add Doctor"])
+    tab1, tab2 = st.tabs(["👨‍All Doctors", "➕ Add Doctor"])
     
     with tab1:
         # Search and filter
         col1, col2 = st.columns([3, 1])
         with col1:
-            search = st.text_input("🔍 Search doctors", placeholder="Name or specialty...")
+            search = st.text_input("Search doctors", placeholder="Name or specialty...")
         with col2:
             specialty_filter = st.selectbox("Filter by Specialty", 
                                           ["All"] + list(set(d.get('specialty', 'General') for d in doctors)))
@@ -95,12 +95,12 @@ def show():
             filtered_doctors = [d for d in filtered_doctors 
                               if d.get('specialty') == specialty_filter]
         
-        st.info(f"👨‍⚕️ **{len(filtered_doctors)} doctors** found")
+        st.info(f"👨‍**{len(filtered_doctors)} doctors** found")
         
         # Display doctors
         if filtered_doctors:
             for idx, doctor in enumerate(filtered_doctors):
-                with st.expander(f"👨‍⚕️ {doctor.get('name', 'Unknown')} - {doctor.get('specialty', 'General')}"):
+                with st.expander(f"👨‍{doctor.get('name', 'Unknown')} - {doctor.get('specialty', 'General')}"):
                     col1, col2 = st.columns([3, 1])
                     
                     with col1:
@@ -150,7 +150,7 @@ def show():
             
             if submitted:
                 if not name or not specialty or not license_no:
-                    st.error("⚠️ Please fill all required fields (*)")
+                    st.error("Please fill all required fields (*)")
                 else:
                     new_doctor = {
                         'id': len(doctors) + 1,
@@ -167,13 +167,13 @@ def show():
                     
                     doctors.append(new_doctor)
                     save_doctors(doctors)
-                    st.success(f"✅ Dr. {name} added successfully!")
+                    st.success(f"Dr. {name} added successfully!")
                     st.rerun()
     
     # Statistics
     if doctors:
         st.markdown("---")
-        st.subheader("📊 Statistics")
+        st.subheader("Statistics")
         
         col1, col2, col3 = st.columns(3)
         

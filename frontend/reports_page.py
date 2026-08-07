@@ -19,7 +19,7 @@ def show():
             border-radius: 16px; padding: 32px; margin-bottom: 24px;
         }
         .filter-section {
-            background: white; border-radius: 12px; padding: 20px; margin: 16px 0;
+            background: var(--bg-surface-elevated); border-radius: 12px; padding: 20px; margin: 16px 0;
             border: 1px solid #E2E8F0;
         }
         </style>
@@ -31,12 +31,12 @@ def show():
                 -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
                 Reports & Export
             </h1>
-            <p style="color: #64748B; margin-top: 8px;">Generate filtered reports and export data</p>
+            <p style="color: var(--text-muted); margin-top: 8px;">Generate filtered reports and export data</p>
         </div>
     """, unsafe_allow_html=True)
     
     # Filters Section
-    st.markdown("### 🔍 Filters")
+    st.markdown("### Filters")
     st.markdown('<div class="filter-section">', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
@@ -78,15 +78,15 @@ def show():
             
         filtered_predictions.append(pred)
     
-    st.success(f"📊 **{len(filtered_predictions)} predictions** match your filters")
+    st.success(f"**{len(filtered_predictions)} predictions** match your filters")
     
     # Report Type Selection
-    st.markdown("### 📈 Available Reports")
+    st.markdown("### Available Reports")
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📋 Summary Report", use_container_width=True):
+        if st.button("Summary Report", use_container_width=True):
             if filtered_predictions:
                 df = pd.DataFrame([{
                     'Patient ID': p.patient_id,
@@ -100,7 +100,7 @@ def show():
                 st.warning("No data matches filters")
     
     with col2:
-        if st.button("📊 Risk Distribution", use_container_width=True):
+        if st.button("Risk Distribution", use_container_width=True):
             if filtered_predictions:
                 risk_counts = {}
                 for p in filtered_predictions:
@@ -114,7 +114,7 @@ def show():
                 st.warning("No data matches filters")
     
     with col3:
-        if st.button("📅 Timeline Report", use_container_width=True):
+        if st.button("Timeline Report", use_container_width=True):
             if filtered_predictions:
                 df = pd.DataFrame([{
                     'Date': p.created_at.strftime('%Y-%m-%d') if p.created_at else 'N/A',
@@ -132,7 +132,7 @@ def show():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("⬇️ Download CSV", use_container_width=True):
+        if st.button("Download CSV", use_container_width=True):
             if filtered_predictions:
                 df = pd.DataFrame([{
                     'Patient_ID': p.patient_id,
@@ -157,7 +157,7 @@ def show():
                 st.warning("No data to export")
     
     with col2:
-        if st.button("📊 Export Statistics", use_container_width=True):
+        if st.button("Export Statistics", use_container_width=True):
             if filtered_predictions:
                 stats = {
                     'Total Predictions': len(filtered_predictions),

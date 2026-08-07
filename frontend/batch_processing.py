@@ -41,7 +41,7 @@ def show():
     """, unsafe_allow_html=True)
 
     # Template download hint
-    with st.expander("📋 Required CSV columns"):
+    with st.expander("Required CSV columns"):
         st.write("Your CSV must contain these columns (case-insensitive):")
         st.code(", ".join(REQUIRED_COLUMNS))
         st.caption("GENDER: 1 = Male, 2 = Female. All other columns: scale 1–8.")
@@ -66,10 +66,10 @@ def show():
         st.error(f"Missing columns: {', '.join(missing_cols)}")
         return
 
-    st.success(f"✅ Loaded **{len(df)} records**")
+    st.success(f"Loaded **{len(df)} records**")
     st.dataframe(df.head(5), use_container_width=True)
 
-    if not st.button("⚡ Run Batch Predictions", use_container_width=True):
+    if not st.button("Run Batch Predictions", use_container_width=True):
         return
 
     results = []
@@ -124,11 +124,11 @@ def show():
     if "Risk Level" in results_df.columns:
         counts = results_df["Risk Level"].value_counts()
         col1, col2, col3 = st.columns(3)
-        col1.metric("🔴 High Risk",   counts.get("High",   0))
-        col2.metric("🟡 Medium Risk", counts.get("Medium", 0))
-        col3.metric("🟢 Low Risk",    counts.get("Low",    0))
+        col1.metric("High Risk",   counts.get("High",   0))
+        col2.metric("Medium Risk", counts.get("Medium", 0))
+        col3.metric("Low Risk",    counts.get("Low",    0))
 
     # Download
     csv_out = results_df.to_csv(index=False)
-    st.download_button("⬇️ Download Results CSV", csv_out,
+    st.download_button("Download Results CSV", csv_out,
                        file_name="batch_results.csv", mime="text/csv")

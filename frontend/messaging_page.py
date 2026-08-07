@@ -21,7 +21,7 @@ def show():
             border-radius: 16px; padding: 32px; margin-bottom: 24px;
         }
         .message-card {
-            background: white; border-radius: 12px; padding: 16px; margin: 12px 0;
+            background: var(--bg-surface-elevated); border-radius: 12px; padding: 16px; margin: 12px 0;
             border-left: 4px solid #14B8A6; transition: all 0.2s ease;
         }
         .message-card:hover {
@@ -31,7 +31,7 @@ def show():
             background: #F0FDFA; border-left-color: #0D9488;
         }
         .message-received {
-            background: white; border-left-color: #14B8A6;
+            background: var(--bg-surface-elevated); border-left-color: #14B8A6;
         }
         .unread {
             background: #FFFBEB; border-left-color: #F59E0B; font-weight: 600;
@@ -56,7 +56,7 @@ def show():
                 -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
                 💬 Messaging Center
             </h1>
-            <p style="color: #64748B; margin-top: 8px;">Real-time communication system</p>
+            <p style="color: var(--text-muted); margin-top: 8px;">Real-time communication system</p>
         </div>
     """, unsafe_allow_html=True)
     
@@ -83,7 +83,7 @@ def show():
         network = {'incoming_kbps': 0, 'outgoing_kbps': 0}
     
     # Enhanced Stats Display - Messaging + System Monitoring
-    st.markdown("### 📊 Messaging Statistics")
+    st.markdown("### Messaging Statistics")
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.metric("Total Messages", msg_stats['total_messages'])
@@ -124,7 +124,7 @@ def show():
                         
                         with col_left:
                             # Clean conversation label
-                            unread_badge = "🔴" if is_unread else "✅"
+                            unread_badge = "" if is_unread else ""
                             
                             # Use st.button as clickable conversation item
                             conv_key = f"conv_{idx}"
@@ -189,7 +189,7 @@ def show():
                                     st.markdown(f"""
                                         <div class="message-card {msg_class} {unread_class}">
                                             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                                                <div style="font-weight: 600; color: #1F2937; font-size: 14px;">
+                                                <div style="font-weight: 600; color: var(--text-main); font-size: 14px;">
                                                     {clean_sender} {'(You)' if is_sent else ''}
                                                 </div>
                                                 <div style="font-size: 12px; color: #94A3B8;">
@@ -254,7 +254,7 @@ def show():
         try:
             sent_messages = message_service.get_user_messages(user_id, sent=True)
         except Exception as e:
-            st.error(f"⚠️ Error loading sent messages: {str(e)}")
+            st.error(f"Error loading sent messages: {str(e)}")
             sent_messages = []
         
         if sent_messages:
@@ -284,7 +284,7 @@ def show():
                 st.markdown(f"""
                     <div class="message-card message-sent">
                         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                            <div style="font-weight: 600; color: #1F2937; font-size: 14px;">
+                            <div style="font-weight: 600; color: var(--text-main); font-size: 14px;">
                                 To: {clean_recipient}
                             </div>
                             <div style="font-size: 12px; color: #94A3B8;">
@@ -317,7 +317,7 @@ def show():
             finally:
                 session.close()
         except Exception as e:
-            st.error(f"⚠️ Error loading users: {str(e)}")
+            st.error(f"Error loading users: {str(e)}")
             user_options = {}
         
         if user_options:
@@ -337,12 +337,12 @@ def show():
                             body=body,
                             priority=priority
                         )
-                        st.success("✅ Message sent successfully!")
+                        st.success("Message sent successfully!")
                         time.sleep(1)
                         st.rerun()
                     except Exception as e:
-                        st.error(f"⚠️ Failed to send message: {str(e)}")
+                        st.error(f"Failed to send message: {str(e)}")
                 else:
-                    st.error("⚠️ Please fill in all fields")
+                    st.error("Please fill in all fields")
         else:
-            st.warning("⚠️ No other users found. Please run database initialization to create users.")
+            st.warning("No other users found. Please run database initialization to create users.")

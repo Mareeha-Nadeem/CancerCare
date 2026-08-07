@@ -14,10 +14,6 @@ def show():
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
         /* Glassmorphic Background */
-        .stApp {
-            background: linear-gradient(135deg, #F0FDFA 0%, #E0F2FE 50%, #F0F9FF 100%) !important;
-            font-family: 'Inter', sans-serif !important;
-        }
         
         /* Hero Section */
         .hero-container {
@@ -30,9 +26,7 @@ def show():
         .hero-title {
             font-size: 72px;
             font-weight: 800;
-            background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--cyan-glow);
             margin-bottom: 24px;
             line-height: 1.1;
             letter-spacing: -0.02em;
@@ -40,7 +34,7 @@ def show():
         
         .hero-subtitle {
             font-size: 24px;
-            color: #475569;
+            color: var(--text-muted);
             font-weight: 500;
             margin-bottom: 48px;
             line-height: 1.5;
@@ -58,38 +52,38 @@ def show():
         }
         
         .cta-primary {
-            background: #14B8A6 !important;
+            background: var(--cyan-glow) !important;
             color: white !important;
             padding: 16px 40px !important;
             border-radius: 12px !important;
             font-weight: 600 !important;
             font-size: 16px !important;
             border: none !important;
-            box-shadow: 0 8px 24px rgba(20, 184, 166, 0.35) !important;
+            box-shadow: 0 8px 24px rgba(0, 240, 255, 0.35) !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
         
         .cta-primary:hover {
-            background: #0D9488 !important;
+            background: var(--indigo-glow) !important;
             transform: translateY(-2px) !important;
-            box-shadow: 0 12px 32px rgba(20, 184, 166, 0.45) !important;
+            box-shadow: 0 12px 32px rgba(0, 240, 255, 0.45) !important;
         }
         
         .cta-secondary {
             background: rgba(255, 255, 255, 0.8) !important;
             backdrop-filter: blur(10px) !important;
-            color: #14B8A6 !important;
+            color: var(--cyan-glow) !important;
             padding: 16px 40px !important;
             border-radius: 12px !important;
             font-weight: 600 !important;
             font-size: 16px !important;
-            border: 2px solid rgba(20, 184, 166, 0.3) !important;
+            border: 2px solid rgba(0, 240, 255, 0.3) !important;
             transition: all 0.3s ease !important;
         }
         
         .cta-secondary:hover {
-            background: white !important;
-            border-color: #14B8A6 !important;
+            background: var(--bg-surface-elevated) !important;
+            border-color: var(--cyan-glow) !important;
             transform: translateY(-2px) !important;
         }
         
@@ -109,32 +103,33 @@ def show():
         .glass-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 12px 48px 0 rgba(31, 38, 135, 0.25);
-            border-color: rgba(20, 184, 166, 0.3);
+            border-color: rgba(0, 240, 255, 0.3);
         }
         
         .feature-icon {
             width: 64px;
             height: 64px;
-            background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+            background: var(--cyan-glow);
+            color: white;
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 32px;
             margin-bottom: 24px;
-            box-shadow: 0 4px 16px rgba(20, 184, 166, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 240, 255, 0.3);
         }
         
         .feature-title {
             font-size: 24px;
             font-weight: 700;
-            color: #1F2937;
+            color: var(--text-main);
             margin-bottom: 12px;
         }
         
         .feature-desc {
             font-size: 16px;
-            color: #64748B;
+            color: var(--text-muted);
             line-height: 1.6;
         }
         
@@ -155,15 +150,13 @@ def show():
         .stat-number {
             font-size: 48px;
             font-weight: 800;
-            background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--cyan-glow);
             margin-bottom: 8px;
         }
         
         .stat-label {
             font-size: 16px;
-            color: #64748B;
+            color: var(--text-muted);
             font-weight: 600;
         }
         </style>
@@ -198,7 +191,7 @@ def show():
     st.markdown("<br><br>", unsafe_allow_html=True)
     
     # Features Grid
-    st.markdown("<h2 style='text-align: center; font-size: 42px; font-weight: 700; margin: 80px 0 60px 0; color: #1F2937;'>Comprehensive Cancer Care Suite</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; font-size: 42px; font-weight: 700; margin: 80px 0 60px 0; color: var(--text-main);'>Comprehensive Cancer Care Suite</h2>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     
@@ -216,7 +209,7 @@ def show():
     with col2:
         st.markdown("""
             <div class="glass-card">
-                <div class="feature-icon">🔬</div>
+                <div class="feature-icon">•</div>
                 <div class="feature-title">Image Analysis</div>
                 <div class="feature-desc">
                     AI-powered medical image analysis detects tumors, calculates size, position, mass, and aggression levels.
@@ -227,7 +220,7 @@ def show():
     with col3:
         st.markdown("""
             <div class="glass-card">
-                <div class="feature-icon">📊</div>
+                <div class="feature-icon">•</div>
                 <div class="feature-title">Post-Diagnosis Tracking</div>
                 <div class="feature-desc">
                     Comprehensive patient management with treatment tracking, tumor markers, and progress visualization.
@@ -253,7 +246,7 @@ def show():
     with col2:
         st.markdown("""
             <div class="glass-card">
-                <div class="feature-icon">⚡</div>
+                <div class="feature-icon">•</div>
                 <div class="feature-title">Batch Processing</div>
                 <div class="feature-desc">
                     Process multiple patient predictions simultaneously with our efficient batch processing system.
@@ -264,7 +257,7 @@ def show():
     with col3:
         st.markdown("""
             <div class="glass-card">
-                <div class="feature-icon">📈</div>
+                <div class="feature-icon">•</div>
                 <div class="feature-title">Advanced Analytics</div>
                 <div class="feature-desc">
                     Real-time dashboard with insights, trends, and comprehensive reporting capabilities.

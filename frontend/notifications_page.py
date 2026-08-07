@@ -18,7 +18,7 @@ def show():
             border-radius: 16px; padding: 32px; margin-bottom: 24px;
         }
         .notification-card {
-            background: white; border-radius: 12px; padding: 16px; margin: 12px 0;
+            background: var(--bg-surface-elevated); border-radius: 12px; padding: 16px; margin: 12px 0;
             border-left: 4px solid; transition: all 0.2s ease;
         }
         .notification-card:hover {
@@ -56,13 +56,13 @@ def show():
                     -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
                     🔔 Notifications
                 </h1>
-                <p style="color: #64748B; margin-top: 8px;">Real-time notification stream with priority queue</p>
+                <p style="color: var(--text-muted); margin-top: 8px;">Real-time notification stream with priority queue</p>
             </div>
         """, unsafe_allow_html=True)
     
     with col2:
         # Auto-refresh toggle
-        auto_refresh = st.checkbox("⚡ Auto-refresh (5s)", value=True)
+        auto_refresh = st.checkbox("Auto-refresh (5s)", value=True)
     
     # Priority stats
     stats = notification_service.get_priority_stats(user_id)
@@ -72,11 +72,11 @@ def show():
     with col1:
         st.metric("Total Unread", unread_count)
     with col2:
-        st.metric("🔴 Urgent", stats.get('urgent', 0))
+        st.metric("Urgent", stats.get('urgent', 0))
     with col3:
         st.metric("🟠 High", stats.get('high', 0))
     with col4:
-        st.metric("🟢 Normal", stats.get('normal', 0))
+        st.metric("Normal", stats.get('normal', 0))
     with col5:
         st.metric("⚪ Low", stats.get('low', 0))
     
@@ -94,7 +94,7 @@ def show():
     # Action buttons
     col1, col2, col3 = st.columns([2, 2, 6])
     with col1:
-        if st.button("✅ Mark All Read", use_container_width=True):
+        if st.button("Mark All Read", use_container_width=True):
             notification_service.mark_all_as_read(user_id)
             st.rerun()
     with col2:
@@ -110,7 +110,7 @@ def show():
     )
     
     st.markdown("---")
-    st.markdown(f"### 📊 {len(notifications)} Notifications")
+    st.markdown(f"### {len(notifications)} Notifications")
     
     # Display notifications
     if notifications:
@@ -120,11 +120,11 @@ def show():
             
             # Icon based on type
             icon = {
-                'info': 'ℹ️',
-                'warning': '⚠️',
-                'error': '❌',
-                'success': '✅'
-            }.get(notif.type, 'ℹ️')
+                'info': '',
+                'warning': '',
+                'error': '',
+                'success': ''
+            }.get(notif.type, '')
             
             # Badge color
             badge_class = f"badge-{notif.priority}"
@@ -133,11 +133,11 @@ def show():
                 <div class="notification-card {priority_class} {read_class}">
                     <div style="display: flex; justify-content: space-between; align-items: start;">
                         <div style="flex: 1;">
-                            <div style="font-weight: 700; font-size: 16px; color: #1F2937;">
+                            <div style="font-weight: 700; font-size: 16px; color: var(--text-main);">
                                 {icon} {notif.title}
                                 <span class="badge {badge_class}">{notif.priority.upper()}</span>
                             </div>
-                            <div style="color: #64748B; margin-top: 8px;">
+                            <div style="color: var(--text-muted); margin-top: 8px;">
                                 {notif.message}
                             </div>
                             <div style="color: #94A3B8; font-size: 12px; margin-top: 8px;">

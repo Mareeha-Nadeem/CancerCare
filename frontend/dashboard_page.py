@@ -21,7 +21,7 @@ def show():
             border-radius: 16px; padding: 32px; margin-bottom: 24px;
         }
         .metric-card {
-            background: white; border-radius: 12px; padding: 20px; text-align: center;
+            background: var(--bg-surface-elevated); border-radius: 12px; padding: 20px; text-align: center;
             border: 1px solid #E2E8F0;
         }
         </style>
@@ -33,7 +33,7 @@ def show():
                 -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
                 Analytics Dashboard
             </h1>
-            <p style="color: #64748B; margin-top: 8px;">Comprehensive visual analytics and insights</p>
+            <p style="color: var(--text-muted); margin-top: 8px;">Comprehensive visual analytics and insights</p>
         </div>
     """, unsafe_allow_html=True)
     
@@ -43,11 +43,11 @@ def show():
     patient_dict = {p.id: p for p in patients}
     
     if not predictions:
-        st.warning("📊 No prediction data available yet. Make some predictions first!")
+        st.warning("No prediction data available yet. Make some predictions first!")
         return
     
     # Key Metrics Row
-    st.markdown("### 📊 Key Metrics")
+    st.markdown("### Key Metrics")
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
@@ -89,7 +89,7 @@ def show():
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
     
     with col2:
-        st.markdown("#### 📈 Confidence Distribution")
+        st.markdown("#### Confidence Distribution")
         confidence_values = [p.confidence or 0 for p in predictions]
         
         fig = go.Figure(data=[go.Histogram(
@@ -107,7 +107,7 @@ def show():
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
     
     # Chart 2: Timeline Analysis
-    st.markdown("#### 📅 Predictions Timeline")
+    st.markdown("#### Predictions Timeline")
     
     # Prepare timeline data
     timeline_data = []
@@ -180,7 +180,7 @@ def show():
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
     
     # Chart 4: Risk by Age Group
-    st.markdown("#### 📊 Risk Level by Age Group")
+    st.markdown("#### Risk Level by Age Group")
     
     age_risk_data = []
     for p in predictions:
@@ -213,7 +213,7 @@ def show():
     
     # Summary Statistics Table
     st.markdown("---")
-    st.markdown("### 📋 Detailed Statistics")
+    st.markdown("### Detailed Statistics")
     
     col1, col2 = st.columns(2)
     

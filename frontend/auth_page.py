@@ -17,7 +17,7 @@ def show():
         }
         
         .auth-container {
-            background: white;
+            background: var(--bg-surface-elevated);
             border-radius: 20px;
             padding: 50px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);

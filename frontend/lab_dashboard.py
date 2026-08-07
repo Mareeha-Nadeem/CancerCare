@@ -19,11 +19,6 @@ def show():
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
-        .stApp {
-            background: linear-gradient(135deg, #F0FDFA 0%, #F0F9FF 100%) !important;
-            font-family: 'Inter', sans-serif !important;
-        }
-        
         /* Dashboard Header */
         .dashboard-header {
             background: rgba(255, 255, 255, 0.7);
@@ -37,14 +32,12 @@ def show():
         .dash-title {
             font-size: 36px;
             font-weight: 800;
-            background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--cyan-glow);
             margin: 0;
         }
         
         .dash-subtitle {
-            color: #64748B;
+            color: var(--text-muted);
             font-size: 16px;
             margin-top: 8px;
         }
@@ -61,14 +54,14 @@ def show():
         
         .kpi-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(20, 184, 166, 0.15);
-            border-color: rgba(20, 184, 166, 0.3);
+            box-shadow: 0 12px 24px rgba(0, 240, 255, 0.15);
+            border-color: rgba(0, 240, 255, 0.3);
         }
         
         .kpi-label {
             font-size: 13px;
             font-weight: 600;
-            color: #64748B;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 12px;
@@ -77,7 +70,7 @@ def show():
         .kpi-value {
             font-size: 36px;
             font-weight: 800;
-            color: #14B8A6;
+            color: var(--cyan-glow);
             margin: 8px 0;
         }
         
@@ -89,7 +82,7 @@ def show():
         
         /* Quick Action Card */
         .action-card {
-            background: white;
+            background: var(--bg-surface-elevated);
             border-radius: 12px;
             padding: 20px;
             border: 2px solid #E2E8F0;
@@ -98,8 +91,8 @@ def show():
         }
         
         .action-card:hover {
-            border-color: #14B8A6;
-            box-shadow: 0 4px 12px rgba(20, 184, 166, 0.15);
+            border-color: var(--cyan-glow);
+            box-shadow: 0 4px 12px rgba(0, 240, 255, 0.15);
         }
         
         .action-icon {
@@ -110,7 +103,7 @@ def show():
         .action-title {
             font-size: 16px;
             font-weight: 600;
-            color: #1F2937;
+            color: var(--text-main);
         }
         </style>
     """, unsafe_allow_html=True)
@@ -118,7 +111,7 @@ def show():
     # Logout button
     col1, col2 = st.columns([5, 1])
     with col2:
-        if st.button("🚪 Logout", use_container_width=True):
+        if st.button("Logout", use_container_width=True):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
             st.session_state.page = "landing"
@@ -190,24 +183,24 @@ def show():
     st.markdown("<br><br>", unsafe_allow_html=True)
     
     # Quick Actions
-    st.markdown("<h2 style='font-size: 24px; font-weight: 700; color: #1F2937; margin-bottom: 24px;'>Quick Actions</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 24px;'>Quick Actions</h2>", unsafe_allow_html=True)
     
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button("🔬 New Analysis", use_container_width=True):
+        if st.button("New Analysis", use_container_width=True):
             st.switch_page("pages/prediction.py")
     
     with col2:
-        if st.button("👥 View Patients", use_container_width=True):
+        if st.button("View Patients", use_container_width=True):
             st.switch_page("pages/patients.py")
     
     with col3:
-        if st.button("📊 Reports", use_container_width=True):
+        if st.button("Reports", use_container_width=True):
             st.switch_page("pages/reports.py")
     
     with col4:
-        if st.button("🏥 Post-Diagnosis", use_container_width=True):
+        if st.button("Post-Diagnosis", use_container_width=True):
             st.switch_page("pages/post_diagnosis.py")
     
     st.markdown("<br><br>", unsafe_allow_html=True)
@@ -216,7 +209,7 @@ def show():
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.markdown("<h2 style='font-size: 24px; font-weight: 700; color: #1F2937; margin-bottom: 16px;'>Risk Distribution</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 16px;'>Risk Distribution</h2>", unsafe_allow_html=True)
         
         # Risk distribution chart
         risk_counts = {"High": high_risk, 
@@ -244,7 +237,7 @@ def show():
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
     
     with col2:
-        st.markdown("<h2 style='font-size: 24px; font-weight: 700; color: #1F2937; margin-bottom: 16px;'>Recent Activity</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 16px;'>Recent Activity</h2>", unsafe_allow_html=True)
         
         # Recent predictions
         recent = sorted(all_predictions, key=lambda x: x.created_at or datetime.min, reverse=True)[:5]
@@ -252,9 +245,9 @@ def show():
         for pred in recent:
             risk_color = {"High": "#EF4444", "Medium": "#F59E0B", "Low": "#10B981"}.get(pred.risk_level, "#64748B")
             st.markdown(f"""
-                <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid {risk_color};">
-                    <div style="font-weight: 600; color: #1F2937;">Patient #{pred.patient_id}</div>
-                    <div style="font-size: 12px; color: #64748B;">
+                <div style="background: var(--bg-surface-elevated); padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid {risk_color};">
+                    <div style="font-weight: 600; color: var(--text-main);">Patient #{pred.patient_id}</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">
                         {pred.risk_level} Risk | {pred.created_at.strftime('%b %d, %Y') if pred.created_at else 'N/A'}
                     </div>
                 </div>

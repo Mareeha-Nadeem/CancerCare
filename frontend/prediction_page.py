@@ -47,7 +47,7 @@ def show():
         
         /* Form Section */
         .form-section {
-            background: white;
+            background: var(--bg-surface-elevated);
             border-radius: 12px;
             padding: 24px;
             margin: 16px 0;
@@ -57,7 +57,7 @@ def show():
         .section-title {
             font-size: 18px;
             font-weight: 700;
-            color: #1F2937;
+            color: var(--text-main);
             margin-bottom: 16px;
             padding-bottom: 8px;
             border-bottom: 2px solid #14B8A6;
@@ -107,7 +107,7 @@ def show():
     st.markdown("""
         <div class="pred-header">
             <h1 class="pred-title">AI Risk Prediction</h1>
-            <p style="color: #64748B; font-size: 16px; margin-top: 8px;">
+            <p style="color: var(--text-muted); font-size: 16px; margin-top: 8px;">
                 Enter patient data for lung cancer risk assessment
             </p>
         </div>
@@ -120,7 +120,7 @@ def show():
     with st.form("prediction_form"):
         # Patient Info
         st.markdown('<div class="form-section">', unsafe_allow_html=True)
-        st.markdown('<div class="section-title">👤 Patient Information</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">Patient Information</div>', unsafe_allow_html=True)
         
         col1, col2 = st.columns(2)
         with col1:
@@ -153,7 +153,7 @@ def show():
         
         # Symptoms & Clinical
         st.markdown('<div class="form-section">', unsafe_allow_html=True)
-        st.markdown('<div class="section-title">🔬 Clinical Symptoms</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">Clinical Symptoms</div>', unsafe_allow_html=True)
         
         col1, col2, col3, col4 = st.columns(4)
         with col1:
@@ -258,7 +258,7 @@ def show():
             <div class="risk-result {risk_class}">
                 <div class="risk-label" style="color: {risk_color};">{result['risk_level']} RISK</div>
                 <div class="risk-value" style="color: {risk_color};">{result['risk_probability']:.1f}%</div>
-                <p style="color: #64748B; font-size: 16px; margin-top: 16px;">
+                <p style="color: var(--text-muted); font-size: 16px; margin-top: 16px;">
                     Confidence Score: {result['confidence']:.1f}%
                 </p>
             </div>
@@ -301,13 +301,13 @@ def show():
         # Recommendations
         st.markdown("""
             <div class="form-section">
-                <div class="section-title">📋 Recommendations</div>
+                <div class="section-title">Recommendations</div>
             </div>
         """, unsafe_allow_html=True)
         
         if result['risk_level'] == "High":
-            st.error("⚠️ **Immediate medical consultation recommended.** Schedule comprehensive screening and diagnostic tests.")
+            st.error("**Immediate medical consultation recommended.** Schedule comprehensive screening and diagnostic tests.")
         elif result['risk_level'] == "Medium":
-            st.warning("⚡ **Follow-up recommended.** Schedule routine screening and monitor symptoms closely.")
+            st.warning("**Follow-up recommended.** Schedule routine screening and monitor symptoms closely.")
         else:
-            st.success("✅ **Low risk detected.** Maintain healthy lifestyle and regular check-ups.")
+            st.success("**Low risk detected.** Maintain healthy lifestyle and regular check-ups.")

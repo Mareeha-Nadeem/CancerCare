@@ -18,7 +18,7 @@ def show():
             border-radius: 16px; padding: 32px; margin-bottom: 24px;
         }
         .result-card {
-            background: white; border-radius: 12px; padding: 16px; margin: 12px 0;
+            background: var(--bg-surface-elevated); border-radius: 12px; padding: 16px; margin: 12px 0;
             border-left: 4px solid #14B8A6;
         }
         </style>
@@ -30,7 +30,7 @@ def show():
                 -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
                 Advanced Search
             </h1>
-            <p style="color: #64748B; margin-top: 8px;">Search patients and predictions with advanced filters</p>
+            <p style="color: var(--text-muted); margin-top: 8px;">Search patients and predictions with advanced filters</p>
         </div>
     """, unsafe_allow_html=True)
     
@@ -38,7 +38,7 @@ def show():
     search_type = st.radio("Search Type", ["Patients", "Predictions", "Both"], horizontal=True)
     
     # Advanced Filters
-    st.markdown("### 🔍 Search Filters")
+    st.markdown("### Search Filters")
     
     col1, col2, col3 = st.columns(3)
     
@@ -56,7 +56,7 @@ def show():
     
     confidence_range = st.slider("Confidence Range %", 0, 100, (0, 100))
     
-    if st.button("🔍 Search", use_container_width=True):
+    if st.button("Search", use_container_width=True):
         # Get all data
         patients = patient_service.get_all_patients()
         predictions = prediction_service.get_all_predictions()
@@ -116,7 +116,7 @@ def show():
         
         # Display Results
         st.markdown("---")
-        st.markdown(f"### 📊 Search Results")
+        st.markdown(f"### Search Results")
         
         if search_type in ["Patients", "Both"] and filtered_patients:
             st.success(f"👥 **{len(filtered_patients)} patients** found")
@@ -124,15 +124,15 @@ def show():
             for patient in filtered_patients:
                 st.markdown(f"""
                     <div class="result-card">
-                        <div style="font-weight: 700; color: #1F2937; font-size: 18px;">{patient.name}</div>
-                        <div style="color: #64748B; margin-top: 4px;">
+                        <div style="font-weight: 700; color: var(--text-main); font-size: 18px;">{patient.name}</div>
+                        <div style="color: var(--text-muted); margin-top: 4px;">
                             MRN: {patient.mrn or 'N/A'} | Age: {patient.age} | Gender: {patient.gender}
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
         
         if search_type in ["Predictions", "Both"] and filtered_predictions:
-            st.success(f"📋 **{len(filtered_predictions)} predictions** found")
+            st.success(f"**{len(filtered_predictions)} predictions** found")
             
             for pred, patient in filtered_predictions:
                 risk_color = {"High": "#EF4444", "Medium": "#F59E0B", "Low": "#10B981"}.get(pred.risk_level, "#64748B")
@@ -140,11 +140,11 @@ def show():
                 
                 st.markdown(f"""
                     <div class="result-card" style="border-left-color: {risk_color};">
-                        <div style="font-weight: 700; color: #1F2937;">{patient_name}</div>
+                        <div style="font-weight: 700; color: var(--text-main);">{patient_name}</div>
                         <div style="color: {risk_color}; font-weight: 600; margin-top: 4px;">
                             {pred.risk_level} Risk - {(pred.confidence or 0):.1f}%
                         </div>
-                        <div style="color: #64748B; font-size: 14px; margin-top: 4px;">
+                        <div style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">
                             {pred.created_at.strftime('%B %d, %Y') if pred.created_at else 'N/A'}
                         </div>
                     </div>
@@ -154,11 +154,11 @@ def show():
             search_type in ["Predictions", "Both"] and not filtered_predictions) or \
            (search_type == "Patients" and not filtered_patients) or \
            (search_type == "Predictions" and not filtered_predictions):
-            st.info("🔍 No results found. Try adjusting your filters.")
+            st.info("No results found. Try adjusting your filters.")
     
     # Quick Stats
     st.markdown("---")
-    st.markdown("### 📈 Quick Statistics")
+    st.markdown("### Quick Statistics")
     
     col1, col2, col3, col4 = st.columns(4)
     

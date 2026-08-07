@@ -17,7 +17,7 @@ def show():
             border-radius: 16px; padding: 32px; margin-bottom: 24px;
         }
         .appt-card {
-            background: white; border-radius: 12px; padding: 16px;
+            background: var(--bg-surface-elevated); border-radius: 12px; padding: 16px;
             margin: 8px 0; border-left: 4px solid #14B8A6;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
@@ -34,7 +34,7 @@ def show():
         </div>
     """, unsafe_allow_html=True)
 
-    tab1, tab2 = st.tabs(["📅 Schedule New", "📋 View All"])
+    tab1, tab2 = st.tabs(["Schedule New", "View All"])
 
     # ── Tab 1: Schedule ────────────────────────────────────────────
     with tab1:
@@ -42,7 +42,7 @@ def show():
         doctors  = doctor_service.get_all_doctors() if hasattr(doctor_service, "get_all_doctors") else []
 
         if not patients:
-            st.warning("⚠️ No patients in the system. Add patients first via Patient Records.")
+            st.warning("No patients in the system. Add patients first via Patient Records.")
             return
 
         with st.form("schedule_appointment"):
@@ -50,28 +50,28 @@ def show():
 
             with col1:
                 patient_options = {f"{p.name} (MRN: {p.mrn})": p.id for p in patients}
-                selected_patient_label = st.selectbox("👤 Patient", list(patient_options.keys()))
+                selected_patient_label = st.selectbox("Patient", list(patient_options.keys()))
                 patient_id = patient_options[selected_patient_label]
 
-                appt_date = st.date_input("📅 Date", min_value=date.today())
-                appt_time = st.time_input("⏰ Time", value=time(9, 0))
+                appt_date = st.date_input("Date", min_value=date.today())
+                appt_time = st.time_input("Time", value=time(9, 0))
 
             with col2:
                 if doctors:
                     doctor_options = {f"Dr. {d.name} ({d.specialization or 'General'})": d.id for d in doctors}
-                    selected_doctor_label = st.selectbox("🩺 Doctor", list(doctor_options.keys()))
+                    selected_doctor_label = st.selectbox("Doctor", list(doctor_options.keys()))
                     doctor_id = doctor_options[selected_doctor_label]
                 else:
                     st.info("No doctors registered. Doctor field will be optional.")
                     doctor_id = None
 
-                appt_type = st.selectbox("📋 Type", ["Consultation", "Follow-up", "Screening", "Emergency"])
-                priority  = st.selectbox("🚨 Priority", ["Normal (1)", "High (2)", "Urgent (3)"])
+                appt_type = st.selectbox("Type", ["Consultation", "Follow-up", "Screening", "Emergency"])
+                priority  = st.selectbox("Priority", ["Normal (1)", "High (2)", "Urgent (3)"])
                 priority_val = int(priority.split("(")[1].replace(")", ""))
 
-            reason = st.text_area("📝 Reason / Notes", placeholder="Brief description of visit…")
+            reason = st.text_area("Reason / Notes", placeholder="Brief description of visit…")
 
-            submitted = st.form_submit_button("📅 Schedule Appointment", use_container_width=True)
+            submitted = st.form_submit_button("Schedule Appointment", use_container_width=True)
 
         if submitted:
             appt_datetime = datetime.combine(appt_date, appt_time)
@@ -86,9 +86,9 @@ def show():
             }
             appt, error = appointment_service.create_appointment(appt_data)
             if error:
-                st.error(f"❌ Failed to schedule: {error}")
+                st.error(f"Failed to schedule: {error}")
             else:
-                st.success(f"✅ Appointment scheduled for **{appt_date}** at **{appt_time.strftime('%H:%M')}**")
+                st.success(f"Appointment scheduled for **{appt_date}** at **{appt_time.strftime('%H:%M')}**")
                 st.balloons()
 
     # ── Tab 2: View All ────────────────────────────────────────────
@@ -104,7 +104,7 @@ def show():
 
         appointments = appointment_service.get_all_appointments()
         if not appointments:
-            st.info("📋 No appointments yet.")
+            st.info("No appointments yet.")
             return
 
         for appt in appointments:
@@ -131,7 +131,7 @@ def show():
                         </span>
                     </div>
                     <div style="color:#64748B;font-size:14px;margin-top:8px;">
-                        📅 {appt.appointment_date.strftime('%B %d, %Y at %H:%M') if appt.appointment_date else 'N/A'}
+                        {appt.appointment_date.strftime('%B %d, %Y at %H:%M') if appt.appointment_date else 'N/A'}
                         &nbsp;&nbsp;|&nbsp;&nbsp; Priority: {appt.priority or 1}
                         &nbsp;&nbsp;|&nbsp;&nbsp; {appt.reason or ''}
                     </div>
@@ -140,9 +140,9 @@ def show():
 
             col_a, col_b, _ = st.columns([1, 1, 5])
             if appt.status == "scheduled":
-                if col_a.button("✅ Complete", key=f"complete_{appt.id}"):
+                if col_a.button("Complete", key=f"complete_{appt.id}"):
                     appointment_service.complete_appointment(appt.id)
                     st.rerun()
-                if col_b.button("❌ Cancel", key=f"cancel_{appt.id}"):
+                if col_b.button("Cancel", key=f"cancel_{appt.id}"):
                     appointment_service.cancel_appointment(appt.id)
                     st.rerun()

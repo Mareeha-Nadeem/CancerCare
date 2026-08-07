@@ -26,7 +26,7 @@ def show():
                 -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
                 Patient History
             </h1>
-            <p style="color: #64748B; margin-top: 8px;">View prediction history by patient</p>
+            <p style="color: var(--text-muted); margin-top: 8px;">View prediction history by patient</p>
         </div>
     """, unsafe_allow_html=True)
     
@@ -34,26 +34,26 @@ def show():
     
     if patients:
         patient_options = {f"{p.name} (MRN: {p.mrn})": p for p in patients}
-        selected_name = st.selectbox("👤 Select Patient", list(patient_options.keys()))
+        selected_name = st.selectbox("Select Patient", list(patient_options.keys()))
         selected_patient = patient_options[selected_name]
         
         predictions = prediction_service.get_patient_predictions(selected_patient.id)
         
         if predictions:
-            st.success(f"📊 **{len(predictions)} predictions** found")
+            st.success(f"**{len(predictions)} predictions** found")
             for pred in predictions:
                 risk_color = {"High": "#EF4444", "Medium": "#F59E0B", "Low": "#10B981"}.get(pred.risk_level, "#64748B")
                 confidence = getattr(pred, 'confidence', 0) or 0
                 st.markdown(f"""
-                    <div style="background: white; padding: 16px; border-radius: 12px; margin: 12px 0; 
+                    <div style="background: var(--bg-surface-elevated); padding: 16px; border-radius: 12px; margin: 12px 0; 
                          border-left: 4px solid {risk_color};">
                         <div style="font-weight: 700; color: {risk_color};">{pred.risk_level} Risk - {confidence:.1f}%</div>
-                        <div style="color: #64748B; font-size: 14px; margin-top: 4px;">
+                        <div style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">
                             {pred.created_at.strftime('%B %d, %Y') if pred.created_at else 'N/A'}
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
         else:
-            st.info("📋 No predictions yet for this patient")
+            st.info("No predictions yet for this patient")
     else:
-        st.warning("⚠️ No patients found")
+        st.warning("No patients found")
